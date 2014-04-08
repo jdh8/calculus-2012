@@ -1,0 +1,677 @@
+%!TEX encoding = UTF-8 Unicode
+\documentclass{beamer}
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{CJKutf8}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{pstricks-add}
+\useoutertheme{sidebar}
+
+\begin{document}
+\begin{CJK}{UTF8}{bsmi}
+\title{微分的應用}
+\subtitle{極值、均值定理、求根演算法}
+\author[何震邦]{何震邦 \href{mailto:jdh8@ms63.hinet.net}{\textless jdh8@ms63.hinet.net\textgreater}\\
+    \href{http://creativecommons.org/licenses/by-sa/3.0/tw/deed.zh\textunderscore TW}{\includegraphics{by-sa.eps}}}
+\date{2012 年 10 月 31 日}
+\maketitle
+
+\section{微分的應用}
+\begin{frame}{左導數與右導數}
+  \begin{definition}
+    對於函數 $f(x)$，它在 $c$ 處的右導數定義為
+    \[f'(c^+) := \lim_{h\to0^+} \frac{f(c+h) - f(c)}{h}\]
+    而左導數定義為
+    \[f'(c^-) := \lim_{h\to0^-} \frac{f(c+h) - f(c)}{h}\]
+  \end{definition}
+  \begin{itemize}
+    \item 嘿，導數是極限！
+    \item 導數存在，等價於左右導數存在且相等
+  \end{itemize}
+\end{frame}
+
+\subsection{極值}
+\begin{frame}{絕對極值}
+  \begin{definition}
+    函數 $f(x)$ 在區間 $I$ 內有絕對極大值 $f(c)$
+    \begin{itemize}
+      \item $c$ 在區間 $I$ 中
+      \item 對於所有 $x \in I$，$f(c) \ge f(x)$
+    \end{itemize}
+  \end{definition}
+  \begin{definition}
+    函數 $f(x)$ 在區間 $I$ 內有絕對極小值 $f(c)$
+    \begin{itemize}
+      \item $c$ 在區間 $I$ 中
+      \item 對於所有 $x \in I$，$f(c) \le f(x)$
+    \end{itemize}
+  \end{definition}
+  \begin{itemize}
+    \item 絕對極值可以在不只一處出現，但只有一值
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{相對極值}
+  \begin{definition}
+     $f(c)$ 為函數 $f$ 的相對極大值
+    \begin{itemize}
+      \item 存在開區間 $I$，使得 $f(c)$ 在 $I$ 中為絕對極大值
+    \end{itemize}
+  \end{definition}
+  \begin{definition}
+    $f(c)$ 為函數 $f$ 的相對極小值
+    \begin{itemize}
+      \item 存在開區間 $I$，使得 $f(c)$ 在 $I$ 中為絕對極小值
+    \end{itemize}
+  \end{definition}
+  \begin{itemize}
+    \item 聽起來很容易，但實際上不容易
+      \begin{itemize}
+	\item 找找看 $f(x) = x$ 的相對極大值
+      \end{itemize}
+    \item 可以不只一值
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{開集合}
+  \begin{definition}
+    在開集合 $I$ 內的任一點 $\mathbf c$，都存在正數 $\epsilon$ 使得
+    \[|\mathbf x - \mathbf c| < \epsilon \Rightarrow \mathbf x \in I\]
+  \end{definition}
+  \begin{itemize}
+    \item $\{x: 2 < x < 5\}$ 是開區間
+    \item $\{(x,y): x^2 + y^2 < 1\}$ 是開集合
+    \item $\varnothing$ 是開集合
+    \item 任意個開集合的聯集仍是開集合
+    \item 有限個開集合的交集仍是開集合
+  \end{itemize}
+  \begin{center}
+    \begin{pspicture}(2,2)
+      \newrgbcolor{Red}{1 0.5 0.5}
+      \pscircle[linecolor=red,linestyle=dashed,fillstyle=solid,fillcolor=Red](1,1){1}
+    \end{pspicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}{閉集合}
+  \begin{definition}
+    開集合的補集是閉集合
+  \end{definition}
+  \begin{itemize}
+    \item $\{x: 2 \le x \le 5\}$ 是閉區間
+      \begin{itemize}
+	\item $\{x: x < 2\} \cup \{x: x > 5\}$ 是開區間的聯集，是開集合
+      \end{itemize}
+    \item $\{(x,y): x^2 + y^2 \le 1\}$ 是閉集合
+      \begin{itemize}
+	\item $\{(x,y): x^2 + y^2 > 1\}$ 是開集合
+      \end{itemize}
+    \item $\varnothing$ 是閉集合
+    \item 有限個閉集合的聯集仍是閉集合
+    \item 任意個閉集合的交集仍是閉集合
+  \end{itemize}
+  \begin{center}
+    \begin{pspicture}(2,2)
+      \newrgbcolor{Blue}{0.5 0.5 1}
+      \pscircle[linecolor=blue,fillstyle=solid,fillcolor=Blue](1,1){1}
+    \end{pspicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}{駐點}
+  \begin{definition}
+    函數 $f$ 的\textbf{駐點}，或稱\textbf{平穩點}，就是它的導數為零的點
+    \[f'(x) = 0\]
+  \end{definition}
+  \begin{itemize}
+    \item 對 $y = f(x)$ 而言，駐點上的切線都平行於 $x$ 軸
+  \end{itemize}
+  \begin{center}
+    \begin{pspicture}(-2,-2)(2,2)
+      \psaxes(0,0)(-2,-2)(2,2)
+      \psplot{-1.521379706804568}{1.521379706804568}{x 3 exp x sub}
+      \psline[linestyle=dashed](-2, 0.3849001794597505)(2, 0.3849001794597505)
+      \psline[linestyle=dashed](-2,-0.3849001794597505)(2,-0.3849001794597505)
+    \end{pspicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}{費馬駐點定理}
+  \begin{theorem}
+    若 $f(c)$ 是相對極值，且 $f$ 在 $c$ 處可微，則
+    \[f'(c) = 0\]
+  \end{theorem}
+  \begin{itemize}
+    \item 相對極值必在不可微分點或駐點上
+    \item 絕對極值必為相對極值或在端點上
+    \item 駐點不一定是極值！
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{費馬駐點定理的證明}
+  \begin{proof}
+    若 $f$ 在 $c$ 處可微且具有相對極大值，則存在正數 $\delta$ 使得 $|x-c| < \delta \Rightarrow f(c) \ge f(x)$。因此
+    \begin{align*}
+      f'(c^+) &:= \lim_{h\to0^+} \frac{f(c+h) - f(c)}{h} \le 0\\
+      f'(c^-) &:= \lim_{h\to0^-} \frac{f(c+h) - f(c)}{h} \ge 0
+    \end{align*}
+    因 $f'(c)$ 存在，故 $f'(c^+) = f'(c^-) = 0$，即 $f'(c) = 0$
+  \end{proof}
+\end{frame}
+
+\begin{frame}{函數的遞增與遞減}
+  \begin{definition}
+    若在區間 $I$ 中任兩點 $x_1$ 與 $x_2$，均有
+    \[x_2 > x_1 \Rightarrow f(x_2) \ge f(x_1)\]
+    則稱函數 $f$ 在區間 $I$ 遞增。特別地，若
+    \[x_2 > x_1 \Rightarrow f(x_2) > f(x_1)\]
+    則稱函數 $f$ 在區間 $I$ 嚴格遞增。
+  \end{definition}
+  \begin{definition}
+    \begin{itemize}
+      \item 遞減函數的負值是遞增函數
+      \item 嚴格嚴減函數的負值是嚴格遞增函數
+    \end{itemize}
+  \end{definition}
+\end{frame}
+
+\begin{frame}{凸集合}
+  \begin{definition}
+    若對於集合 $S$ 內任兩點 $\mathbf x$ 及 $\mathbf y$，均有
+    \[t \in [0,1] \Rightarrow t \mathbf x + \left( 1 - t \right) \mathbf y \in S\]
+    則 $S$ 是一個凸集合
+  \end{definition}
+  \begin{itemize}
+    \item 凸集合內任兩點連線上的點，都屬於這個凸集合
+    \item 實數的凸集合是區間
+  \end{itemize}
+  \begin{center}
+    \begin{pspicture}(0,-1)(2,1)
+      \newrgbcolor{Green}{0.5 1 0.5}
+      \psccurve[linecolor=green,fillstyle=solid,fillcolor=Green](2,1)(0,0)(1,-1)
+    \end{pspicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}{凸函數與凹函數}
+  \begin{definition}
+    考慮函數 $f: V\to\mathbb R$，其中 $S$ 為一凸集合。若 $f$ 是凸函數，即對於 $S$ 中任意相異兩點 $\mathbf x_1$ 與
+    $\mathbf x_2$，均有
+      \[0 < t < 1 \Rightarrow f(t \mathbf x_1 + (1-t)\mathbf x_2) \le tf(\mathbf x_1) + \left( 1-t \right) f(\mathbf x_2)\]
+    又若 $f$ 是嚴格凸函數，即
+      \[0 < t < 1 \Rightarrow f(t \mathbf x_1 + (1-t)\mathbf x_2) < tf(\mathbf x_1) + \left( 1-t \right) f(\mathbf x_2)\]
+  \end{definition}
+  \begin{definition}
+    \begin{itemize}
+      \item 凹函數的負值是凸函數
+      \item 嚴格凹函數的負值是嚴格凸函數
+    \end{itemize}
+  \end{definition}
+\end{frame}
+
+\subsection{均值定理}
+\begin{frame}{均值定理的用途}
+  雖然均值定理本身看起來好像沒什麼鳥用，不過它可以推出很多有用的訊息
+  \begin{itemize}
+    \item 導函數相等的兩函數，相差一常數
+    \item 羅必達法則
+    \item 泰勒級數
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{羅爾定理} 
+  \begin{theorem}
+    考慮在區間 $[a,b]$ 上連續的實函數 $f$，其中 $f(a) = f(b)$。若在區間 $(a,b)$ 中，$f$ 的左導數與右導數均存在，則存在
+    $c \in (a,b)$ 使得
+    \[f'(c^+)\,f'(c^-) \le 0\]
+  \end{theorem}
+  \begin{center}
+    \begin{pspicture}(4,2)
+      \psaxes(0,0)(4,2)
+      \parabola(0,0)(2,2)
+      \psline[linecolor=red](0,1)(4,1)
+      \psline[linecolor=green](0,2)(4,2)
+    \end{pspicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}{羅爾定理的證明}
+  \begin{proof}
+    \begin{itemize}
+      \item 若絕對極大值與絕對極小值都在端點上，則 $f$ 是常數函數，原命題成立
+      \item 設絕對極大值在 $c \in (a,b)$ 上
+	\begin{align*}
+	  f'(c^+) &= \lim_{h\to0^+} \frac{f(c+h) - f(c)}{h} \le 0\\
+	  f'(c^-) &= \lim_{h\to0^-} \frac{f(c+h) - f(c)}{h} \ge 0
+	\end{align*}
+      \item 若絕對極小值在 $c \in (a,b)$ 上，則 $-f$ 的絕對極大值在此
+    \end{itemize}
+  \end{proof}
+\end{frame}
+
+\begin{frame}{柯西均值定理}
+  \begin{theorem}
+    若函數 $f$ 和 $g$ 在 $[a,b]$ 都連續，在 $(a,b)$ 都可微，則存在 $c \in (a,b)$ 使得
+    \[f'(c) \left(g(b) - g(a) \right) = g'(c) \left(f(b) - f(a) \right)\]
+  \end{theorem}
+  \begin{itemize}
+    \item 若 $\left(g(b) - g(a) \right) \ne 0$ 且 $g'(c) \ne 0$，則有
+      \[\frac{f'(c)}{g'(c)} = \frac{f(b) - f(a)}{g(b) - g(a)}\]
+  \end{itemize}
+  \begin{center}
+  \end{center}
+\end{frame}
+
+\begin{frame}{柯西均值定理的證明}
+  \begin{proof}
+    \begin{enumerate}
+      \item 設 $h(x) := f(x) \left(g(b) - g(a) \right) - g(x) \left(f(b) - f(a) \right)$
+      \item $h$ 在 $[a,b]$ 連續，在 $(a,b)$ 可微，且 $h(a) = h(b)$
+      \item 根據羅爾定理，存在 $c \in (a,b)$ 使得 $h'(c) = 0$。此時
+	\[h'(c) = f'(c) \left(g(b) - g(a) \right) - g'(c) \left(f(b) - f(a) \right) = 0\]
+	\[f'(c) \left(g(b) - g(a) \right) = g'(c) \left(f(b) - f(a) \right)\]
+    \end{enumerate}
+  \end{proof}
+\end{frame}
+
+\begin{frame}{均值定理}
+  \begin{theorem}
+    若函數 $f$ 在 $[a,b]$ 上連續，在 $(a,b)$ 上可微，則存在 $c \in (a,b)$ 使得
+    \[f'(c) = \frac{f(b) - f(a)}{b - a}\]
+  \end{theorem}
+  \begin{center}
+    \begin{pspicture}(0,-2)(4,2)
+      \psaxes(0,0)(0,-2)(4,2)
+      \psplot[plotstyle=curve]{1.1920928955078125e-7}{4}{x ln x mul x sub}
+      \psline[linecolor=red](0,0)(4,1.545177444479562)
+      \psline[linecolor=green](0,-1.471517764685769)(4,0.07365967979379295)
+    \end{pspicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}{導函數為 0 的函數是常數函數}
+  \begin{lemma}
+    若 $f$ 在區間 $I$ 上所有點的導數均為 0，則 $f$ 在此為常數函數
+  \end{lemma}
+  \begin{proof}
+    \begin{enumerate}
+      \item 設 $a,b$ 為 $I$ 上任意相異兩點，其中 $a < b$，則 $f$ 在區間 $[a,b]$ 上均有 $f'(x) = 0$，其中
+      \item 根據均值定理，存在 $c \in (a,b)$ 使得
+	\begin{align*}
+	  \frac{f(b) - f(a)}{b - a} &= f'(c) = 0\\
+	  f(b) - f(a) &= 0
+	\end{align*}
+      \item 因為 $a,b$ 為 $I$ 上\textbf{任意}相異兩點，所以 $f$ 在 $I$ 上是常數函數
+    \end{enumerate}
+  \end{proof}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{遞增與遞減的區間}
+  \begin{theorem}
+    設函數 $f$ 在 $[\alpha,\beta]$ 上連續，在 $(\alpha,\beta)$ 上可微
+    \begin{itemize}
+      \item 若對於所有 $x \in (\alpha,\beta)$，均有 $f'(x) > 0$，則 $f$ 在 $[\alpha,\beta]$ 上遞增
+      \item 若對於所有 $x \in (\alpha,\beta)$，均有 $f'(x) < 0$，則 $f$ 在 $[\alpha,\beta]$ 上遞減
+    \end{itemize}
+  \end{theorem}
+  \begin{proof}
+    \begin{enumerate}
+      \item 設 $a,b$ 為 $I$ 上任意相異兩點，其中 $a < b$
+      \item 根據均值定理，存在 $c \in (a,b)$ 使得
+	\[f'(c) = \frac{f(b) - f(a)}{b - a}\]
+	\[f(b) - f(a) = f'(c) \left( b - a \right)\]
+      \item $b - a > 0$，所以 $f'(c)$ 與 $f(b) - f(a)$ 同號
+    \end{enumerate}
+  \end{proof}
+\end{frame}
+
+\begin{frame}{一階導數測試}
+  找到 $f'(c) = 0$ 的點後，要怎麼確定它是極值還是打醬油的？
+  \begin{theorem}
+    \begin{itemize}
+      \item 若 $f'$ 在 $c$ 的左側為正，右側為負，則 $f(c)$ 是極大值
+      \item 若 $f'$ 在 $c$ 的左側為負，右側為正，則 $f(c)$ 是極小值
+      \item 若 $f'$ 在 $c$ 的兩側同號，則 $(c, f(c))$ 是鞍點
+    \end{itemize}
+  \end{theorem}
+  \begin{center}
+    \begin{pspicture}(-2,-2)(2,2)
+      \psaxes(0,0)(-2,-2)(2,2)
+      \psplot{-1.259921049894873}{1.259921049894873}{x 3 exp}
+    \end{pspicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}{凹凸性與導函數的關係}
+  \begin{theorem}
+    設 $f$ 在開區間 $I$ 上可微
+    \begin{itemize}
+      \item 若 $f'$ 在 $I$ 中遞增，則 $f'$ 在此為凸函數
+      \item 若 $f'$ 在 $I$ 中遞減，則 $f'$ 在此為凹函數
+    \end{itemize}
+  \end{theorem}
+  \begin{center}
+    \begin{pspicture}(-2,-2)(2,2)
+      \psaxes(0,0)(-2,-2)(2,2)
+      \parabola(2,2)(0,0)
+      \psline[linestyle=dotted](-2,-2)(2,2)
+    \end{pspicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}{反曲點（inflection point）}
+  \begin{definition}
+    若 $f$ 在 $c$ 上連續，且在此由凸轉凹，或由凹轉凸，則此處為反曲點
+  \end{definition}
+  \begin{itemize}
+    \item 平穩的反曲點又稱為鞍點
+    \item 反曲點的二階導數必不存在或為 0
+  \end{itemize}
+  \begin{center}
+    \begin{pspicture}(-2,-2)(2,2)
+      \psaxes(0,0)(-2,-2)(2,2)
+      \psplot[plotstyle=curve]{-2}{2}{x x mul SIN x mul}
+      \psdots(-0.9941029787749228,-0.8301350300850469)(0,0)(0.9941029787749228,0.8301350300850469)
+      \psplot[plotstyle=dots,dotscale=0.25,plotpoints=100]{-1.496979629602774}{1.496979629602774}{
+	  x x mul dup SIN exch dup COS mul 2 mul add} % \sin(x^2) + 2 x^2 \cos(x^2)
+    \end{pspicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}{凹凸性的測試}
+  既然凹凸性是要觀察 $f'$ 的遞增或遞減，因此我們對 $f'$ 進行一階導數測試
+  \begin{theorem}
+    \begin{itemize}
+      \item 若 $f''(c) > 0$ 則 $f$ 凹口向上
+      \item 若 $f''(c) < 0$ 則 $f$ 凹口向下
+      \item 若 $f''(c) = 0$
+	\begin{itemize}
+	  \item 若 $f''$ 在 $c$ 的兩側異號，則 $f$ 在此有反曲點
+	  \item 若 $f''$ 在 $c$ 的兩側皆正，則凹口仍向上
+	  \item 若 $f''$ 在 $c$ 的兩側皆負，則凹口仍向下
+	\end{itemize}
+    \end{itemize}
+  \end{theorem}
+  \begin{center}
+    \begin{pspicture}(-1,-1)(1,1)
+      \psaxes(0,0)(-1,-1)(1,1)
+      \psplot[plotstyle=curve]{-1}{1}{x 4 exp}
+      \psplot[plotstyle=dots,dotscale=0.25]{-0.6299605249}{0.6299605249}{x 3 exp 4 mul}
+      \end{pspicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}{高階導數測試}
+  如果題目要求找出反曲點，那麼你必定已經算好 $f''$ 了，不用實在可惜
+  \begin{theorem}
+    $f$ 在區間 $I$ 內足夠可微，其中一點 $c \in I$ 使得 $f'(c) = \cdots = f^{(n)}(c) = 0$ 且 $f^{(n+1)}(c) \ne 0$
+    \begin{itemize}
+      \item 若 $n$ 是奇數，則此處是極值
+	\begin{itemize}
+	  \item 若 $f^{(n+1)}(c) > 0$ 則 $f(c)$ 是極小值
+	  \item 若 $f^{(n+1)}(c) < 0$ 則 $f(c)$ 是極大值
+	\end{itemize}
+      \item 若 $n$ 是偶數，則此處是鞍點
+	\begin{itemize}
+	  \item 若 $f^{(n+1)}(c) > 0$ 則此處嚴格遞增
+	  \item 若 $f^{(n+1)}(c) > 0$ 則此處嚴格遞減
+	\end{itemize}
+    \end{itemize}
+  \end{theorem}
+\end{frame}
+
+\begin{frame}{最佳化問題}
+  \begin{example}
+    A rain gutter is made from sheets of metal 9 in wide. The gutters have a 3-in base and two 3-in sides, folded up at an angle
+    $\theta$ (see figure). What angle $\theta$ maximizes the cross-sectional area of the gutter?
+    \begin{center}
+      \begin{pspicture}(-1,0)(3,2)
+	\newrgbcolor{Blue}{0.5 0.7 1}
+	\psline[fillstyle=solid,fillcolor=Blue](-1,1.732050808)(0,0)(2,0)(3,1.732050808)
+	\psline[linestyle=dashed](2,0)(3,0)
+	\psarc(2,0){0.25}{0}{60}
+	\uput[180](-0.5,0.8660254038){3 in}
+	\uput[270]( 1  ,0           ){3 in}
+	\uput[  0]( 2.5,0.8660254038){3 in}
+	\uput[ 30](2.216506351,0.125){$\theta$}
+      \end{pspicture}
+    \end{center}
+  \end{example}
+\end{frame}
+
+\begin{frame}{解題}
+  \begin{solution}
+    設 $f(\theta)$ 為梯形面積
+    \begin{align*}
+      f(\theta) &= (3\sin\theta) \left( \frac{(3 + 6\cos\theta) + 3}{2}\right) = (9\sin\theta)(1 + \cos\theta)\\
+      f'(\theta) &= (9\cos\theta)(1 + \cos\theta) + (9\sin\theta)(-\sin\theta)\\
+	&= 9 \left( \cos^2 \theta + \cos\theta - \sin^2 \theta \right) = 9 \left( 2 \cos^2 \theta + \cos\theta - 1 \right)\\
+      f''(\theta) &= (-9\sin\theta) \left( 4\cos\theta + 1 \right)
+    \end{align*}
+    \[f'(\theta) = 0 \quad\Leftrightarrow\quad \cos\theta = \frac12 \;\vee\; \cos\theta = -1\]
+    \[\arccos\frac12 = \frac\pi3,\quad \arccos(-1) = \pi\,\textup{（不合）}\]
+    \[f'' \left( \frac\pi3 \right) < 0 \;\Rightarrow\; \theta = \frac\pi3\]
+  \end{solution}
+\end{frame}
+
+\begin{frame}{$\textup e^{\textup i \theta} = \cos\theta + \textup i \sin\theta$}
+  \begin{proof}
+    設 $f(\theta) := e^{-\textup i \theta} (\cos\theta + \textup i \sin\theta)$
+    \begin{align*}
+      f'(\theta) &= -\textup i e^{-\textup i \theta} (\cos\theta + \textup i \sin\theta)
+	  + e^{-\textup i \theta} (-\sin\theta + \textup i \cos\theta)\\
+	&= -\textup i e^{-\textup i \theta} (\cos\theta + \textup i \sin\theta)
+	  + \textup i e^{-\textup i \theta} (\cos\theta + \textup i \sin\theta)\\
+	&= 0\\
+      f(\theta) &= f(0) = 1\\
+      e^{\textup i \theta} &= \cos\theta + \textup i \sin\theta
+    \end{align*}
+  \end{proof}
+  唉呀，難怪複數的極式相乘，角度相加
+\end{frame}
+
+\begin{frame}{以指數函數表達三角函數}
+  \[\cos\theta = \frac{\textup e^{\textup i \theta} + \textup e^{-\textup i \theta}}{2},\quad
+    \sin\theta = \frac{\textup e^{\textup i \theta} - \textup e^{-\textup i \theta}}{2 \textup i}\]
+  \begin{center}
+    \psset{unit=2}
+    \begin{pspicture}(-1.1,-1.1)(1,1)
+      \psaxes(0,0)(-1,-1)(1,1)
+      \pscircle[linestyle=dotted](0,0){1}
+      \psarc(0,0){0.1}{0}{65}
+      \psline[linecolor=green](0,0)(0.42261826,0)
+      \psline[linecolor=blue](0.42261826,0)(0.42261826,0.90630779)
+      \psline[linecolor=red]{->}(0,0)(0.42261826,0.90630779)
+
+      \uput[32.5](0.0843391446,0.0537299608){$\theta$}
+      \uput[270](0.21130913,0         ){$\cos\theta$}
+      \uput[  0](0.42261826,0.45315389){$\sin\theta$}
+    \end{pspicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}{羅必達法則（L'H\^opital's rule）}
+  \begin{theorem}
+    若 $\displaystyle \lim_{x \to c} f(x) = \lim_{x \to c} g(x) = 0$，則
+    \[\lim_{x \to c} \frac{f(x)}{g(x)} = \lim_{x \to c} \frac{f'(x)}{g'(x)}\]
+  \end{theorem}
+  \begin{itemize}
+    \item 可以推論出若 $\displaystyle \lim_{x \to c} \frac{1}{f(x)} = \lim_{x \to c} \frac{1}{g(x)} = 0$，則
+    \[\lim_{x \to c} \frac{f(x)}{g(x)} = \lim_{x \to c} \frac{f'(x)}{g'(x)}\]
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{羅必達法則 0/0 型}
+  \begin{proof}
+    \begin{enumerate}
+      \item 設 $x$ 使得 $g(x)\ne 0$。根據柯西均值定理，在 $c$ 與 $x$ 間必存在 $\xi$ 使得
+	\begin{align*}
+	  f'(\xi)\,g(x) &= f(x)\,g'(\xi)\\
+	  \frac{f(x)}{g(x)} &= \frac{f'(\xi)}{g'(\xi)}
+	\end{align*}
+      \item 因為 $\displaystyle \lim_{x \to c} x = \lim_{x \to c} c = c$，所以 $\displaystyle \lim_{x \to c} \xi = c$
+	\[\lim_{x \to c} \frac{f'(x)}{g'(x)} = \lim_{x \to c} \frac{f'(\xi)}{g'(\xi)} = \lim_{x \to c} \frac{f(x)}{g(x)}\]
+    \end{enumerate}
+  \end{proof}
+\end{frame}
+
+\begin{frame}{羅必達法則 $\infty$/$\infty$ 型}
+  \begin{proof}
+    \begin{align*}
+      \lim_{x \to c} \frac{f(x)}{g(x)} &= \lim_{x \to c} \frac{f(x)^2}{g(x)^2} \lim_{x \to c} \frac{1/f(x)}{1/g(x)}\\
+	&= \lim_{x \to c} \frac{f(x)^2}{g(x)^2} \lim_{x \to c} \frac{(1/f(x))'}{(1/g(x))'}\\
+	&= \lim_{x \to c} \frac{f(x)^2}{g(x)^2} \lim_{x \to c} \frac{f'(x)\,g(x)^2}{f(x)^2\,g'(x)}\\
+	&= \lim_{x \to c} \frac{f'(x)}{g'(x)}
+    \end{align*}
+  \end{proof}
+\end{frame}
+
+\begin{frame}{泰勒級數}
+  \begin{definition}
+    若實值或複值函數 $f(x)$ 在 $c$ 的鄰域無窮可微，則
+    \begin{align*}
+      f(x) &= \sum_{n=0}^{\infty} \frac{f^{(n)}(c) \left( x - c \right)^n}{n!}\\
+	&= f(c) + f'(c) \left( x - c \right) + \frac{f''(c) \left( x - c \right)^2}{2!} + \cdots
+    \end{align*}
+    此式稱為 $f$ 在 $c$ 的泰勒級數
+  \end{definition}
+  \begin{itemize}
+    \item 泰勒級數是與函數最接近的多項式
+  \end{itemize}
+\end{frame}
+
+\subsection{求根演算法}
+\begin{frame}{迭代法}
+  \begin{definition}
+    \begin{itemize}
+      \item 迭代法從初始估計值出發，尋找一系列的近似解
+      \item 迭代法是用無窮數列 $(x_0,x_1,\dots)$ 來逼近真確解 $x$
+    \end{itemize}
+  \end{definition}
+  \begin{itemize}
+    \item 若 $\displaystyle \lim_{n\to\infty} x_n = x$，則稱此迭代法有效
+    \item 有些方法不一定有效，使用時需要特別注意
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{牛頓法}
+  \begin{theorem}
+    \[x_{n+1} := x_n - \frac{f(x_n)}{f'(x_n)}\]
+  \end{theorem}
+  \begin{center}
+    \begin{pspicture}(0,-2)(4,2)
+      \psaxes(0,0)(0,-2)(4,2)
+      \psplot[plotstyle=curve]{0.1200591295395061}{4}{x ln x SIN add}
+      \psline[linecolor=red](0,-0.6988313210602433)(1.752143920565734,2)
+      \psline[linecolor=green](0.4536975101562095,0)(1,0)
+      \psline[linecolor=blue](1,0)(1,0.8414709848078965)
+    \end{pspicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}{當代電算中的牛頓法}
+  牛頓法是求超越方程的數值解的 SOP
+  \begin{align*}
+    f(x) &:= \ln x + \sin x\\
+    x_{n+1} &:= x_n - \frac{\ln x_n + \sin x_n}{\frac{1}{x_n} + \cos x_n}
+  \end{align*}
+  \begin{center}
+    \scriptsize
+    \begin{tabular}{lr@{.}ll}
+      \multicolumn1c{$x$}& \multicolumn2c{$f(x)$}         & \multicolumn1c{$f'(x)$}\\
+      \hline
+      1                  &  0&8414709848078965            & 1.540302305868140\\
+      0.4536975101562095 & $-0$&3520326146900732          & 3.102944382444359\\
+      0.5671486621271506 & $-0$&02990450470606842         & 2.606642358080185\\
+      0.5786210854971496 & $-2$&3743916394747266 $10^{-4}$& 2.565464264470342\\
+      0.5787136376200678 & $-1$&5133428177271924 $10^{-8}$& 2.565137253031151\\
+      0.5787136435197241 & $-1$&110223024625157 $10^{-16}$& 2.565137232188674\\
+      0.5787136435197241
+    \end{tabular}
+  \end{center}
+\end{frame}
+
+\begin{frame}{求解高次方程}
+  \begin{example}
+    Use Newton's method to find the real root $r$ of $f(x) = x^3 - x - 1$ to two decimal places, given the initial point
+    $x_0 = 1.35$.
+    \begin{solution}
+      \[x_{n+1} := x_n - \frac{f(x_n)}{f'(x_n)} = \frac{2x_n^3 + 1}{3x_n^2 - 1}\]
+      \begin{align*}
+	x_1 &\approx 1.325\\
+	x_2 &\approx 1.324\\
+	r &\approx 1.32
+      \end{align*}
+    \end{solution}
+  \end{example}
+\end{frame}
+
+\begin{frame}{手繪函數圖形}
+  手繪圖形不需要函數的準確值，只需要近似值
+  \begin{enumerate}
+    \item 找定義域
+    \item 檢查對稱性
+    \item 求一階及二階導函數
+    \item 找臨界點和可能的反曲點
+    \item 定出函數的遞增、遞減區間
+    \item 找出所有的極值和反曲點
+    \item 找水平、垂直漸近線，並注意函數的極端行為
+    \item 求出截距
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{多項式的圖形}
+  \begin{example}
+    Sketch the graph of $\dfrac{3x^5 - 20x^3 + 1}{32}$ and also mark the absolute extreme points and inflection points at
+    interval $[-3, 3]$.
+    \begin{solution}
+      因為題目要求反曲點，所以要做到二階導函數。
+      \begin{align*}
+	f(x) &= \frac{3x^5 - 20x^3 + 1}{32}\\
+	f'(x) &= \frac{15x^4 - 60x^2}{32}\\
+	f''(x) &= \frac{15x^3 - 30x}{8}
+      \end{align*}
+    \end{solution}
+  \end{example}
+  \begin{enumerate}
+    \item 解導函數的零點，找到臨界點為
+      \[\left( -3, \frac{-47}{8} \right), \left( -2, \frac{65}{32} \right), \left( 0, \frac{1}{32} \right), 
+	\left( 2, \frac{-63}{32} \right), \left( 3, \frac{95}{16} \right)\]
+    \item 解二階導函數的零點，找到可能的反曲點為 $-\sqrt2, 0, \sqrt2$
+      \[\left( -\sqrt2, \frac{7\sqrt2}{8} + \frac{1}{32} \right), \left( 0, \frac{1}{32} \right),
+	\left( \sqrt2, \frac{-7\sqrt2}{8} + \frac{1}{32} \right)\]
+    \item 如果時間允許，找 $f(x)=0$ 的根來美化圖形吧！
+      \[x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)} = \frac{12x_n^5 - 40x^3 + 1}{15x_n^4 - 60x_n^2}\]
+      \begin{align*}
+	x_0 &=  2.5 &\Rightarrow x_1 &= \frac{3375}{512} \approx  2.5878 &\Rightarrow x_2 &\approx  2.5783\\
+	x_0 &= -2.5 &\Rightarrow x_1 &= \frac{-974}{375} \approx -2.5973 &\Rightarrow x_2 &\approx -2.5859
+      \end{align*}
+  \end{enumerate}
+  \begin{center}
+    \psset{yunit=0.5}
+    \begin{pspicture}(-3,-6)(3,6)
+      \psaxes[labels=none,linecolor=gray](0,0)(-3,-6)(3,6)
+      \psplot[plotstyle=curve]{-3}{3}{x x mul dup x mul exch 3 mul 20 sub mul 1 add 32 div}
+      \psdots(-3,-5.875)(-1.414213562,1.268686867)(0,0.03125)(1.414213562,-1.206186867)(3,5.9375)
+      \psdots[dotstyle=o](-2.585719992,0)(-2,2.03125)(2,-1.96875)(2.578219675,0);
+      \uput[  0](-3          ,-5.875      ){\tiny 最小值 $\left(-3        ,\dfrac{-47}{ 8}                    \right)$}
+      \uput[270](-2.585719992, 0          ){\tiny 零點   $\left(-2.5857200,0                                  \right)$}
+      \uput[ 90](-2          , 2.03125    ){\tiny 極大值 $\left(-2        ,\dfrac{ 65}{32}                    \right)$}
+      \uput[  0](-1.414213562, 1.268686867){\tiny 反曲點 $\left(-\sqrt2   ,\dfrac{ 7\sqrt2}{8} + \dfrac{1}{32}\right)$}
+      \uput[270]( 0          , 0.03125    ){\tiny 反曲點 $\left( 0        ,\dfrac{  1}{32}                    \right)$}
+      \uput[225]( 1.414213562,-1.206186867){\tiny 反曲點 $\left( \sqrt2   ,\dfrac{-7\sqrt2}{8} + \dfrac{1}{32}\right)$}
+      \uput[270]( 2          ,-1.96875    ){\tiny 極小值 $\left( 2        ,\dfrac{-63}{32}                    \right)$}
+      \uput[ 90]( 2.578219675, 0          ){\tiny 零點   $\left( 2.5782197,0                                  \right)$}
+      \uput[180]( 3          , 5.9375     ){\tiny 最大值 $\left( 3        ,\dfrac{ 95}{16}                    \right)$}
+    \end{pspicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \huge Thanks for your attention!
+  \end{center}
+\end{frame}
+
+\end{CJK}
+\end{document}

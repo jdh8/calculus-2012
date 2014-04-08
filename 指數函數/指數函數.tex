@@ -1,0 +1,166 @@
+%!TEX encoding = UTF-8 Unicode
+\documentclass[a4paper]{article}
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{CJKutf8}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage[colorlinks,unicode]{hyperref}
+\usepackage{pstricks-add}
+
+\newcommand{\Left} {\mathopen{}\mathclose\bgroup\left}
+\newcommand{\Right}{\aftergroup\egroup\right}
+\newcommand  {\e}{\textup e}
+\renewcommand{\i}{\textup i}
+\newcommand  {\N}{\mathbb N}
+\newcommand  {\Z}{\mathbb Z}
+\newcommand  {\Q}{\mathbb Q}
+\newcommand  {\R}{\mathbb R}
+\renewcommand{\C}{\mathbb C}
+\newcommand{\sech}  {\operatorname{sech}}
+\newcommand{\csch}  {\operatorname{csch}}
+\newcommand{\arsinh}{\operatorname{arsinh}}
+\newcommand{\op}  {\operatorname{op}}
+\newcommand{\Elem}{\operatorname{Elem}}
+\newcommand{\trig}{\operatorname{trig}}
+\renewcommand{\today}{\number\year~年~\number\month~月~\number\day~日}
+
+\theoremstyle{plain}
+  \newtheorem{theorem}{定理}
+  \newtheorem{corollary}[theorem]{推論}
+  \newtheorem{lemma}    [theorem]{引理}
+\theoremstyle{definition}
+  \newtheorem{definition}[theorem]{定義}
+\theoremstyle{remark}
+  \newtheorem{remark}{附註}
+
+\title{指數函數}
+\author{何震邦 \href{mailto:jdh8@ms63.hinet.net}{\textless jdh8@ms63.hinet.net\textgreater}\\
+    \href{http://creativecommons.org/licenses/by-sa/3.0/tw/deed.zh\textunderscore TW}{\includegraphics{by-sa.eps}}}
+
+\begin{document}
+\begin{CJK}{UTF8}{bsmi}
+\maketitle
+
+\begin{definition} \label{def:exp}
+  對於所有 $x \in \C$，我們把指數函數定義為
+  \[\exp(x) \triangleq \sum_{k=0}^{\infty} \frac{x^k}{k!}\]
+  其中我們也定義 $0^0 \triangleq 1$。另外，在本文中，我們定義級數 $S$ 為
+  \[S_n(x) \triangleq \sum_{k=0}^n \frac{x^k}{k!}.\]
+\end{definition}
+
+\begin{theorem}
+  \textbf{比值審斂法}用來測試級數 $\displaystyle \sum_{n=0}^\infty a_n$ 是否收斂，其中每一項都是實數或複數，且當 $n$
+  足夠大時 $a_n \ne 0$。
+
+  我們設
+  \[L = \lim_{n \to \infty} \left| \frac{a_{n+1}}{a_n} \right|.\]
+  則
+  \begin{itemize}
+    \item 若 $L < 1$ 則此級數絕對收斂\footnote{\textbf{絕對收斂}即絕對值收斂至某一非負實數。}。
+    \item 若 $L > 1$ 則此級數發散
+    \item 若是其他狀況則沒有定論。
+  \end{itemize}
+
+  \begin{proof}
+    當 $L < 1$，設 $r = \dfrac{L+1}{2}$。則 $L < 1 < r$ 且存在 $N \in \N$ 使得若 $n > N$ 則 $|a_{n+1}| < r \left| a_n
+    \right|$。因此對於所有 $n > N$ 及 $k > 0$，我們都有 $|a_{n+k}| < r^k \left| a_n \right|$。所以
+    \[\sum_{k=N+1}^\infty |a_k| = \sum_{k=1}^\infty |a_{N+k} < \sum_{k=1}^\infty r^k \left| a_{N+1} \right| = |a_{N+1}|
+    \sum_{k=1}^\infty r^k = \frac{r \left| a_{N+1} \right|}{1-r} < \infty\]
+    即此級數絕對收斂。
+  \end{proof}
+\end{theorem}
+
+\begin{theorem}
+  對於所有 $x \in \C$，級數 $S$ 絕對收斂。
+  \begin{proof}
+    \[\lim_{n \to \infty} \left| \frac{x^{n+1} / (n+1)!}{x^n / n!} \right| = \lim_{n \to \infty} \left| \frac{x}{n+1}
+    \right| = 0 < 1. \qedhere\]
+  \end{proof}
+\end{theorem}
+
+\begin{theorem}
+  對於所有 $x,y \in \C$
+  \[\exp(x+y) = \exp(x) \exp(y).\]
+
+  \begin{proof}
+    我們有
+    \begin{align*}
+      S_{2n}(x+y) &= \sum_{k=0}^{2n} \frac{(x+y)^k}{k!}\\
+	&= \sum_{k=0}^{2n} \sum_{j=k}^{2n} \frac{x^k y^{j-k}}{k!\,(j-k)!}\\
+	&= \sum_{k=0}^{2n} \sum_{j=0}^{2n-k} \frac{x^k y^j}{k!\,j!}\\
+	&= \left( \sum_{k=0}^n \sum_{j=0}^n + \sum_{k=0}^{n-1} \sum_{j=n+1}^{2n-k} +  \sum_{k=n+1}^{2n} \sum_{j=0}^{2n-k}
+	   \right) \frac{x^k y^j}{k!\,j!}.
+    \end{align*}
+    所以
+    \[S_{2n}(x+y) - S_n(x)\,S_n(y) = \left( \sum_{k=0}^{n-1} \sum_{j=n+1}^{2n-k} +  \sum_{k=n+1}^{2n} \sum_{j=0}^{2n-k}
+      \right) \frac{x^k y^j}{k!\,j!}.\]
+    因此
+    \[|S_{2n}(x+y) - S_n(x)\,S_n(y)| \le S_{n-1}(|x|) \left( S_{2n}(|y|) - S_n(|y|) \right) - S_n(|y|) \left( S_{2n}(|x|)
+      - S_n(|x|) \right).\]
+    因為級數 $S$ 絕對收斂，所以
+    \[\lim_{n \to \infty} |S_{2n}(x+y) - S_n(x)\,S_n(y)| = 0. \qedhere\]
+  \end{proof}
+\end{theorem}
+
+\begin{definition}
+  我們定義數學常數 $\e$ 如下：
+  \[\e \triangleq \exp(1)\]
+  因此
+  \[\e^x = \exp(x).\]
+\end{definition}
+
+\begin{theorem} \label{th:exp}
+  \[\lim_{n \to \infty} \left( 1 + \frac x n \right)^n = \e^x.\]
+  \begin{proof}
+    定義序列 $T$ 使得
+    \[T_n(x) \triangleq \left( 1 + \frac x n \right)^n.\]
+    對於所有 $n > 2$
+    \[S_n(x) - T_n(x) = \sum_{k=2}^n \frac{x^k}{k!} \left( 1 - \left( 1 - \frac1n \right) \cdots \left( 1 - \frac{k-1}{n}
+      \right) \right).\]
+    當 $k \ge 2$
+    \[0 < 1 - \left( 1 - \frac1n \right) \cdots \left( 1 - \frac{k-1}{n} \right) \le \frac{1 + \cdots + (k-1)}{n} = \frac{k
+      \left( k-1 \right)}{2n}\]
+    所以
+    \[|S_n(x) - T_n(x)| \le \frac{1}{2n} \sum_{k=2}^n \frac{|x|^k}{(k-2)!} = \frac{x^2 S_{n-2}(|x|)}{2n}.\]
+    因此
+    \[\lim_{n \to \infty} T_n(x) = \lim_{n \to \infty} S_n(x) = \e^x. \qedhere\]
+  \end{proof}
+\end{theorem}
+
+\begin{theorem}
+  由定義 \ref{def:exp} 得
+  \[\frac{d}{dx}\,\e^x = \e^x.\]
+  \begin{proof}
+    \begin{align*}
+      \frac{d}{dx} \sum_{k=0}^{\infty} \frac{x^k}{k!} &= \frac{d}{dx} \sum_{k=1}^{\infty} \frac{x^k}{k!}\\
+	&= \sum_{k=1}^{\infty} \frac{x^{k-1}}{(k-1)!}\\
+	&= \sum_{k=0}^{\infty} \frac{x^k}{k!}. \qedhere
+    \end{align*}
+  \end{proof}
+\end{theorem}
+
+\begin{theorem}
+  由定理 \ref{th:exp} 得
+  \[\frac{d}{dx}\,\e^x = \e^x.\]
+  \begin{proof}
+    \begin{align*}
+      \frac{\e^h - 1}{h} &= \frac1h \left( \lim_{n \to \infty} \left( 1 + \frac h n \right)^n - 1 \right)\\
+	&= \frac1h \left( \lim_{n \to \infty} \sum_{k=0}^n \binom n k \left( \frac h n \right)^k - 1 \right)\\
+	&= \frac1h \left( \lim_{n \to \infty} \sum_{k=1}^n \binom n k \left( \frac h n \right)^k \right)\\
+	&= 1 + h \left( \lim_{n \to \infty} \sum_{k=1}^n \binom n k \frac{h^{k-2}}{n^k} \right).
+    \end{align*}
+    因此
+    \[\lim_{h \to 0} \frac{\e^h - 1}{h} = 1.\]
+    由導函數的定義得
+    \begin{align*}
+      \frac{d}{dx}\,\e^x &= \lim_{h \to 0} \frac{\e^{x+h} - \e^x}{h}\\
+	&= \lim_{h \to 0} \frac{\e^x \e^h - \e^x}{h}\\
+	&= \e^x \lim_{h \to 0} \frac{\e^h - 1}{h}\\
+	&= \e^x. \qedhere
+    \end{align*}
+  \end{proof}
+\end{theorem}
+
+\clearpage
+\end{CJK}
+\end{document}

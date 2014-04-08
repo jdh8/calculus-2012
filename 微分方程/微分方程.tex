@@ -1,0 +1,313 @@
+%!TEX encoding = UTF-8 Unicode
+\documentclass{beamer}
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{CJKutf8}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+\hypersetup{colorlinks,linkcolor=,unicode}
+\useoutertheme{sidebar}
+\usecolortheme{rose}
+\usecolortheme{seahorse}
+\newcommand{\Cdot} {\!\cdot\!}
+\newcommand{\Left} {\mathopen{}\mathclose\bgroup\left}
+\newcommand{\Right}{\aftergroup\egroup\right}
+\newcommand  {\e}{\textup e}
+\renewcommand{\i}{\textup i}
+\newcommand  {\N}{\mathbb N}
+\newcommand  {\Z}{\mathbb Z}
+\newcommand  {\Q}{\mathbb Q}
+\newcommand  {\R}{\mathbb R}
+\renewcommand{\C}{\mathbb C}
+\renewcommand{\today}{\number\year~年~\number\month~月~\number\day~日}
+\newcommand{\Negskip}{\vskip -1em plus 2pt minus 2pt}
+\newcommand{\negskip}{\vskip -2em plus 3pt minus 3pt}
+
+\theoremstyle{remark}
+  \newtheorem{remark}{Remark}
+
+\title{微分方程}
+\author[何震邦]{何震邦 \href{mailto:jdh8@ms63.hinet.net}{\textless jdh8@ms63.hinet.net\textgreater}\\
+    \href{http://creativecommons.org/licenses/by-sa/3.0/tw/deed.zh\textunderscore TW}{\includegraphics{by-sa.eps}}}
+
+\begin{document}
+\begin{CJK}{UTF8}{bsmi}
+\maketitle
+
+\section[一階 ODE]{一階常微分方程}
+\begin{frame}{一階常微分方程}
+  \textbf{一階常微分方程}為符合以下兩者之一的方程式：
+  \begin{enumerate}
+    \item $P(x,y)\,y' + Q(x,y) = 0$
+    \item $P(x,y)\,dx + Q(x,y)\,dy = 0$。
+  \end{enumerate}
+  若我們解出方程，通解可用以下形式表達：
+  \[\phi(x,y) = c\]
+  其中 $c$ 是積分常數。
+\end{frame}
+
+\subsection[線性]{一階線性微分方程}
+\begin{frame}{方法 1：一階線性微分方程}
+  \begin{theorem}
+    給定微分方程
+    \[f(x)\,y' + g(x)\,y + h(x) = 0.\]
+    設 $P(x) = \dfrac{g(x)}{f(x)}$ 與 $Q(x) = \dfrac{h(x)}{f(x)}$，則通解為
+    \[\e^{\int P\,dx} y + \int \e^{\int P\,dx} Q\,dx = c.\]
+  \end{theorem}
+\end{frame}
+
+\begin{frame}{通解的證明}
+  \begin{proof}
+    \begin{align*}
+      f(x)\,y' + g(x)\,y &+ h(x) = 0\\
+      y' + Py &+ Q = 0\\
+      \e^{\int P\,dx} y' + \e^{\int P\,dx} Py &+ \e^{\int P\,dx} Q = 0\\
+      \left( \e^{\int P\,dx} y \right)' &+ \e^{\int P\,dx} Q = 0\\
+      \e^{\int P\,dx} y &+ \int \e^{\int P\,dx} Q\,dx = c. \qedhere
+    \end{align*}
+  \end{proof}
+\end{frame}
+
+\begin{frame}{指數衰變}
+  \begin{example}
+    An exponential decay function $f(t) = y_0 e^{-kt}$ models the among of drug in the blood $t$ hours after an initial
+    dose of $y_0 = 100$ mg is administered. Assume the half-life of a particular drug is 16 hours. How much time is
+    required for the drug to reach 1\% of the initial dose (1 mg)?
+    \begin{solution}
+      \negskip
+      \begin{align*}
+	50 &= 100\e^{-16k}\\
+	k  &= \frac{\ln(2)}{16}\\
+	1  &= 100\e^{-\frac{\ln(2)}{16}t}
+      \end{align*}
+      \[t = 16\log_2(100) \approx 106.30169903639559513 \mbox{（小時）}.\]
+    \end{solution}
+  \end{example}
+\end{frame}
+
+\subsection[變數可分離]{變數可分離的微分方程}
+\begin{frame}{方法 2：變數可分離的微分方程}
+  \begin{theorem}
+    給定微分方程
+    \[A(x)\,B(y)\,dx + C(x)\,D(y)\,dy = 0.\]
+    通解為
+    \[\int \frac{A(x)}{C(x)}\,dx + \int \frac{D(x)}{B(x)}\,dy = c.\]
+    證明從略。
+  \end{theorem}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Logistic 成長，頁}
+  \begin{example}
+    A population grows according to the logistic differential equation $y' = 0.0003y \left( 2000-y \right)$. The initial
+    population size is 800. Solve this differential equation and use the solution to predict to population size at time
+    $t=3$.
+  \end{example}
+  本題為一個初期值問題
+  \[\left\{ \begin{aligned}
+      y'(t) &= 0.0003y(t) \left( 2000-y(t) \right)\\
+      y(0)  &= 800
+    \end{aligned} \right.\]
+  原微分方程為變數可分離的微分方程。
+  \begin{align*}
+    10000y' - 3y \left( 2000 - y \right) &= 0\\
+    10000dy - 3y \left( 2000 - y \right) dt &= 0\\
+    \int \frac{10000}{3y \left( 2000 - y \right)}\,dy - \int dt &= c\\
+    \int \frac53 \left( \frac1y - \frac{1}{y-2000} \right) dy - \int dt &= c\\
+    \frac{5 \ln \Left| y \Right|}{3} - \frac{5 \ln \Left| y - 2000 \Right|}{3} - t &= c.
+  \end{align*}
+  代入初期值條件 $y(0) = 800$ 以求取積分常數
+  \[c = \frac{5 \ln \Left| 800 \Right|}{3} - \frac{5 \ln \Left| -1200 \Right|}{3} = \frac{5\ln(2)}{3} - \frac{5\ln(3)}{3}.\]
+  代回原方程，因為 $0 < 800 < 2000$，整理得：
+  \begin{align*}
+    \ln y - \ln \Left( 2000 - y \Right) &= \frac{3t}{5} + \ln(2) - \ln(3)\\
+    \frac{y}{2000-y} &= \frac{2\e^\frac{3t}{5}}{3}\\
+    \frac{y(3)}{2000-y(3)} &= \frac{2e^{9/5}}{3}\\
+    y(3) = \frac{4000\e^{9/5}}{2\e^{9/5}+3} &\approx 1602.6304520653167546.
+  \end{align*}
+\end{frame}
+
+\subsection[恰當--積分乘數]{恰當微分方程}
+\begin{frame}{方法 3：恰當微分方程}
+  \begin{theorem}
+    給定微分方程
+    \[P(x,y)\,dx + Q(x,y)\,dy = 0\]
+    其中
+    \begin{equation}
+      \frac{\partial P}{\partial y} = \frac{\partial Q}{\partial x}. \label{eq:Exact}
+    \end{equation}
+    通解為
+    \[\int P\,dx + \int \left( Q - \frac{\partial}{\partial y} \int P\,dx \right) dy.\]
+  \end{theorem}
+\end{frame}
+
+\begin{frame}{\eqref{eq:Exact}式的充要條件}
+  \begin{theorem}
+    \eqref{eq:Exact}式等價於存在函數 $\phi(x,y)$ 使得
+    \begin{equation}
+      d\phi = P(x,y)\,dx + Q(x,y)\,dy. \label{eq:ExactIffPhiExists}
+    \end{equation}
+  \end{theorem}
+\end{frame}
+
+\begin{frame}{若\eqref{eq:Exact}則\eqref{eq:ExactIffPhiExists}}
+  \begin{proof}
+    設
+    \[\phi = \int P\,dx + \int \left( Q - \frac{\partial}{\partial y} \int P\,dx \right) dy.\]
+    \Negskip
+    \begin{align*}
+      \frac{\partial\phi}{\partial x}
+	&= P + \frac{\partial}{\partial x} \int \left( Q - \frac{\partial}{\partial y} \int P\,dx \right) dy\\
+	&= P + \int \left( \frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y} \right) dy = P.\\
+    \end{align*}
+    \negskip
+    \[\frac{\partial\phi}{\partial y} = \frac{\partial}{\partial y} \int P\,dx + Q - \frac{\partial}{\partial y} \int P\,dx
+      = Q. \qedhere\]
+  \end{proof}
+\end{frame}
+
+\begin{frame}{若\eqref{eq:ExactIffPhiExists}則\eqref{eq:Exact}}
+  \begin{proof}
+    根據\href{http://zh.wikipedia.org/wiki/\%E5\%81\%8F\%E5\%AF\%BC\%E6\%95\%B0}{偏導數}的定義，
+    \begin{equation}
+      d\phi = \frac{\partial\phi}{\partial x}\,dx + \frac{\partial\phi}{\partial y}\,dy. \label{eq:PartialPhi}
+    \end{equation}
+    比較\eqref{eq:ExactIffPhiExists}與\eqref{eq:PartialPhi}得
+    \[\frac{\partial\phi}{\partial x} = P \quad \mbox{且} \quad \frac{\partial\phi}{\partial y} = Q.\]
+    若 $P$, $Q$, $P_y$ 與 $Q_x$
+    在所討論的平面區域上連續，則在此區域中
+    \[\frac{\partial P}{\partial y} = \frac{\partial^2 \phi}{\partial y\,\partial x} = \frac{\partial^2 \phi}{\partial x\,
+      \partial y} = \frac{\partial Q}{\partial x}. \qedhere\]
+  \end{proof}
+\end{frame}
+
+\begin{frame}{積分乘數}
+  對於非恰當微分方程
+  \[P(x,y)\,dx + Q(x,y)\,dy = 0\]
+  我們可以試著尋找積分乘數 $\mu(x,y)$ 使得
+  \[\mu P\,dx + \mu Q\,dy = 0\]
+  為恰當微分方程，即
+  \begin{equation}
+    \frac{\partial}{\partial y}\,\mu P = \frac{\partial}{\partial x}\,\mu Q \label{eq:Multiplier}
+  \end{equation}
+  其中 $\mu \ne 0$。
+\end{frame}
+
+\begin{frame}{積分乘數為單變函數}
+  \begin{theorem}
+    給定非恰當微分方程
+    \begin{equation}
+      P(x,y)\,dx + Q(x,y)\,dy = 0. \label{eq:NonExact}
+    \end{equation}
+    若 $\dfrac{P_y - Q_x}{Q} = h(x)$，則積分乘數為
+    \begin{equation}
+      \mu(x) = \e^{\int h(x)\,dx}. \label{eq:xMultiplier}
+    \end{equation}
+    同理，若 $\dfrac{Q_x - P_y}{P} = k(y)$，則積分乘數為
+    \[\mu(y) = \e^{\int k(y)\,dy}.\]
+  \end{theorem}
+\end{frame}
+
+\begin{frame}{\eqref{eq:xMultiplier}式的證明}
+  \begin{proof}
+    設 $\mu(x)$ 為\eqref{eq:NonExact}的積分乘數，則由\eqref{eq:Multiplier}得
+    \[\mu\,\frac{\partial P}{\partial y} - \mu\,\frac{\partial Q}{\partial x} - Q\,\frac{d\mu}{dx} = 0\]
+    \[\frac{d\mu}{\mu} = \frac{\frac{\partial P}{\partial y} - \frac{\partial Q}{\partial x}}{Q}\,dx = h\,dx\]
+    \begin{align*}
+      \ln \mu &= \int h\,dx\\
+      \mu &= \e^{\int h\,dx}. \qedhere
+    \end{align*}
+  \end{proof}
+\end{frame}
+
+\begin{frame}{$P$ 與 $Q$ 滿足柯西--黎曼方程時的積分乘數}
+  \begin{theorem}
+    給定微分方程
+    \begin{equation}
+      P(x,y)\,dx + Q(x,y)\,dy = 0. \label{eq:CauchyRiemann}
+    \end{equation}
+    其中
+    \[\frac{\partial P}{\partial x} = \frac{\partial Q}{\partial y} \quad \mbox{且} \quad \frac{\partial Q}{\partial x} =
+      -\frac{\partial P}{\partial y}\]
+    即 $P$ 與 $Q$ 滿足 \href
+    {http://zh.wikipedia.org/wiki/\%E6\%9F\%AF\%E8\%A5\%BF\%EF\%BC\%8D\%E9\%BB\%8E\%E6\%9B\%BC\%E6\%96\%B9\%E7\%A8\%8B}
+    {柯西--黎曼方程}，此時積分乘數為
+    \[\mu(x,y) = \frac{1}{P^2 + Q^2}.\]
+  \end{theorem}
+\end{frame}
+
+\subsection[伯努力]{伯努力微分方程}
+\begin{frame}{方法 4：伯努力微分方程}
+  \begin{theorem}
+    給定微分方程
+    \[f(x)\,y' + g(x)\,y + h(x)\,y^n = 0\]
+    其中 $n \ne 1$。設 $u(x) = y^{1-n}$，則原方程轉為線性的
+    \[f(x)\,u' + \left( 1-n \right) g(x)\,u + \left( 1-n \right) h(x) = 0.\]
+  \end{theorem}
+\end{frame}
+
+\subsection[齊次]{齊次微分方程}
+\begin{frame}{齊次函數}
+  \begin{definition}
+    函數 $f(x,y)$ 稱為 $n$ 次齊次函數，等價於
+    \begin{equation}
+      f(tx,ty) = t^n f(x,y) \label{eq:Homogeneity}
+    \end{equation}
+    其中 $n$ 為常數。
+  \end{definition}
+  \begin{example}
+    \begin{itemize}
+      \item $f(x,y) = x^3 + 2x^2y + 3xy^2 + 4y^3$ 為 3 次齊次函數。
+      \item $f(x,y) = x^2 + y^2 + 1$ 不是齊次函數。
+    \end{itemize}
+  \end{example}
+\end{frame}
+
+\begin{frame}{方法 5：齊次微分方程}
+  \begin{theorem}
+    給定微分方程
+    \[P(x,y)\,dx + Q(x,y)\,dy = 0\]
+    其中 $P$ 與 $Q$ 皆為 $x$, $y$ 的齊次函數。設 $u(x) = y/x$，則原方程轉為變數可分離的方程。
+  \end{theorem}
+\end{frame}
+
+\subsection[幾乎線性]{幾乎線性的微分方程}
+\begin{frame}{方法 6：幾乎線性的微分方程}
+  \begin{theorem}
+    給定微分方程
+    \[f(x)\,k'(y)\,y' + g(x)\,k(y) + h(x)= 0.\]
+    設 $u(x) = k(y)$，則原方程轉為線性的
+    \[f(x)\,u' + g(x)\,u + h(x) = 0.\]
+  \end{theorem}
+  \begin{remark}
+    這方法在課本上罕見。
+  \end{remark}
+\end{frame}
+
+\subsection[含線性分式]{含線性分式的微分方程}
+\begin{frame}{方法 7：含線性分式的微分方程}
+  \begin{theorem}
+    給定微分方程
+    \[y' + F \Left( \frac{a_1 x + b_1 y + c_1}{a_2 x + b_2 y + c_2} \Right) = 0.\]
+    若在 $xy$-平面上，直線 $a_1 x + b_1 y + c_1 = 0$ 與 $a_2 x + b_2 y + c_2 = 0$ 交於 $(h,k)$，設 $X = x-h$ 與
+    $Y = y-k$，則原方程轉為齊次的
+    \[\frac{dY}{dX} + F \Left( \frac{a_1 X + b_1 Y}{a_2 X + b_2 Y} \Right) = 0.\]
+  \end{theorem}
+\end{frame}
+
+\subsection[以 $x^n y$ 替代]{以 x\textasciicircum n y 替代}
+\begin{frame}{方法 8：以 $x^n y$ 替代}
+  \begin{theorem}
+    給定微分方程
+    \[y' + \frac{y H(x^n y)}{x} = 0\]
+    其中 $n$ 為待定常數。設 $u(x) = x^n y$，則原方程轉為變數可分離的
+    \[\frac{du}{u \left( n - H(u) \right)} = \frac{dx}{x}.\]
+  \end{theorem}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \huge Tanks for your attention!
+  \end{center}
+\end{frame}
+\end{CJK}
+\end{document}

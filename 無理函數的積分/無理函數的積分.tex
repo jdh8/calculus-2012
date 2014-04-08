@@ -1,0 +1,402 @@
+%!TEX encoding = UTF-8 Unicode
+\documentclass{beamer}
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{CJKutf8}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+\hypersetup{colorlinks,linkcolor=,unicode}
+\useoutertheme{sidebar}
+\usecolortheme{rose}
+\usecolortheme{seahorse}
+\newcommand{\Cdot} {\!\cdot\!}
+\newcommand{\Left} {\mathopen{}\mathclose\bgroup\left}
+\newcommand{\Right}{\aftergroup\egroup\right}
+\newcommand  {\e}{\textup e}
+\renewcommand{\i}{\textup i}
+\newcommand  {\N}{\mathbb N}
+\newcommand  {\Z}{\mathbb Z}
+\newcommand  {\Q}{\mathbb Q}
+\newcommand  {\R}{\mathbb R}
+\renewcommand{\C}{\mathbb C}
+\newcommand{\sech}  {\operatorname{sech}}
+\newcommand{\csch}  {\operatorname{csch}}
+\newcommand{\arsinh}{\operatorname{arsinh}}
+\newcommand{\op}  {\operatorname{op}}
+\newcommand{\Elem}{\operatorname{Elem}}
+\newcommand{\trig}{\operatorname{trig}}
+\renewcommand{\today}{\number\year~年~\number\month~月~\number\day~日}
+\newcommand{\Negskip}{\vskip -1em plus 2pt minus 2pt}
+\newcommand{\negskip}{\vskip -2em plus 3pt minus 3pt}
+
+\theoremstyle{remark}
+  \newtheorem{remark}{Remark}
+
+\title[積分無理函數]{無理函數的積分}
+\author[何震邦]{何震邦 \href{mailto:jdh8@ms63.hinet.net}{\textless jdh8@ms63.hinet.net\textgreater}\\
+    \href{http://creativecommons.org/licenses/by-sa/3.0/tw/deed.zh\textunderscore TW}{\includegraphics{by-sa.eps}}}
+
+\begin{document}
+\begin{CJK}{UTF8}{bsmi}
+\maketitle
+
+\begin{frame}{方法 5：反三角替代}
+  在被積函數形如以下的無理函數時，進入本節的演算法。
+  \begin{itemize}
+    \item $f(x) \left( px + q \right)^m \left( a_1 x + b_1 \right)^{k_1} \left( a_2 x + b_2 \right)^{k_2}$
+    \item $f(x) \left( px + q \right)^m \left( ax^2 + bx + c \right)^k$
+  \end{itemize}
+  其中 $f$ 是多項式，$m$ 是整數，$k$, $k_1$, $k_2$ 是奇數的一半，$a$, $a_1$, $a_2$, $b$, $b_1$, $b_2$, $c$, $p$, $q$
+  是常數。
+\end{frame}
+
+\section{有理化}
+\begin{frame}{$\displaystyle \int f(x) \left( px + q \right)^m \left( a_1 x + b_1 \right)^{k_1}
+    \left( a_2 x + b_2 \right)^{k_2} dx$}
+  其中 $f$ 是多項式，且 $k_1$ 與 $k_2$ 是奇數的一半。
+  \begin{itemize}
+    \item 若 $k_1 k_2 < 0$，設 $k_1 > 0$, $k_2 < 0$，不失一般性。若 $m \ge 0$，則 $g(x) = f(x) \left( px + q \right)^m$
+      為多項式。
+      \[g(x) \left( a_2 x + b_2 \right)^{k_2 - k_1} \left( a_1 x + b_1 \right)^{k_1} \left( a_2 x + b_2 \right)^{k_1}\]
+      其中 $k_2 - k_1$ 為負整數。
+    \item 否則設 $k_2 \ge k_1$，不失一般性。此時有理化為
+      \[h(x) \left( px + q \right)^m \left( a_1 x + b_1 \right)^{k_1} \left( a_2 x + b_2 \right)^{k_1}\]
+      其中 $h(x) = f(x)  \left( a_2 x + b_2 \right)^{k_2-k_1}$ 亦為多項式。
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{$\displaystyle \int f(x) \left( px + q \right)^m \left( ax^2 + bx + c \right)^k dx$}
+  其中 $f$ 是多項式，且 $k$ 是奇數的一半。設 $y = px + q$，則原式化為
+  \[g(y) \left( Ay^2 + By + C \right)^k\]
+  其中 $g$ 是\href{http://zh.wikipedia.org/wiki/\%E6\%B4\%9B\%E6\%9C\%97\%E7\%BA\%A7\%E6\%95\%B0}{洛朗級數}，$A$, $B$, $C$
+  為常數。
+\end{frame}
+
+\section{多項式型}
+\begin{frame}{多項式型}
+  本節我們討論
+  \[\int f(x) \left( ax^2 + bx + c \right)^k\]
+  其中 $f$ 是多項式，且 $k$ 是奇數的一半。
+\end{frame}
+
+\subsection{基本型}
+\begin{frame}{$\displaystyle \int \frac{1}{\sqrt{ax^2 + bx + c}}\,dx$}
+  \begin{itemize}
+    \item 若 $a > 0$ 且 $4ac > b^2$，則原式為
+      \[\frac{\arsinh \Left( \frac{2ax + b}{\sqrt{4ac - b^2}} \Right)}{\sqrt a}.\]
+    \item 若 $a > 0$ 且 $4ac < b^2$，則原式為
+      \[\frac{\ln \Left| 2 \sqrt a \sqrt{ax^2 + bx + c} + 2ax + b \Right|}{\sqrt a}.\]
+    \item 若 $a < 0$ 且 $4ac < b^2$，則原式為
+      \[-\frac{\arcsin \Left( \frac{2ax + b}{\sqrt{b^2 - 4ac}} \Right)}{\sqrt{-a}}.\]
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{$\displaystyle \int \frac{1}{\sqrt{x - \alpha} \sqrt{x - \beta}}\,dx$}
+  \begin{solution}
+    設 $y = \sqrt{x - \alpha} + \sqrt{x - \beta}$。
+    \[y' = \frac{1}{2 \sqrt{x - \alpha}} + \frac{1}{2 \sqrt{x - \beta}}
+      = \frac{\sqrt{x - \alpha} + \sqrt{x - \beta}}{2 \sqrt{x - \alpha} \sqrt{x - \beta}}.\]
+    \begin{align*}
+      \int \frac{1}{\sqrt{x - \alpha} \sqrt{x - \beta}}\,dx &= \int \frac{2}{y}\,dy\\
+	&= 2 \ln \Left| y \Right|\\
+	&= 2 \ln \Left| \sqrt{x - \alpha} + \sqrt{x - \beta} \Right|\\
+	&= \ln \Left| 2 \sqrt{x - \alpha} \sqrt{x - \beta} + 2x - \alpha - \beta \Right|.
+    \end{align*}
+  \end{solution}
+\end{frame}
+
+\begin{frame}{$\displaystyle \int \frac{1}{\sqrt{(x - \alpha) \left( x - \beta \right)}}\,dx$}
+  \begin{solution}
+    \begin{align*}
+	 & \frac{d}{dx} \ln \Left| 2 \sqrt{(x - \alpha) \left( x - \beta \right)} + 2x - \alpha - \beta \Right|\\
+      =\:& \frac{\dfrac{2x - \alpha - \beta}{\sqrt{(x - \alpha) \left( x - \beta \right)}} + 2}
+	   {2 \sqrt{(x - \alpha) \left( x - \beta \right)} + 2x - \alpha - \beta}\\
+      =\:& \frac{1}{\sqrt{(x - \alpha) \left( x - \beta \right)}}
+    \end{align*}
+  \end{solution}
+\end{frame}
+
+\begin{frame}{$\displaystyle \int \frac{1}{\sqrt{ax^2 + bx + c}}\,dx$，其中 $a > 0$ 且 $4ac < b^2$}
+  設 $\alpha = \dfrac{-b - \sqrt{b^2 - 4ac}}{2a}$ 與 $\beta = \dfrac{-b + \sqrt{b^2 - 4ac}}{2a}$。
+  \begin{solution}
+  設 $y = ax$。
+    \begin{align*}
+      \int \frac{1}{\sqrt{ax^2 + bx + c}}\,dx &= \int \frac{\sqrt a}{\sqrt{(ax - a\alpha) \left( ax - a\beta \right)}}\,dx\\
+	&= \int \frac{1}{\sqrt a \sqrt{(y - a\alpha) \left( y - a\beta \right)}}\,dy\\
+	&= \frac{\ln \Left| 2 \sqrt a \sqrt{ax^2 + bx + c} + 2ax + b \Right|}{\sqrt a}.
+    \end{align*}
+  \end{solution}
+\end{frame}
+
+\begin{frame}{$\displaystyle \int_5^{15} \frac{1}{\sqrt{16x^2 - 1}}\,dx$}
+  \begin{solution}
+    當 $5 \le x \le 15$ 時，$\sqrt{16x^2 - 1} = \sqrt{4x + 1} \sqrt{4x - 1}$。
+    \begin{align*}
+      \int \frac{1}{\sqrt{16x^2 - 1}}\,dx &= \frac{\ln \Left| 8\sqrt{16x^2 - 1} + 32x \Right|}{4}\\
+      \int_5^{15} \frac{1}{\sqrt{16x^2 - 1}}\,dx &= \frac{\ln \Left( 8\sqrt{3599} + 480 \Right)}{4}
+	  - \frac{\ln \Left( 8\sqrt{399} + 160 \Right)}{4}\\
+	&\approx 0.2747921059353482.
+    \end{align*}
+  \end{solution}
+\end{frame}
+
+\begin{frame}{$\displaystyle \int_5^{15} \frac{1}{\sqrt{16x^2 - 1}}\,dx$，另解}
+  \begin{solution}
+    當 $5 \le x \le 15$ 時，$\sqrt{16x^2 - 1} = \sqrt{4x + 1} \sqrt{4x - 1}$。
+    \begin{align*}
+      \int \frac{1}{\sqrt{16x^2 - 1}}\,dx &= \frac{2 \ln \Left| \sqrt{4x + 1} + \sqrt{4x - 1} \Right|}{4}\\
+      \int_5^{15} \frac{1}{\sqrt{16x^2 - 1}}\,dx &= \frac{2 \ln \Left( \sqrt{61} + \sqrt{59} \Right)}{4}
+	  - \frac{2 \ln \Left( \sqrt{21} + \sqrt{19} \Right)}{4}\\
+	&\approx 0.2747921059353482.
+    \end{align*}
+  \end{solution}
+  \begin{remark}
+    這個解對人類比較友善，但對機器則否。因為它要多做兩次平方根。
+  \end{remark}
+\end{frame}
+
+\begin{frame}{$\displaystyle \int \frac{1}{\sqrt{ax^2 + b}}\,dx$}
+  \begin{itemize}
+    \item 若 $a > 0$ 且 $b > 0$，則原式為
+      \[\frac{\arsinh \Left( \frac{\sqrt a x}{\sqrt b} \Right)}{\sqrt a}.\]
+    \item 若 $a > 0$ 且 $b < 0$，則原式為
+      \[\frac{\ln \Left| 2 \sqrt a \sqrt{ax^2 + b} + 2ax \Right|}{\sqrt a}.\]
+    \item 若 $a < 0$ 且 $b > 0$，則原式為
+      \[\frac{\arcsin \Left( \frac{\sqrt{-a}x}{\sqrt b} \Right)}{\sqrt{-a}}.\]
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{$\displaystyle \int \frac{1}{\sqrt{ax^2 + b}}\,dx$，其中 $a > 0$ 且 $b > 0$}
+  \begin{solution}
+    設 $y = \arsinh \Left( \dfrac{\sqrt a x}{\sqrt b} \Right)$，則 $dx = \dfrac{\sqrt b \cosh(y)}{\sqrt a}\,dy$。
+    \begin{align*}
+      \int \frac{1}{\sqrt{ax^2 + b}}\,dx &= \int \frac{1}{\sqrt b \cosh y}\,dx\\
+	&= \int \frac{1}{\sqrt a}\,dy\\
+	&= \frac{\arsinh \Left( \frac{\sqrt a x}{\sqrt b} \Right)}{\sqrt a}.
+    \end{align*}
+  \end{solution}
+\end{frame}
+
+\begin{frame}{$\displaystyle \int \frac{1}{\sqrt{ax^2 + b}}\,dx$，其中 $a < 0$ 且 $b > 0$}
+  \begin{solution}
+    設 $y = \arcsin \Left( \dfrac{\sqrt{-a}x}{\sqrt b} \Right)$，則 $dx = \dfrac{\sqrt b \cos(y)}{\sqrt{-a}}\,dy$
+    \begin{align*}
+      \int \frac{1}{\sqrt{ax^2 + b}}\,dx &= \int \frac{1}{\sqrt b \cos(y)}\,dx\\
+	&= \int \frac{1}{\sqrt{-a}}\,dy\\
+	&= \frac{\arcsin \Left( \frac{\sqrt{-a}x}{\sqrt b} \Right)}{\sqrt{-a}}.
+    \end{align*}
+  \end{solution}
+\end{frame}
+
+\begin{frame}{$\displaystyle \int \frac{1}{\sqrt{ax^2 + bx + c}}\,dx$，其中 $a > 0$ 且 $4ac > b^2$}
+  \begin{solution}
+    設 $y = x + \dfrac{b}{2a}$。
+    \begin{align*}
+      \int \frac{1}{\sqrt{ax^2 + bx + c}}\,dx &= \int \frac{1}{\sqrt{ay + \frac{4ac - b^2}{4a}}}\,dy\\
+	&= \frac{\arsinh \Left( \frac{2ay}{\sqrt{4ac - b^2}} \Right)}{\sqrt a}\\
+	&= \frac{\arsinh \Left( \frac{2ax + b}{\sqrt{4ac - b^2}} \Right)}{\sqrt a}.
+    \end{align*}
+  \end{solution}
+\end{frame}
+
+\begin{frame}{$\displaystyle \int \frac{1}{\sqrt{ax^2 + bx + c}}\,dx$，其中 $a < 0$ 且 $4ac < b^2$}
+  \begin{solution}
+    設 $y = x + \dfrac{b}{2a}$。
+    \begin{align*}
+      \int \frac{1}{\sqrt{ax^2 + bx + c}}\,dx &= \int \frac{1}{\sqrt{ay - \frac{b^2 - 4ac}{4a}}}\,dy\\
+	&= \frac{\arcsin \Left( \frac{-2ay}{\sqrt{b^2 - 4ac}} \Right)}{\sqrt{-a}}\\
+	&= -\frac{\arcsin \Left( \frac{2ax + b}{\sqrt{b^2 - 4ac}} \Right)}{\sqrt{-a}}.
+    \end{align*}
+  \end{solution}
+\end{frame}
+
+\subsection{一般型}
+\begin{frame}{$\displaystyle \int \frac{px + q}{\sqrt{ax^2 + bx + c}}\,dx$}
+  \begin{solution}
+    \begin{align*}
+	 & \int \frac{px + q}{\sqrt{ax^2 + bx + c}}\,dx\\
+      =\:& \frac{p}{2a} \int \frac{2ax + b}{\sqrt{ax^2 + bx + c}}\,dx
+	   +\int \frac{q - \frac{bp}{2a}}{\sqrt{ax^2 + bx + c}}\,dx\\
+      =\:& \frac{p \sqrt{ax^2 + bx + c}}{a} + \int \frac{2aq - bp}{2a \sqrt{ax^2 + bx + c}}\,dx.
+    \end{align*}
+  \end{solution}
+\end{frame}
+
+\begin{frame}{$\displaystyle \int \left( ax^2 + bx + c \right)^{n + \frac12} dx$，其中 $n \in \N_0$}
+  \begin{solution}
+    設 $R = ax^2 + bx + c$。
+    \begin{align*}
+	 & \int R^{n + \frac12} dx\\
+      =\:& x R^{n + \frac12}
+	   -\int \frac{\left( 2n + 1 \right) \left( 2ax^2 + bx \right) R^{n - \frac12}}{2}\,dx\\
+      =\:& \frac{x R^{n + \frac12}}{2n + 2}
+	   +\int \frac{\left( 2n + 1 \right) \left( bx + c \right) R^{n - \frac12}}{4n + 4}\,dx\\
+      =\:& \frac{\left( 2ax + b \right) R^{n + \frac12}}{\left( 4n+4 \right) a}
+	   +\int \frac{\left( 2n + 1 \right) \left( 4ac - b^2 \right) R^{n - \frac12}}{\left( 8n+8 \right) a}\,dx
+    \end{align*}
+  \end{solution}
+\end{frame}
+
+\begin{frame}{$\displaystyle \int \frac{x^2}{\sqrt{x^2 + x + 1}}\,dx$}
+  \begin{solution}
+    \begin{align*}
+      \int \frac{x^2}{\sqrt{x^2 + x + 1}}\,dx &= \int \sqrt{x^2 + x + 1}\,dx - \int \frac{x + 1}{\sqrt{x^2 + x + 1}}\,dx\\
+	&= \frac{2x + 1}{4 \sqrt{x^2 + x + 1}} - \int \frac{8x + 5}{8 \sqrt{x^2 + x + 1}}\,dx\\
+	&= \frac{2x - 3}{4 \sqrt{x^2 + x + 1}} - \int \frac{1}{8 \sqrt{x^2 + x + 1}}\,dx\\
+	&= \frac{2x - 3}{4 \sqrt{x^2 + x + 1}} - \int \frac{\arsinh \Left( \frac{2x + 1}{\sqrt3} \Right)}{8}\,dx
+    \end{align*}
+  \end{solution}
+\end{frame}
+
+\subsection[Hermite red.]{Hermite reduction}
+\begin{frame}{Hermite reduction}
+  設 $n$ 為正整數。若多項式 $R$ 與 $R'$ 互質。根據多項式的\href
+  {http://zh.wikipedia.org/wiki/\%E8\%B2\%9D\%E7\%A5\%96\%E7\%AD\%89\%E5\%BC\%8F}{貝祖等式}，我們能以擴展的輾轉相除法求兩多項式
+  $B$, $C$ 使得
+  \[\frac{2A}{1-2n} = BR' + CR\]
+  其中 $\deg(B) < \deg(R)$。因此
+  \begin{align*}
+    \frac{A}{R^{n + \frac12}} &= \frac{\left( 1-2n \right) BR'}{2R^{n + \frac12}}
+	 +\frac{\left( 1-2n \right) C}{2R^{n - \frac12}}\\
+      &= \frac{B'}{R^{n - \frac12}} - \frac{\left( 2n-1 \right) BR'}{2R^{n + \frac12}}
+	 -\frac{B' + \left( 2n-1 \right) C}{2R^{n - \frac12}}\\
+    \int \frac{A}{R^{n + \frac12}} &= \frac{B}{R^{n - \frac12}} - \int \frac{B' + \left( 2n-1 \right) C}{2R^{n - \frac12}}.
+  \end{align*}
+\end{frame}
+
+\begin{frame}{$\displaystyle \int \frac{px + q}{\left( ax^2 + bx + c \right)^{3/2}}\,dx$}
+  設 $A = px + q$ 與 $R = ax^2 + bx + c$，其中 $4ac \ne b^2$。
+  \begin{align*}
+    4aR &= \left( 2ax + b \right) R' + 4ac - b^2\\
+    -2A &= -\frac{pR'}{a} + \frac{bp - 2aq}{a}\\
+	&= -\frac{pR'}{a} + \frac{\left( 2aq - bp \right) \left( \left( 2ax + b \right) R' - 4aR \right)}
+	   {a \left( 4ac - b^2 \right)}.
+  \end{align*}
+  設 $B = \dfrac{\left( 2aq - bp \right) \left( 2ax + b \right)}{a \left( 4ac - b^2 \right)} - \dfrac p a$ 與
+  $C = -\dfrac{4 \left( 2aq - bp \right) R}{4ac - b^2}$。
+  \begin{align*}
+    -2A &= BR' + CR\\
+    \int \frac{A}{R^{3/2}} &= \frac{B}{\sqrt R} - \int \frac{B' + C/2}{\sqrt R} = \frac{B}{\sqrt R}.
+  \end{align*}
+\end{frame}
+
+\begin{frame}{$\displaystyle \int \frac{4x + 5}{\left( x^2 + 2x + 3 \right)^{3/2}}\,dx$}
+  \begin{solution}
+    設 $A = 4x + 5$ 與 $R = x^2 + 2x + 3$。
+    \begin{align*}
+       2R &= \left( x + 1 \right) R' + 4\\
+      -2A &= -4R' - 2 = \frac{\left( x - 7 \right) R'}{2} - R.
+    \end{align*}
+    \[\int \frac{4x + 5}{R^{3/2}}\,dx = \frac{x - 7}{2 \sqrt{x^2 + 2x + 3}}.\]
+  \end{solution}
+\end{frame}
+
+\section{洛朗級數型}
+\begin{frame}{$\displaystyle \int \frac{1}{x^m \sqrt{ax^2 + bx + c}}\,dx$}
+  \begin{solution}
+    設 $y = 1/x$。
+    \begin{align*}
+      \int \frac{1}{x^m \sqrt{ax^2 + bx + c}}\,dx &= -\int \frac{y^{m-2}}{\sqrt{\frac b y + \frac{a}{y^2} + c}}\,dy\\
+	&= -\int \frac{y^{m-2} \left| y \right|}{\sqrt{cy^2 + by + a}}\,dy.
+    \end{align*}
+  \end{solution}
+  \begin{remark}
+    \[\frac{x}{|x|} = \begin{cases}1 & \mbox{ 若 }x > 0\\ -1 & \mbox{ 若 }x < 0.\end{cases}\]
+  \end{remark}
+\end{frame}
+
+\subsection{基本型}
+\begin{frame}{$\displaystyle \int \frac{1}{x \sqrt{ax^2 + bx + c}}\,dx$}
+  \begin{itemize}
+    \item 若 $c > 0$ 且 $4ac > b^2$，則原式為
+      \[-\frac{\arsinh \Left( \frac{bx + 2c}{\sqrt{4ac - b^2} |x|} \Right)}{\sqrt c}.\]
+    \item 若 $c > 0$ 且 $4ac < b^2$，則原式為
+      \[-\frac{\ln \Left| \frac{2 \sqrt c \sqrt{ax^2 + bx + c}}{|x|} + \frac{2c}{|x|} + b \Right|}{\sqrt c}.\]
+    \item 若 $c < 0$ 且 $4ac < b^2$，則原式為
+      \[\frac{\arcsin \Left( \frac{bx + 2c}{\sqrt{b^2 - 4ac} |x|} \Right)}{\sqrt{-c}}.\]
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{$\displaystyle \int \frac{1}{x \sqrt{ax^2 + bx + c}}\,dx$，若 $c > 0$ 且 $4ac > b^2$}
+  \begin{solution}
+    設 $y = 1/x$。
+    \begin{align*}
+      \int \frac{1}{x \sqrt{ax^2 + bx + c}}\,dx &= -\int \frac{|y|}{y \sqrt{cy^2 + by + a}}\,dy\\
+	&= -\frac{\arsinh \Left( \frac{\left( 2cy + b \right) |y|}{y \sqrt{4ac - b^2}} \Right)}{\sqrt c}\\
+	&= -\frac{\arsinh \Left( \frac{bx + 2c}{\sqrt{4ac - b^2} |x|} \Right)}{\sqrt c}.
+    \end{align*}
+  \end{solution}
+\end{frame}
+
+\begin{frame}{$\displaystyle \int \frac{1}{x \sqrt{ax^2 + bx + c}}\,dx$，若 $c > 0$ 且 $4ac < b^2$}
+  \begin{solution}
+    設 $y = 1/x$。
+    \begin{align*}
+      \int \frac{1}{x \sqrt{ax^2 + bx + c}}\,dx &= -\int \frac{|y|}{y \sqrt{cy^2 + by + a}}\,dy\\
+	&= -\frac{\ln \Left| 2 \sqrt c \sqrt{cy^2 + by + a} + 2c|y| + b \Right|}{\sqrt c}\\
+	&= -\frac{\ln \Left| \frac{2 \sqrt c \sqrt{ax^2 + bx + c}}{|x|} + \frac{2c}{|x|} + b \Right|}{\sqrt c}.
+    \end{align*}
+  \end{solution}
+\end{frame}
+
+\begin{frame}{$\displaystyle \int \frac{1}{x \sqrt{ax^2 + bx + c}}\,dx$，若 $c < 0$ 且 $4ac < b^2$}
+  \begin{solution}
+    設 $y = 1/x$。
+    \begin{align*}
+      \int \frac{1}{x \sqrt{ax^2 + bx + c}}\,dx &= -\int \frac{|y|}{y \sqrt{cy^2 + by + a}}\,dy\\
+	&= \frac{\arcsin \Left( \frac{\left( 2cy + b \right) |y|}{y \sqrt{b^2 - 4ac}} \Right)}{\sqrt{-c}}\\
+	&= \frac{\arcsin \Left( \frac{bx + 2c}{\sqrt{b^2 - 4ac} |x|} \Right)}{\sqrt{-c}}.
+    \end{align*}
+  \end{solution}
+\end{frame}
+
+\begin{frame}{$\displaystyle \int \frac{1}{x \sqrt{ax^2 + b}}\,dx$}
+  \begin{itemize}
+    \item 若 $b > 0$ 且 $a > 0$，則原式為
+      \[-\frac{\arsinh \Left( \frac{\sqrt b}{\sqrt a |x|} \Right)}{\sqrt b}.\]
+    \item 若 $b > 0$ 且 $a < 0$，則原式為
+      \[-\frac{\ln \Left| \frac{2 \sqrt b \sqrt{ax^2 + b}}{|x|} + \frac{2b}{|x|} \Right|}{\sqrt b}.\]
+    \item 若 $b < 0$ 且 $a > 0$，則原式為
+      \[-\frac{\arcsin \Left( \frac{\sqrt{-b}}{\sqrt a |x|} \Right)}{\sqrt{-b}}.\]
+  \end{itemize}
+\end{frame}
+
+\subsection{一般型}
+\begin{frame}{$\displaystyle \int \frac{1}{x^2 \sqrt{ax^2 + bx + c}}\,dx$}
+  \begin{solution}
+    設 $y = 1/x$。
+    \begin{align*}
+	 & \int \frac{1}{x^2 \sqrt{ax^2 + bx + c}}\,dx\\
+      =\:& -\int \frac{|y|}{\sqrt{cy^2 + by + a}}\,dy\\
+      =\:& -\frac{y \sqrt{cy^2 + by + a}}{c \left| y \right|} + \int \frac{b \left| y \right|}
+	   {2c^{3/2}y \sqrt{cy^2 + by + a}}\,dy\\
+      =\:& -\frac{\sqrt{ax^2 + bx + c}}{cx} + \int \frac{b \left| y \right|} {2c^{3/2}y \sqrt{cy^2 + by + a}}\,dy.
+    \end{align*}
+  \end{solution}
+\end{frame}
+
+\begin{frame}{$\displaystyle \int \frac{1}{x^3 \sqrt{ax^2 + bx + c}}\,dx$}
+  \begin{solution}
+    設 $y = 1/x$。
+    \small
+    \begin{align*}
+	 & \int \frac{1}{x^3 \sqrt{ax^2 + bx + c}}\,dx = -\int \frac{y \left| y \right|}{\sqrt{cy^2 + by + a}}\,dy\\
+      =\:& -\int \frac{y \sqrt{cy^2 + by + a}}{c \left| y \right|}\,dy + \int \frac{\left( by + a \right) |y|}
+	   {cy \sqrt{cy^2 + by + a}}\,dy\\
+      =\:& -\frac{\left( 2cy + b \right) \sqrt{cy^2 + by + a}}{4c^2} + \int \frac{\left( 8bcy + 4ac + b^2 \right) |y|}
+	   {8c^2 y \sqrt{cy^2 + by + a}}\,dy\\
+      =\:& \frac{\left( 3b - 2cy \right) \sqrt{cy^2 + by + a}}{4c^2} + \int \frac{\left( 4ac - 3b^2 \right) |y|}
+	   {8c^2 y \sqrt{cy^2 + by + a}}\,dy\\
+      =\:& \left( \frac{3b}{4c^2 x} - \frac{1}{2cx^2} \right) \sqrt{ax^2 + bx + c} + \int \frac{\left( 4ac - 3b^2 \right) |y|}
+	   {8c^2 y \sqrt{cy^2 + by + a}}\,dy.
+    \end{align*}
+  \end{solution}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \huge Tanks for your attention!
+  \end{center}
+\end{frame}
+\end{CJK}
+\end{document}

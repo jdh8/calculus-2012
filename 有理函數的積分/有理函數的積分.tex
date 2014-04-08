@@ -1,0 +1,697 @@
+%!TEX encoding = UTF-8 Unicode
+\documentclass{beamer}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{CJKutf8}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+\hypersetup{colorlinks,linkcolor=,unicode}
+\useoutertheme{sidebar}
+\usecolortheme{rose}
+\usecolortheme{seahorse}
+\newcommand{\Left} {\mathopen{}\mathclose\bgroup\left}
+\newcommand{\Right}{\aftergroup\egroup\right}
+\newcommand{\e}{\textup e}
+\newcommand{\N}{\mathbb N}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\Q}{\mathbb Q}
+\newcommand{\R}{\mathbb R}
+\newcommand{\cont}{\operatorname{cont}}
+\renewcommand{\today}{\number\year~年~\number\month~月~\number\day~日}
+\renewcommand{\algorithmiccomment}[1]{\quad/* #1 */}
+\newcommand{\Negskip}{\vskip -1em plus 2pt minus 2pt}
+\newcommand{\negskip}{\vskip -2em plus 3pt minus 3pt}
+
+\theoremstyle{remark}
+  \newtheorem{remark}{Remark}
+
+\title[積分有理函數]{有理函數的積分}
+\subtitle{地表最快演算法}
+\author[何震邦]{何震邦 \href{mailto:jdh8@ms63.hinet.net}{\textless jdh8@ms63.hinet.net\textgreater}\\
+    \href{http://creativecommons.org/licenses/by-sa/3.0/tw/deed.zh\textunderscore TW}{\includegraphics{by-sa.eps}}}
+
+\begin{document}
+\begin{CJK}{UTF8}{bsmi}
+\maketitle
+
+\section{多項式}
+\begin{frame}{重點提要}
+  本次我們的重點在於
+  \begin{itemize}
+    \item 多項式除法
+    \item 最大公因式
+    \item Squarefree 多項式。
+  \end{itemize}
+\end{frame}
+
+\subsection{最大公因式}
+\begin{frame}{多項式除法}
+  對於任意兩個多項式 $A$, $B$，其中 $B \ne 0$，我們都可以找到商 $Q$ 和餘式 $R$ 使得
+  \begin{equation}
+    A = BQ + R \label{eq:A=BQ+R}
+  \end{equation}
+  其中 $\deg(R) < \deg(B)$。\eqref{eq:A=BQ+R}式又可寫作
+  \[\frac A B = Q + \frac R B.\]
+  \begin{definition}
+    為了方便，對於以上除法式，我們定義以下新符號：
+    \begin{align*}
+      \lfloor A/B \rfloor &= Q\\
+      \left\lceil B \right\rceil A &= R.
+    \end{align*}
+  \end{definition}
+\end{frame}
+
+\begin{frame}{除法演算法}
+  \begin{algorithm}[H]
+    \caption{多項式的除法 $A = BQ + R$}
+    \begin{algorithmic}[1]
+      \REQUIRE $A$, $B$ 是多項式且 $B \ne 0$
+      \ENSURE  $A = BQ + R$
+      \STATE $Q := 0$
+      \STATE $R := A$
+      \WHILE[長除法]{$\deg(R) \ge \deg(B)$}
+	\STATE $S$ 為 $R$ 的領導項除以 $B$ 的領導項
+	\STATE $Q := Q + S$
+	\STATE $R := R - BS$
+      \ENDWHILE
+    \end{algorithmic}
+  \end{algorithm}
+\end{frame}
+
+\begin{frame}{最大公因式}
+  輾轉相除法最早的記錄是在歐幾里德的《幾何原本》中，故在西方常稱為歐幾里德演算法（Euclidean algorithm）。
+  \begin{quote}
+    [The Euclidean algorithm] is the granddaddy of all algorithms, because it is the oldest nontrivial algorithm that
+    has survived to the present day.\\[1ex]
+    \textup{Donald Knuth}, The Art of Computer Programming, Vol.\ 2: Seminumerical Algorithms, \textup{2nd edition (1981),
+    p. 318.}
+  \end{quote}
+\end{frame}
+
+\begin{frame}{輾轉相除法}
+  \begin{algorithm}[H]
+    \caption{輾轉相除法求最大公因式 $\gcd(A,B)$}
+    \begin{algorithmic}[1]
+      \REQUIRE $A$, $B$ 是多項式
+      \STATE $R_0 := A$
+      \STATE $R_1 := B$
+      \STATE $k := 1$
+      \WHILE{$R_k \ne 0$}
+	\STATE $R_{k+1} := \left\lceil R_k \right\rceil R_{k-1}$
+	\STATE $k := k+1$
+      \ENDWHILE
+      \RETURN $R_{k-1}$ \COMMENT{$R_k = 0$}
+    \end{algorithmic}
+  \end{algorithm}
+\end{frame}
+
+\begin{frame}{分數的計算很麻煩！}
+  \begin{itemize}
+    \item 有時候對於係數為有理數的多項式 $A$, $B$，我們不需要知道確切的餘式 $\left\lceil B \right\rceil
+      A$，而可以接受答案為餘式的常數倍。此時為了避免分數的計算，我們可以在過程中縮放多項式，使計算過程全為整數。
+    \item 如輾轉相除法。
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{多項式的容度（content）}
+  \begin{definition}
+    對整係數多項式 $f \in \Z[x]$ 而言，它的\textbf{容度} $\cont(f)$ 為所有係數的最大公因數。
+  \end{definition}
+  \begin{definition}
+    若 $f \in \Q[x]$ 即 $f$ 是係數為有理數的多項式，則必存在 $n \in \N$ 使得 $nf \in \Z[x]$。我們定義 $f$ 的容度為
+    \[\cont(f) = \frac{\cont(nf)}{n}.\]
+  \end{definition}
+  \begin{definition}
+    \textbf{本原多項式}就是容度為 1 的多項式。
+  \end{definition}
+\end{frame}
+
+\begin{frame}{求餘式的常數倍，並為本原多項式}
+  \begin{algorithm}[H]
+    \caption{求 $R = \left\lceil B \right\rceil cA$，其中常數 $c$ 使 $\cont(R) = 1$}
+    \begin{algorithmic}[1]
+      \REQUIRE $\{A,B\} \subset \Q[x]$
+      \STATE $A := A/\cont(A)$
+      \STATE $B := B/\cont(B)$ \COMMENT{理論上不需要，但可簡化計算}
+      \WHILE{$\deg(A) \ge \deg(B)$}
+	\STATE $a$ 與 $b$ 分別為 $A$ 與 $B$ 的領導係數
+	\STATE $m := b/\gcd(a,b)$
+	\STATE $n := \deg(A) - \deg(B)$
+	\STATE $A := \left\lceil Bx^n \right\rceil mA$ \COMMENT{$A$ 至少降一次且仍為 $\Z[x]$}
+	\STATE $A := A/\cont(A)$
+      \ENDWHILE
+      \RETURN $R := A$
+    \end{algorithmic}
+  \end{algorithm}
+\end{frame}
+
+\begin{frame}{$P = x^{10} + 8x^8 + 19x^6 + 9x^4 + 27$，求 $\gcd \Left( P,P' \Right)$}
+  \negskip
+  \begin{align*}
+    R_0 &= x^{10} + 8x^8 + 19x^6 + 9x^4 + 27\\
+    R_1 &= 5x^9 + 32x^7 + 57x^5 + 18x^3\\
+    R_2 &= 8x^8 + 38x^6 + 27x^4 + 135\\
+    R_3 &= 22x^7 + 107x^5 + 48x^3 - 225x\\
+    R_4 &= 2x^6 - 21x^4 - 180x^2 - 297\\
+    R_5 &= x^5 + 6x^3 + 9x\\
+    R_6 &= x^4 + 6x^2 + 9\\
+    R_7 &= 0.
+  \end{align*}
+  \[\gcd \Left( P,P' \Right) = x^4 + 6x^2 + 9.\]
+\end{frame}
+
+\begin{frame}{多項式的互質}
+  \begin{definition}
+    若一群多項式的最大公因式為常數，則我們說它們\textbf{互質}。
+  \end{definition}
+  \begin{theorem}
+    多項式互質等價於它們沒有共同的根。
+  \end{theorem}
+  \begin{example}
+    \begin{itemize}
+      \item $x+2$ 與 $x+3$ 互質
+      \item $x^2 + 2x + 1$ 與 $x-1$ 互質
+      \item 非零常數與任意多項式互質。
+    \end{itemize}
+  \end{example}
+\end{frame}
+
+\begin{frame}{質式}
+  \begin{definition}
+    \textbf{質式}或稱\textbf{不可約多項式}為無法分解為較低次多項式的積的多項式。
+  \end{definition}
+  \begin{theorem}
+    所有一次多項式是質式。
+  \end{theorem}
+\end{frame}
+
+\subsection[Squarefree]{Squarefree 多項式}
+\begin{frame}{Squarefree 多項式}
+  \begin{definition}
+    若不存在多項式 $U$ 使得 $\deg(U) > 0$ 且 $U^2$ 整除多項式 $P$，則我們說 $P$ 是 \textbf{Squarefree 多項式}。
+  \end{definition}
+  \begin{theorem}
+    \begin{itemize}
+      \item Squarefree 多項式就是沒有重根的多項式。
+      \item 多項式為 squarefree 等價於它與自己的導函數互質。
+    \end{itemize}
+  \end{theorem}
+\end{frame}
+
+\begin{frame}{Squarefree 多項式與自己的導函數互質}
+  \begin{proof}
+    設一任意 squarefree 多項式 $P$，它可分解為
+    \[P = P_1 P_2 \cdots P_n\]
+    其中對於所有 $k \in \N$ 且 $1 \le k \le n$，$P_k$ 是質式。因此
+    \[P' = P_1' P_2 \cdots P_n + P_1 P_2' \cdots P_n + \cdots + P_1 P_2 \cdots P_n'.\]
+    因為對於所有 $P_k$，$\gcd \Left( P_k, P_k' \Right) = 1$，所以
+    \[\gcd \Left( P, P'\Right) = 1. \qedhere\]
+  \end{proof}
+\end{frame}
+
+\begin{frame}{與自己的導函數互質的多項式必為 squarefree}
+  \begin{proof}
+    假設有一任意非 squarefree 多項式 $P$ 與它的導函數互質。它可分解為
+    \[P = UV^m\]
+    其中 $\deg(V) > 0$ 且 $m \in \N$ 且 $m \ge 2$。因此
+    \[P' = U'V^m + mUV^{m-1}V' = V^{m-1} \left( U'V + mUV' \right).\]
+    所以
+    \[\left. V^{m-1} \middle| \gcd \Left( P, P' \Right) \right.\]
+    矛盾！所以假設錯誤。
+  \end{proof}
+\end{frame}
+
+\begin{frame}{Squarefree 分解}
+  \begin{definition}
+    顧名思義，就是不先急著做多項式 $D$ 的質因式分解，而只做到因式是 squarefree 多項式為止，即
+    \[D = D_1 D_2^2 \cdots D_m^m\]
+    其中 $D_i$ 為 squarefree 且兩兩互質。
+  \end{definition}
+\end{frame}
+
+\begin{frame}{Yun 演算法}
+  \begin{algorithm}[H]
+    \caption{求多項式 $D$ 的 squarefree 分解}
+    \begin{algorithmic}[1]
+      \REQUIRE $D$ 是多項式
+      \ENSURE  $D = D_1 D_2^2 \cdots D_m^m$ 是 $D$ 的 squarefree 分解
+      \STATE $P := D$
+      \STATE $Q := D'$
+      \STATE $m := 0$
+      \WHILE{$\deg(P) > 0$}
+	\STATE $D_m := \gcd(P,Q)$
+	\STATE $P := P/D_m$
+	\STATE $Q := Q/D_m - P'$
+	\STATE $m := m + 1$
+      \ENDWHILE
+    \end{algorithmic}
+  \end{algorithm}
+\end{frame}
+
+\begin{frame}{Yun 演算法是有效的}
+  \begin{proof}
+    設 $D = D_1 D_2^2 \cdots D_m^m$ 是 $D$ 的 squarefree 分解。
+    \begin{align*}
+      P   &= D_1 D_2^2 \cdots D_m^m\\
+      Q   &= D_2 D_3^2 \cdots D_m^{m-1} \left( D_1' D_2 \cdots D_m + \cdots + m D_1 D_2 \cdots
+	  D_m' \right)\\
+      D_0 &= D_2 D_3^2 \cdots D_m^{m-1}
+    \end{align*}
+    對於所有 $i \in \N$ 且 $1 \le i \le m$
+    \begin{align*}
+      P   &= D_i D_{i+1} \cdots D_m\\
+      Q   &= D_i \left( D_{i+1}' D_{i+2} \cdots D_m + \cdots + \left( m-i \right) D_{i+1} D_{i+2} \cdots D_m' \right)\\
+      D_i &= \gcd(P,Q) \qedhere
+    \end{align*}
+  \end{proof}
+\end{frame}
+
+\begin{frame}{分解 $D = x^{10} + 8x^8 + 19x^6 + 9x^4 + 27$}
+  \begin{solution}
+    \begin{columns}
+      \begin{column}[t]{0.6\textwidth}
+	\begin{align*}
+	  P   &= x^{10} + 8x^8 + 19x^6 + 9x^4 + 27\\
+	  Q   &= 10x^9 + 64x^7 + 114x^5 + 36x^3\\
+	  D_0 &= x^4 + 6x^2 + 9\\
+	  P   &= x^6 + 2x^4 - 2x^2 + 3\\
+	  Q   &= 4x^5 - 4x^3 + 4x\\
+	  D_1 &= x^4 - x^2 + 1
+	\end{align*}
+      \end{column}
+      \begin{column}[t]{0.4\textwidth}
+	\begin{align*}
+	  P   &= x^2 + 3\\
+	  Q   &= 2x\\
+	  D_2 &= 1\\
+	  P   &= x^2 + 3\\
+	  Q   &= 0\\
+	  D_3 &= x^2 + 3\\
+	\end{align*}
+      \end{column}
+    \end{columns}
+    \[D = \left( x^4 - x^2 + 1 \right) \left( x^2 + 3 \right)^3.\]
+  \end{solution}
+\end{frame}
+
+\section{有理函數}
+\begin{frame}{方法 8：有理函數的積分}
+  當被積函數為最簡分式 $N/D$，執行多項式除法，即
+  \[N = PD + A\]
+  其中 $\deg(A) < \deg(D)$。則
+  \[\int \frac N D = \int P + \int \frac A D.\]
+  多項式 $P$ 可輕易積分，而最簡真分式 $A/D$ 的積分就是本節的重點了。
+\end{frame}
+
+\subsection{分母為二次式}
+\begin{frame}{$\displaystyle \int \frac{1}{ax^2 + b}\,dx$，其中 $ab > 0$}
+  \begin{solution}
+    設 $\displaystyle y = \arctan \Left( \frac{ax}{\sqrt{ab}} \Right)$，則 $dx = \dfrac{\sqrt{ab} \sec(y)^2}{a}\,dy$。
+    \begin{align*}
+      \int \frac{1}{ax^2 + b}\,dx &= \int \frac{\sqrt{ab} \sec(y)^2}{a \left( b \tan(y)^2 + b \right)}\,dy\\
+	&= \int \frac{1}{\sqrt{ab}}\,dy\\
+	&= \frac{\arctan \Left( \frac{ax}{\sqrt{ab}} \Right)}{\sqrt{ab}}.
+    \end{align*}
+  \end{solution}
+\end{frame}
+
+\begin{frame}{$\displaystyle \int \frac{1}{ax^2 + bx + c}\,dx$，其中 $4ac > b^2$}
+  \begin{solution}
+    設 $y = x + \dfrac{b}{2a}$。
+    \begin{align*}
+      \int \frac{1}{ax^2 + bx + c}\,dx &= \int \frac{1}{ay^2 + \frac{4ac - b^2}{4a}}\,dy\\
+	&= \frac{\arctan \Left( \frac{ay}{\sqrt{4ac - b^2}/2} \Right)}{\sqrt{4ac - b^2}/2}\\
+	&= \frac{2 \arctan \Left( \frac{2ax + b}{\sqrt{4ac - b^2}} \Right)}{\sqrt{4ac - b^2}}.
+    \end{align*}
+  \end{solution}
+\end{frame}
+
+\begin{frame}{$\displaystyle \int \frac{1}{ax^2 + bx + c}\,dx$，其中 $4ac < b^2$}
+  \begin{solution}
+    $ax^2 + bx + c$ 的兩根為 $\dfrac{- b \pm \sqrt{b^2 - 4ac}}{2a}$。
+    \begin{align*}
+      \frac{1}{\left( x - \alpha \right) (x - \beta)} &= \frac{1}{\beta - \alpha} \left( \frac{1}{x - \beta} 
+	- \frac{1}{x - \alpha} \right)\\
+      \int \frac{1}{\left( x - \alpha \right) (x - \beta)}\,dx &= \frac{\ln \Left| \frac{x - \beta}{x - \alpha} \Right|}
+	{\beta - \alpha} = \frac{\ln \Left| \frac{2ax - 2a\beta}{2ax - 2a\alpha} \Right|} {\beta - \alpha}\\
+      \int \frac{1}{ax^2 + bx + c}\,dx &= \frac{\ln \Left| \frac{2ax + b - \sqrt{b^2 - 4ac}}{2ax + b + \sqrt{b^2 - 4ac}}
+	\Right|} {\sqrt{b^2 - 4ac}}.
+    \end{align*}
+  \end{solution}
+\end{frame}
+
+\begin{frame}{$\displaystyle \int \frac{px + q}{ax^2 + bx + c}\,dx$}
+  \begin{solution}
+    \begin{align*}
+	 & \int \frac{px + q}{ax^2 + bx + c}\,dx\\
+      =\:& \frac{p}{2a} \int \frac{2ax + b}{ax^2 + bx + c}\,dx + \int \frac{q - \frac{bp}{2a}}{ax^2 + bx + c}\,dx\\
+      =\:& \frac{p \ln \Left| ax^2 + bx + c \Right|}{2a} + \int \frac{2aq - bp}{2a \left( ax^2 + bx + c \right)}\,dx.
+    \end{align*}
+  \end{solution}
+\end{frame}
+
+\begin{frame}{$\displaystyle \int \frac{x}{x^2 - 2x + 2}\,dx$}
+  \begin{solution}
+    \begin{align*}
+	 & \int \frac{x}{x^2 - 2x + 2}\,dx\\
+      =\:& \int \frac{2x - 2}{2 \left( x^2 - 2x + 2 \right)}\,dx + \int \frac{1}{x^2 - 2x + 2}\,dx\\
+      =\:& \frac{\ln \Left| x^2 - 2x + 2 \Right|}{2} + \arctan \Left( \frac{2x - 2}{2} \Right)\\
+      =\:& \frac{\ln \Left| x^2 - 2x + 2 \Right|}{2} + \arctan(x-1).
+    \end{align*}
+  \end{solution}
+\end{frame}
+
+\subsection[Hermite red.]{Hermite reduction}
+\begin{frame}{多項式的\href{http://zh.wikipedia.org/wiki/\%E8\%B2\%9D\%E7\%A5\%96\%E7\%AD\%89\%E5\%BC\%8F}{貝祖等式}}
+  \begin{theorem}
+    若 $G$ 是多項式 $A$ 與 $B$ 的最大公因式，則存在多項式 $X$, $Y$ 使得
+    \[AX + BY = G\]
+    其中
+    \begin{align*}
+      \deg(X) &< \deg(B) - \deg(G)\\
+      \deg(Y) &< \deg(A) - \deg(G).
+    \end{align*}
+  \end{theorem}
+\end{frame}
+
+\begin{frame}{擴展的輾轉相除法}
+  \begin{algorithm}[H]
+    \caption{擴展的輾轉相除法}
+    \begin{algorithmic}[1]
+      \REQUIRE $A$, $B$ 是多項式
+      \ENSURE  $G$, $X$, $Y$ 符合貝祖等式 $AX + BY = G$
+      \STATE $(R_0, X_0, Y_0) := (A, 1, 0)$ \COMMENT{$1A + 0B$}
+      \STATE $(R_1, X_1, Y_1) := (B, 0, 1)$ \COMMENT{$0A + 1B$}
+      \STATE $k := 1$
+      \WHILE{$R_k \ne 0$}
+	\STATE $Q := \lfloor R_{k-1} / R_k \rfloor$
+	\STATE $R_{k+1} := \left\lceil R_k \right\rceil R_{k-1}$
+	\STATE $X_{k+1} := X_k - QX_{k-1}$
+	\STATE $Y_{k+1} := Y_k - QY_{k-1}$
+	\STATE $k := k+1$ \COMMENT{$AX_k + BY_k = R_k$}
+      \ENDWHILE
+      \STATE $(G,X,Y) := (R_{k-1}, X_{k-1}, Y_{k-1})$
+    \end{algorithmic}
+  \end{algorithm}
+\end{frame}
+
+\begin{frame}{Hermite reduction}
+  假設 $m \ge 2$ 否則 $D$ 已經 squarefree 了。首先設 $V = D_m$ 與 $U = D/V^m$。因為 $UV'$ 與 $V$
+  互質，我們能以擴展的輾轉相除法求兩多項式 $B$, $C$ 使得
+  \[\frac{A}{1-m} = BUV' + CV\]
+  其中 $\deg(B) < \deg(V)$。兩端同乘 $(1-m)/(UV^m)$ 得
+  \begin{align*}
+    \frac{A}{UV^m} &= \frac{\left( 1-m \right) BV'}{V^m} + \frac{\left( 1-m \right) C}{UV^{m-1}}\\
+      &= \frac{B'}{V^{m-1}} - \frac{\left( m-1 \right) BV'}{V^m} - \frac{B'U + \left( m-1 \right) C}{UV^{m-1}}\\
+    \int \frac{A}{UV^m} &= \frac{B}{V^{m-1}} - \int \frac{B'U + \left( m-1 \right) C}{UV^{m-1}}.
+  \end{align*}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{$\displaystyle \int \frac{x^8 + 7x^6 + 42x^4 + 48x^2 + 30}
+    {x^{10} + 8x^8 + 19x^6 + 9x^4 + 27}\,dx$，頁}
+  設 $A = x^8 + 7x^6 + 42x^4 + 48x^2 + 30$，又設 $U = x^4 - x^2 + 1$ 及 $V = x^2 + 3$。
+  \begin{align*}
+    UV'  &= \left( 2x^3 - 8x \right) V + 26x\\
+    -78  &= xUV' -  \left( 2x^4 - 8x^2 + 26 \right) V\\
+    \frac{A}{-2} &= - \left( \frac{x^6}{2} + 2x^4 + 15x^2 - 21 \right) V - 78\\
+	 &= xUV' - \left( \frac{x^6}{2} + 4x^4 + 7x^2 + 5 \right) V.
+  \end{align*}
+  即 $B = x$ 與 $C = - \left( \dfrac{x^6}{2} + 4x^4 + 7x^2 + 5 \right)$ 滿足
+  \[\frac{A}{-2} = BUV' + CV.\]
+  因此
+  \begin{align*}
+    \int \frac{A}{UV^3} &= \frac{B}{V^2} - \int \frac{B'U + 2C}{UV^2}\\
+      &= \frac{x}{V^2} + \int \frac{x^6 + 7x^4 + 15x^2 + 9}{UV^2}\\
+      &= \frac{x}{x^4 + 6x^2 + 9} + \int \frac{x^2 + 1}{x^4 - x^2 + 1}\,dx.
+  \end{align*}
+\end{frame}
+
+\subsection{部份分式法}
+\begin{frame}{部份分式分解，分母為 squarefree}
+  \begin{theorem}
+    若被積函數為最簡真分式 $A/D$，先因式分解
+    \[D = D_1 D_2 \cdots D_n\]
+    其中 $D_k$ 兩兩互質。則 $A/D$ 可以表達為
+    \[\frac{A_1}{D_1} + \frac{A_2}{D_2} + \cdots + \frac{A_n}{D_n}\]
+    其中 $\deg(A_k) < \deg(D_k)$ 均成立。
+  \end{theorem}
+\end{frame}
+
+\begin{frame}{部份分式分解是有效的}
+  \begin{proof}
+    設多項式 $A,P,Q$ 兩兩互質且 $\deg(A) < \deg(PQ)$。根據多項式的貝祖等式，存在多項式 $B,C$ 使得
+    \begin{align*}
+      A &= BQ + CP\\
+      \frac{A}{PQ} &= \frac{B}{P} + \frac{C}{Q}
+    \end{align*}
+    其中 $\deg(B) < \deg(P)$ 且 $\deg(C) < \deg(Q)$。不斷重複此步驟，即得 $A/(PQ)$ 的部份分式分解。
+  \end{proof}
+\end{frame}
+
+\begin{frame}{擴展的餘式算子}
+  \begin{definition}
+    設 $B$, $D$, $N$, $R$ 皆為多項式，其中 $B$ 與 $D$ 互質，我們定義
+    \[\left\lceil B \right\rceil \frac N D = R\]
+    等價於
+    \[\left\lceil B \right\rceil N = \left\lceil B \right\rceil DR\]
+    其中 $\deg(R) < \deg(B)$。
+  \end{definition}
+\end{frame}
+
+\begin{frame}{餘式算子的性質}
+  \begin{theorem}
+    設 $B$, $D$, $N$ 為多項式，$F$ 與 $G$ 為有理函數且 $B$ 與 $D$ 互質。
+    \begin{itemize}
+      \item $\lceil B \rceil \left( F + G \right) = \left\lceil B \right\rceil F + \left\lceil B \right\rceil G$
+      \item $\left\lceil B \right\rceil FG = \lceil B \rceil \left( \left\lceil B \right\rceil F \left\lceil B
+	\right\rceil G\right)$
+      \item $\left\lceil B \right\rceil \dfrac{N}{D} = \left\lceil B \right\rceil \dfrac{\left\lceil B \right\rceil
+	N}{\left\lceil B \right\rceil D}$
+    \end{itemize}
+  \end{theorem}
+\end{frame}
+
+\begin{frame}{餘式的最快算法}
+  \begin{algorithm}[H]
+    \caption{擴展的餘式算子}
+    \begin{algorithmic}[1]
+      \REQUIRE $B$, $D$ 是非零多項式，$N$ 是多項式
+      \ENSURE  回傳 $\left\lceil B \right\rceil N/D$
+      \STATE $N := \left\lceil B \right\rceil N$
+      \STATE $D := \left\lceil B \right\rceil D$
+      \WHILE{$\deg(D) > 0$}
+	\STATE $Q := \lfloor B/D \rfloor$
+	\STATE $D := -\left\lceil D \right\rceil B$ \COMMENT{$\left\lceil B \right\rceil DQ$}
+	\STATE $N := \left\lceil B \right\rceil NQ$
+      \ENDWHILE
+      \RETURN $N/D$ \COMMENT{$D$ 是常數}
+    \end{algorithmic}
+  \end{algorithm}
+\end{frame}
+
+\begin{frame}{部份分式分解算法}
+  \begin{theorem}
+    對於最簡真分式 $A/D$，其中
+    \[D = D_1 D_2 \cdots D_n\]
+    且 $D_k$ 兩兩互質。則 $A/D$ 可以表達為
+    \[\frac{A_1}{D_1} + \frac{A_2}{D_2} + \cdots + \frac{A_n}{D_n}\]
+    其中對於所有 $k$，若 $1 \le k \le n$ 則
+    \[A_k = \left\lceil D_k \right\rceil \frac{AD_k}{D}.\]
+  \end{theorem}
+\end{frame}
+
+\begin{frame}{部份分式分解算法是有效的}
+  \begin{proof}
+    對於所有 $k$ 使得 $1 \le k \le n$
+    \[\left\lceil D_k \right\rceil \frac{AD_k}{D} = \left\lceil D_k \right\rceil \frac{A_k D + D_k Q}{D}\]
+    其中
+    \[Q = \frac{A_1 D}{D_1} + \cdots + \frac{A_{k-1}D}{D_{k-1}} + \frac{A_{k+1}D}{D_{k+1}} + \cdots + \frac{A_n D}{D_n}\]
+    為多項式。所以
+    \[\left\lceil D_k \right\rceil \frac{AD_k}{D} = \left\lceil D_k \right\rceil \frac{A_k D}{D} = A_k.\qedhere\]
+  \end{proof}
+\end{frame}
+
+\begin{frame}{分解 $\dfrac{1}{x^5 + x + 1}$}
+  \begin{solution}
+    首先質因式分解 $x^5 + x + 1$ 得
+    \[x^5 + x + 1 = \left( x^2 + x + 1 \right) \left( x^3 - x^2 + 1 \right).\]
+    設 $D_1 = x^2 + x + 1$ 與 $D_2 = x^3 - x^2 + 1$。
+    \begin{align*}
+      \left\lceil D_1 \right\rceil \frac{1}{D_2} &= \left\lceil D_1 \right\rceil \frac{1}{x + 3} = \frac{x-2}{-7}\\
+      \left\lceil D_2 \right\rceil \frac{1}{D_1} &= \left\lceil D_2 \right\rceil \frac{x - 2}{-x - 3}
+	= \frac{5x^2 - 20x + 25}{35}.
+    \end{align*}
+    \[\frac{1}{x^5 + x + 1} = \frac{x^2 - 4x + 5}{7 \left( x^3 - x^2 + 1 \right)} 
+      - \frac{x - 2}{7 \left( x^2 + x + 1 \right)}.\]
+  \end{solution}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{$\displaystyle \int \frac{6x^2 - 15x + 22}{(x+3) \left( x^2 + 2 \right)^2}\,dx$，頁}
+  設 $A = 6x^2 - 15x + 22$，又設 $U = x+3$ 及 $V = x^2 + 2$。
+  \begin{align*}
+    UV' &= 2V + 6x - 4\\
+    18V &= (3x + 2) \left( 6x - 4 \right) + 44\\
+	&= (3x + 2) \left( UV' - 2V \right) + 44\\
+    44  &= \left( 3x + 2 \right) UV' + \left( 14x - 6 \right) V\\
+    -A  &= -6V + 15x - 10\\
+	&= -6V + \frac{5 \left( 6x - 4 \right)}{2}\\
+	&= \frac{5UV'}{2} - 11V.
+  \end{align*}
+  \[\int \frac{A}{UV^2} = \frac{5}{2V} + \int \frac{11}{UV}.\]
+  分解部份分式：
+  \begin{align*}
+    \left\lceil x + 3 \right\rceil   \frac{11}{x^2 + 2} &= \frac{11}{11}\\
+    \left\lceil x^2 + 2 \right\rceil \frac{11}{x   + 3} &= \frac{11 \left( x-3 \right)}{-11}.
+  \end{align*}
+  \[\frac{11}{(x+3) \left( x^2 + 2 \right)} = \frac{1}{x+3} + \frac{3-x}{x^2 + 2}.\]
+  \begin{align*}
+       & \int \frac{6x^2 - 15x + 22}{(x+3) \left( x^2 + 2 \right)^2}\,dx\\
+    =\:& \frac{5}{2x^2 + 4} + \ln \Left| x-3 \Right| - \frac{\ln \Left( x^2 + 2 \Right)}{2}
+	 +\frac{3 \arctan \Left( \frac{x}{\sqrt2} \Right)}{\sqrt2}.
+  \end{align*}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{$\displaystyle \int_1^2 \frac{x^2 + 16x}{(x-3) \left( x^2 + 4 \right)^2}\,dx$，頁}
+  設 $A = x^2 + 16x$，又設 $U = x-3$ 及 $V = x^2 + 4$。
+  \begin{align*}
+    UV' &= 2V - 6x - 8\\
+    18V &= (3x - 4) \left( 6x + 8 \right) + 104\\
+	&= (3x - 4) \left( 2V - UV' \right) + 104\\
+    104 &= \left( 3x - 4 \right) UV' - \left( 6x - 26 \right) V\\
+    -A  &= -V - 16x + 4\\
+	&= -V - \frac{8 \left( 6x + 8 \right)}{3} + \frac{76}{3}\\
+	&= \frac{\left( 19x + 44 \right) UV'}{26} - \frac{19xV}{13}.
+  \end{align*}
+  \[\int \frac{A}{UV^2} = \frac{19x + 44}{26V} + \int \frac{19x + 57}{26UV}.\]
+  分解部份分式：
+  \begin{align*}
+    \left\lceil x - 3 \right\rceil   \frac{19x + 57}{26 \left( x^2 + 4 \right)} &= \frac{57}{169}\\
+    \left\lceil x^2 + 4 \right\rceil \frac{19x + 57}{26 \left( x   - 3 \right)} &= \frac{114x + 95}{-338}.
+  \end{align*}
+  \[\frac{19x + 57}{26 \left( x-3 \right) \left( x^2 + 4 \right)} = \frac{57}{169 \left( x-3 \right)} 
+    - \frac{114x + 95}{338 \left( x^2 + 4 \right)}.\]
+  \begin{align*}
+       & \int \frac{x^2 + 16x}{(x-3) \left( x^2 + 4 \right)^2}\,dx\\
+    =\:& \frac{19x + 44}{26x^2 + 104} + \frac{57 \ln \Left| x-3 \Right|}{169} - \frac{57 \ln \Left( x^2 + 4 \Right)}{338} 
+	 -\frac{95 \arctan \Left( \frac x 2 \Right)}{676}\\[1em]
+       & \int_1^2 \frac{x^2 + 16x}{(x-3) \left( x^2 + 4 \right)^2}\,dx\\
+    =\:& \frac{41}{104} - \frac{57\ln(8)}{338} - \frac{95\pi}{2704}\\
+    \phantom=\:& +\frac{570\ln(5) - 1140\ln(2) + 475 \arctan \Left( \frac12 \Right) - 1638}{3380}\\
+    \approx\:& -0.44864537510260708881.
+  \end{align*}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{$\displaystyle \int_2^3 \frac{2x^3 + 5x^2 + 16x}
+    {(x-1) \left( x^2 + 4 \right)^2}\,dx$，頁}
+  設 $A = 2x^3 + 5x^2 + 16x$，又設 $U = x-1$ 及 $V = x^2 + 4$。
+  \begin{align*}
+    UV' &= 2V - 2x - 8\\
+    2V  &= (x - 4) \left( 2x + 8 \right) + 40\\
+	&= (x - 4) \left( 2V - UV' \right) + 40\\
+    40  &= \left( x - 4 \right) UV' - \left( 2x - 10 \right) V\\
+    -A  &= \left( -2x - 5 \right) V - 8x + 20\\
+	&= \left( -2x - 5 \right) V - 4 \left( 2x + 8 \right) + 52\\
+	&= 4UV' - \left( 2x + 13 \right) V + 52\\
+	&= \frac{\left( 13x - 12 \right) UV'}{10} - \frac{23xV}{5}.
+  \end{align*}
+  \[\int \frac{A}{UV^2} = \frac{13x - 12}{10V} + \int \frac{33x + 13}{10UV}.\]
+  分解部份分式：
+  \begin{align*}
+    \left\lceil x - 1 \right\rceil   \frac{33x + 13}{10 \left( x^2 + 4 \right)} &= \frac{46}{50}\\
+    \left\lceil x^2 + 4 \right\rceil \frac{33x + 13}{10 \left( x   - 1 \right)} &= \frac{46x - 119}{-50}.
+  \end{align*}
+  \[\frac{33x + 13}{10 \left( x   - 1 \right) \left( x^2 + 4 \right)} = \frac{23}{25 \left( x - 1 \right)}
+    -\frac{46x - 119}{50 \left( x^2 + 4 \right)}.\]
+  \begin{align*}
+       & \int \frac{2x^3 + 5x^2 + 16x}{(x-1) \left( x^2 + 4 \right)^2}\,dx\\
+    =\:& \frac{13x - 12}{10x^2 + 40} + \frac{23 \ln \Left| x - 1 \Right|}{25} - \frac{23 \ln \Left( x^2 + 4 \Right)}{25}
+	 -\frac{119 \arctan \Left( \frac x 2 \Right)}{100}\\[1em]
+       & \int_2^3 \frac{2x^3 + 5x^2 + 16x}{(x-1) \left( x^2 + 4 \right)^2}\,dx\\
+    =\:& \frac{184\ln(8) - 119\pi - 70}{400}\\
+    \phantom=\:& -\frac{598\ln(13) - 1196\ln(2) - 1547 \arctan \Left( \frac32 \Right) - 270}{1300}\\
+    \approx\:& 0.6819548347692329.
+  \end{align*}
+\end{frame}
+
+\subsection{分母為高次式}
+\begin{frame}{分母為 $ax^3 \pm b$}
+  假設 $a > 0$ 且 $b > 0$。
+  \begin{theorem}
+    $ax^3 - b$ 可在 $\R$ 上因式分解為
+    \[\left( a^{1/3}x - b^{1/3} \right) \left( a^{2/3}x^2 + a^{1/3} b^{1/3} x + b^{2/3} \right).\]
+    $ax^3 + b$ 可在 $\R$ 上因式分解為
+    \[\left( a^{1/3}x + b^{1/3} \right) \left( a^{2/3}x^2 - a^{1/3} b^{1/3} x + b^{2/3} \right).\]
+  \end{theorem}
+\end{frame}
+
+\begin{frame}{分母為 $ax^4 \pm b$}
+  假設 $a > 0$ 且 $b > 0$。
+  \begin{theorem}
+    $ax^4 - b$ 可在 $\R$ 上因式分解為
+    \[\left( \sqrt a x^2 - \sqrt b \right) \left( \sqrt a x^2 + \sqrt b \right).\]
+    $ax^4 + b$ 可在 $\R$ 上因式分解為
+    \[\left( \sqrt a x^2 - \sqrt2 a^{1/4} b^{1/4} x + \sqrt b \right)
+      \left( \sqrt a x^2 + \sqrt2 a^{1/4} b^{1/4} x + \sqrt b \right).\]
+  \end{theorem}
+\end{frame}
+
+\begin{frame}{分母為 $ax^5 \pm b$}
+  假設 $a > 0$ 且 $b > 0$。
+  \begin{theorem}
+    $ax^5 - b$ 可在 $\R$ 上因式分解為
+    \begin{align*}
+      \frac14 \left( a^{1/5}x - b^{1/5} \right) 
+      &\left( 2 a^{2/5} x^2 + \left( 1 - \sqrt5 \right) a^{1/5} b^{1/5} x + 2b^{2/5} \right)\\
+      &\left( 2 a^{2/5} x^2 + \left( 1 + \sqrt5 \right) a^{1/5} b^{1/5} x + 2b^{2/5} \right).
+    \end{align*}
+    $ax^5 + b$ 可在 $\R$ 上因式分解為
+    \begin{align*}
+      \frac14 \left( a^{1/5}x + b^{1/5} \right) 
+      &\left( 2 a^{2/5} x^2 - \left( 1 - \sqrt5 \right) a^{1/5} b^{1/5} x + 2b^{2/5} \right)\\
+      &\left( 2 a^{2/5} x^2 - \left( 1 + \sqrt5 \right) a^{1/5} b^{1/5} x + 2b^{2/5} \right).
+    \end{align*}
+  \end{theorem}
+\end{frame}
+
+\begin{frame}{分母為 $ax^6 \pm b$}
+  假設 $a > 0$ 且 $b > 0$。
+  \begin{theorem}
+    $ax^6 - b$ 可在 $\R$ 上因式分解為
+    \[\left( \sqrt a x^3 - \sqrt b \right) \left( \sqrt a x^3 + \sqrt b \right).\]
+    $ax^6 + b$ 可在 $\R$ 上因式分解為
+    \begin{align*}
+      \left( a^{1/3} x^2 + b^{1/3} \right)
+      &\left( a^{1/3} x^2 - \sqrt3 a^{1/6} b^{1/6} + b^{1/3} \right)\\
+      &\left( a^{1/3} x^2 + \sqrt3 a^{1/6} b^{1/6} + b^{1/3} \right).
+    \end{align*}
+  \end{theorem}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{$\displaystyle \int \frac{1}{x^4 + 1}\,dx$，頁}
+  \[x^4 + 1 = \left( x^2 - \sqrt2 x + 1 \right) \left( x^2 + \sqrt2 x + 1 \right).\]
+  設 $D_1 = x^2 - \sqrt2 x + 1$ 與 $D_2 = x^2 + \sqrt2 x + 1$。
+  \begin{align*}
+    \left\lceil D_1 \right\rceil \frac{1}{D_2} &= \left\lceil D_1 \right\rceil \frac{1}{2^{3/2} x}
+      = \frac{x - \sqrt2}{-2^{3/2}}\\
+    \left\lceil D_2 \right\rceil \frac{1}{D_1} &= \left\lceil D_2 \right\rceil \frac{1}{-2^{3/2} x}
+      = \frac{x + \sqrt2}{2^{3/2}}.
+  \end{align*}
+  \begin{align*}
+       & \int \frac{1}{x^4 + 1}\,dx\\
+    =\:& \int \frac{x + \sqrt2}{2^{3/2} \left( x^2 + \sqrt2 x + 1 \right)}\,dx
+	 - \int \frac{x - \sqrt2}{2^{3/2} \left( x^2 - \sqrt2 x + 1 \right)}\,dx\\
+    =\:& \frac{\ln \Left( x^2 + \sqrt2 x + 1 \Right)}{2^{5/2}} - \frac{\ln \Left( x^2 - \sqrt2 x + 1 \Right)}{2^{5/2}}
+	 + \frac{\arctan \Left( \sqrt2 x + 1 \Right)}{2^{3/2}}\\
+    \phantom=\:& +\frac{\arctan \Left( \sqrt2 x - 1 \Right)}{2^{3/2}}.
+  \end{align*}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \huge Tanks for your attention!
+  \end{center}
+\end{frame}
+\end{CJK}
+\end{document}

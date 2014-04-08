@@ -1,0 +1,1176 @@
+%!TEX encoding = UTF-8 Unicode
+\documentclass{beamer}
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{CJKutf8}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{pstricks-add}
+\useoutertheme{sidebar}
+
+\begin{document}
+\begin{CJK}{UTF8}{bsmi}
+\title{微分}
+\subtitle{極限、微分、番外篇}
+\author[何震邦]{何震邦 \href{mailto:jdh8@ms63.hinet.net}{\textless jdh8@ms63.hinet.net\textgreater}\\
+    \href{http://creativecommons.org/licenses/by-sa/3.0/tw/deed.zh\textunderscore TW}{\includegraphics{by-sa.eps}}}
+\date{2012 年 10 月 24 日}
+\maketitle
+
+\section{極限}
+\begin{frame}{前情提要}
+  \begin{itemize}
+    \item 上回有些關於極限的東西被略過了，這次要來把它補完
+      \begin{itemize}
+      \item 上確界、下確界
+      \item 上極限、下極限
+      \item 夾擠定理
+      \item 一些常用的極限值
+      \end{itemize}
+    \item 我們現在討論的範圍是實數，因為複數不能比大小
+  \end{itemize}
+\end{frame}
+
+\subsection{極限的存在}
+\begin{frame}{上確界與下確界}
+  \begin{definition}
+    對於一個實數的集合 $S$，它的上確界 $\sup(S)$ 是大於等於 $S$ 中所有成員的最小實數
+  \end{definition}
+  \begin{itemize}
+    \item $\sup\{1,2,3\} = 3$
+    \item $\sup\{0 < x < 1\} = \sup\{0 \le x \le 1\} = 1$
+    \item $\sup\{x\in\mathbb{Q}: x^2 < 2\} = 1$
+      \begin{itemize}
+      \item 這是個有理數的集合，但它的上確界是無理數！
+      \item 所以有理數是\textbf{不完備}的，也就是 $\mathbb{Q}$ 這個集合\textbf{有洞}
+      \end{itemize}
+    \item $\sup\mathbb{N} = \infty$
+    \item $\sup\varnothing = -\infty$
+  \end{itemize}
+  \begin{definition}
+    對於一個實數的集合 $S$，它的下確界 $\inf(S)$ 是小於等於 $S$ 中所有成員的最大實數
+    \[\inf(S) = -\sup(-S)\]
+  \end{definition}
+\end{frame}
+
+\begin{frame}{上極限與下極限}
+  \begin{definition}
+    函數的上極限與下極限定義為
+    \begin{align*}
+    \limsup_{x \to c} f(x) &:= \lim_{\delta\to0}(\sup\{f(x): 0 < |x-c| < \delta\})\\
+    \liminf_{x \to c} f(x) &:= \lim_{\delta\to0}(\inf\{f(x): 0 < |x-c| < \delta\})
+    \end{align*}
+    當 $\delta$ 縮小時，右式的範圍也單調地縮小。所以以上兩式也可以寫作
+    \begin{align*}
+    \limsup_{x \to c} f(x) &:= \inf_{\delta>0}(\sup\{f(x): 0 < |x-c| < \delta\})\\
+    \liminf_{x \to c} f(x) &:= \sup_{\delta>0}(\inf\{f(x): 0 < |x-c| < \delta\})
+    \end{align*}
+  \end{definition}
+\end{frame}
+
+\begin{frame}{極限的存在}
+  \begin{theorem}
+    $\displaystyle \lim_{x \to c} f(x) = L$ 等價於以下敘述
+    \begin{itemize}
+      \item $\displaystyle \lim_{x \to c^+} f(x) = L$ 且 $\displaystyle \lim_{x \to c^-} f(x) = L$
+      \item $\displaystyle \limsup_{x \to c} f(x) = L$ 且 $\displaystyle \liminf_{x \to c} f(x) = L$
+    \end{itemize}
+  \end{theorem}
+  \begin{itemize}
+    \item 除了用傳統的 $\epsilon$-$\delta$ 證明，我們也可以利用極限的方向來驗證極限是否存在
+    \item 反正就是 D\&C\\\centerline{Divide and conquer!}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{上下極限必存在}
+  \begin{itemize}
+    \item 左右極限可能不存在，但上下極限必存在
+    \[\limsup_{x\to0} \sin \left( \frac{1}{x} \right) = 1,\quad \liminf_{x\to0} \sin \left( \frac{1}{x} \right) = -1\]
+    \item $\displaystyle \lim_{x\to0^-} \sin \left( \frac{1}{x} \right)$ 與
+      $\displaystyle \lim_{x\to0^+} \sin \left( \frac{1}{x} \right)$ 均不存在
+  \end{itemize}
+  \begin{center}
+    \psset{xunit=5}
+    \begin{pspicture}(-1,-2)(1,2)
+      \psaxes(0,0)(-1,-2)(1,2)
+      \parametricplot[plotstyle=dots,dotscale=0.25,plotpoints=1000]{1}{200}{1 t div  t SIN}
+      \parametricplot[plotstyle=dots,dotscale=0.25,plotpoints=1000]{-1}{-200}{1 t div  t SIN}
+    \end{pspicture}
+  \end{center}
+\end{frame}
+
+\subsection{夾擠定理}
+\begin{frame}{夾擠定理}
+  \begin{theorem}
+    \begin{itemize}
+    \item 設一包含 $c$ 點的區間 $I$，又 $f,g,h$ 為定義在 $I\backslash\{c\}$ 上的函數
+    \item 對於所有 $x \in I\backslash\{c\}$，均有 $g(x) \le f(x) \le h(x)$
+    \item $\displaystyle \lim_{x \to c} g(x) = L$ 且 $\displaystyle \lim_{x \to c} h(x) = L$
+    \end{itemize}
+    \[\lim_{x \to c} f(x) = L\]
+  \end{theorem}
+  \begin{proof}
+    \centerline{$\displaystyle L = \lim_{x \to c} g(x) \le \liminf_{x \to c} f(x) \le \limsup_{x \to c} f(x)
+	\le \lim_{x \to c} h(x) = L$}
+  \end{proof}
+\end{frame}
+
+\begin{frame}{假夾擠，真詐財}
+  \begin{columns}
+    \begin{column}{0.6\textwidth}
+      \begin{pspicture}(-3,-3)(3,3)
+	\psaxes[labels=none](0,0)(-3,-3)(3,3)
+	\psline(-3,-2)(2,3)
+	\psline(-1,-3)(3,1)
+
+	\psline[linecolor=blue]{-o}(-3,-3)(-2,-3)
+	\psline[linecolor=blue]{-o}(-2,-2)(-1,-2)
+	\psline[linecolor=blue]{-o}(-1,-1)( 0,-1)
+	\psline[linecolor=blue]{-o}( 0, 0)( 1, 0)
+	\psline[linecolor=blue]{-o}( 1, 1)( 2, 1)
+	\psline[linecolor=blue]{-o}( 2, 2)( 3, 2)
+      \end{pspicture}
+    \end{column}
+    \begin{column}{0.4\textwidth}
+      \begin{align*}
+	f(x) &:= \lfloor x \rfloor\\
+	g(x) &:= x + 1\\
+	h(x) &:= x - 2\\
+      \end{align*}
+      \[g(x) \le f(x) \le h(x)\]
+      \centerline{$\displaystyle \lim_{x\to0} f(x)$ 不存在！}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\subsection{三角函數的連續性}
+\def\figThetaOAP{
+  \psset{unit=0.8\textwidth}
+  \begin{pspicture}(1,0.5)
+    \pspolygon(0,0)(1,0)(0.8660254038,0.5)
+    \psline[linecolor=red](0.8660254038,0)(0.8660254038,0.5)
+    \psarc[linecolor=green](0,0){1}{0}{30}
+    \psarc(0,0){0.25}{0}{30}
+
+    \uput[270](0           ,0)  {$O$}
+    \uput[270](1           ,0)  {$A$}
+    \uput[270](0.8660254038,0)  {$B$}
+    \uput[ 90](0.8660254038,0.5){$P$}
+    \uput[ 15](0.2414814556,0.06470476128){$\theta$}
+  \end{pspicture}
+}
+
+\begin{frame}{$\displaystyle \lim_{\theta\to0} \sin\theta = 0$}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \begin{center}
+	\figThetaOAP
+      \end{center}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \begin{proof}
+	當 $0 < \theta < \dfrac{\pi}{2}$
+	\[0 < \triangle OAP < \textup{扇形}\, OAP\]
+	\[0 < \sin\theta    < \theta\]
+	\[\lim_{\theta\to0^+} 0 = \lim_{\theta\to0^+} \theta = 0\]
+	\[\lim_{\theta\to0^+} \sin\theta = 0\]
+	\[\lim_{\theta\to0^-} \sin\theta = -\lim_{\theta\to0^+} \sin\theta = 0\]
+      \end{proof}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{三角函數是連續函數}
+  \begin{proof}
+    \begin{itemize}
+      \item 若 $-\dfrac{\pi}{2} < \theta < \dfrac{\pi}{2}$，則 $\cos\theta = \sqrt{1 - \sin^2 \theta}$
+	\[\lim_{\theta\to0} \cos\theta = 1\]
+      \item sin 是連續函數
+	\begin{align*}
+	  \lim_{x \to c} \sin x &= \lim_{h \to 0} \sin(c + h)\\
+	    &= \lim_{h \to 0} (\sin c \cos h + \cos c \sin h)\\
+	    &= 1 \sin c + 0 \cos c\\
+	    &= \sin c
+	\end{align*}
+      \item 其他三角函數均可以自變數與 sin 的有理式表達
+    \end{itemize}
+  \end{proof}
+\end{frame}
+
+\subsection{常用的極限值}
+\begin{frame}{$\displaystyle \lim_{\theta\to0} \frac{\sin\theta}{\theta} = 1$}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \begin{center}
+	\psset{unit=0.8\textwidth}
+	\begin{pspicture}(1,0.5)
+	  \pspolygon(0,0)(1,0)(0.8660254038,0.5)
+	  \psline(0.8660254038,0.5)(1,0.5773502692)
+	  \psline[linecolor=red ](0.8660254038,0)(0.8660254038,0.5)
+	  \psline[linecolor=blue](1           ,0)(1,  0.5773502692)
+	  \psarc[linecolor=green](0,0){1}{0}{30}
+	  \psarc(0,0){0.25}{0}{30}
+
+	  \uput[270](0           ,0)  {$O$}
+	  \uput[270](1           ,0)  {$A$}
+	  \uput[270](0.8660254038,0)  {$B$}
+	  \uput[ 90](0.8660254038,0.5){$P$}
+	  \uput[ 90](1,  0.5773502692){$Q$}
+	  \uput[ 15](0.2414814556,0.06470476128){$\theta$}
+	\end{pspicture}
+      \end{center}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \begin{proof}
+	當 $0 < \theta < \dfrac{\pi}{2}$
+	\[\triangle OAQ > \textup{扇形}\,OAP > \triangle OAP\]
+	\[\tan\theta > \theta > \sin\theta\]
+	\[\cos\theta < \frac{\sin\theta}{\theta} < 1\]
+	\[\lim_{\theta\to0^+} \cos\theta = \lim_{\theta\to0^+} 1 = 1\]
+	\[\lim_{\theta\to0^-} \frac{\sin\theta}{\theta} = \lim_{\theta\to0^+} \frac{\sin\theta}{\theta} = 1\]
+      \end{proof}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{$\displaystyle \lim_{\theta\to0} \frac{1 - \cos\theta}{\theta} = 0$，天啟解法}
+  \begin{proof}
+    \begin{align*}
+      \lim_{\theta\to0} \frac{1 - \cos\theta}{\theta}
+      &= \lim_{\theta\to0} \left( \frac{1 - \cos\theta}{\theta} \right) \left( \frac{1 + \cos\theta}{1 + \cos\theta} \right)\\
+      &= \lim_{\theta\to0} \frac{\sin^2\theta}{\theta(1 + \cos\theta)}\\
+      &= \lim_{\theta\to0} \frac{\sin\theta}{\theta} \lim_{\theta\to0} \frac{\sin\theta}{1 + \cos\theta}\\
+      &= 0
+    \end{align*}
+  \end{proof}
+\end{frame}
+
+\begin{frame}{$\displaystyle \lim_{\theta\to0} \frac{1 - \cos\theta}{\theta} = 0$，幾何解法}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \begin{center}
+	\figThetaOAP
+      \end{center}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \begin{proof}
+	\begin{align*}
+	   & \lim_{\theta\to0^+} \frac{1 - \cos\theta}{\theta}\\
+	  =& \lim_{\theta\to0^+} \frac{\overline{AB}}{\textup{弧}\,AP}\\
+	  =& \lim_{\theta\to0^+} \frac{\overline{BP} \tan\angle APB}{\textup{弧}\,AP}\\
+	  =& \lim_{\theta\to0^+} \frac{\sin\theta}{\theta} \lim_{\theta\to0^+} \tan\frac{\theta}{2}\\
+	  =&\, 0
+	\end{align*}
+	\[\lim_{\theta\to0^-} \frac{1 - \cos\theta}{\theta} = -0 = 0\]
+      \end{proof}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{$\displaystyle \lim_{x\to0} x \left\lfloor \frac{1}{x} \right\rfloor = 1$}
+  \begin{proof}
+    \[\frac{1}{x} - 1 < \left\lfloor \frac{1}{x} \right\rfloor \le \frac{1}{x}\]
+    \begin{itemize}
+      \item 當 $x > 0$，$\displaystyle 1-x < x \left\lfloor \frac{1}{x} \right\rfloor \le 1$
+      \item 當 $x < 0$，$\displaystyle 1-x > x \left\lfloor \frac{1}{x} \right\rfloor \ge 1$
+    \end{itemize}
+    \[\lim_{x\to0} (1-x) = \lim_{x\to0} 1 = 1\]
+    \[\lim_{x\to0} x \left\lfloor \frac{1}{x} \right\rfloor = 1\]
+  \end{proof}
+\end{frame}
+
+\begin{frame}{$\displaystyle y = x \left\lfloor \frac{1}{x} \right\rfloor$ 的圖形}
+  \begin{center}
+    \begin{pspicture}(-5,0)(5,5)
+      \psaxes(0,0)(-5,0)(5,5)
+      \psline[linecolor=red ,linestyle=dashed](-4,5)(1,0)
+      \psline[linecolor=blue,linestyle=dashed](-5,1)(5,1)
+
+      \psline(1           ,0           )(5           ,0)
+      \psline(0.5         ,0.5         )(1           ,1)
+      \psline(0.3333333333,0.6666666667)(0.5         ,1)
+      \psline(0.25        ,0.75        )(0.3333333333,1)
+      \psline(0.2         ,0.8         )(0.25        ,1)
+      \psline(0.1666666667,0.8333333333)(0.2         ,1)
+      \psline(0.1428571429,0.8571428571)(0.1666666667,1)
+      \psline(0.125       ,0.875       )(0.1428571429,1)
+      \psline(0.1111111111,0.8888888889)(0.125       ,1)
+      \psline(0.1         ,0.9         )(0.1111111111,1)
+      \psline(0.0909090909,0.9090909091)(0.1         ,1)
+      \psline(0.0833333333,0.9166666667)(0.0909090909,1)
+      \psline(0.0769230769,0.9230769231)(0.0833333333,1)
+      \psline(0.0714285714,0.9285714286)(0.0769230769,1)
+      \psline(0.0666666667,0.9333333333)(0.0714285714,1)
+      \psline(0.0588235294,0.9411764706)(0.0625      ,1)
+      \psline(0.05        ,0.95        )(0.0526315789,1)
+      \psline(0.0416666667,0.9583333333)(0.0434782609,1)
+      \psline(0.0333333333,0.9666666667)(0.0344827586,1)
+      \psline(0.0243902439,0.9756097561)(0.025       ,1)
+      \psline(0.0149253731,0.9850746269)(0.0151515152,1)
+      \psline(0.0076335878,0.9923664122)(0.0075757576,1)
+
+      \psline(-5           ,5           )(-1           ,1)
+      \psline(-1           ,2           )(-0.5         ,1)
+      \psline(-0.5         ,1.5         )(-0.3333333333,1)
+      \psline(-0.3333333333,1.3333333333)(-0.25        ,1)
+      \psline(-0.25        ,1.25        )(-0.2         ,1)
+      \psline(-0.2         ,1.2         )(-0.1666666667,1)
+      \psline(-0.1666666667,1.1666666667)(-0.1428571429,1)
+      \psline(-0.1428571429,1.1428571429)(-0.125       ,1)
+      \psline(-0.125       ,1.125       )(-0.1111111111,1)
+      \psline(-0.1111111111,1.1111111111)(-0.1         ,1)
+      \psline(-0.1         ,1.1         )(-0.0909090909,1)
+      \psline(-0.0909090909,1.0909090909)(-0.0833333333,1)
+      \psline(-0.0833333333,1.0833333333)(-0.0769230769,1)
+      \psline(-0.0769230769,1.0769230769)(-0.0714285714,1)
+      \psline(-0.0714285714,1.0714285714)(-0.0666666667,1)
+      \psline(-0.0625      ,1.0625      )(-0.0588235294,1)
+      \psline(-0.0526315789,1.0526315789)(-0.05        ,1)
+      \psline(-0.0434782609,1.0434782609)(-0.0416666667,1)
+      \psline(-0.0344827586,1.0344827586)(-0.0333333333,1)
+      \psline(-0.025       ,1.025       )(-0.0243902439,1)
+      \psline(-0.0151515152,1.0151515152)(-0.0149253731,1)
+      \psline(-0.0075757576,1.0075757576)(-0.0076335878,1)
+    \end{pspicture}
+  \end{center}
+\end{frame}
+
+\section{微分}
+\begin{frame}{微分的用途}
+  \begin{itemize}
+    \item 最佳化
+      \begin{itemize}
+	\item 手繪函數圖形
+      \end{itemize}
+    \item 微分方程
+      \begin{itemize}
+	\item 微分就是變化，所以常用來描述物理/化學變化
+      \end{itemize}
+    \item 級數逼近
+      \begin{itemize}
+	\item 用多項式或有理函數來逼近無理函數
+	\item 數值上，我們只會算四則運算！
+      \end{itemize}
+    \item 處理隱函數
+      \begin{itemize}
+	\item 圓錐曲線
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\subsection{微分的定義}
+\begin{frame}{割線與切線}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \begin{center}
+	\begin{pspicture}(4,4)
+	  \psaxes(0,0)(4,4)
+	  \psplot[plotstyle=curve]{0}{3.645751311}{x 1 sub dup mul 0.5 mul 0.5 add}
+	  \psline[linecolor=blue](1.333333333,0)(4,4)
+	  \psline[linestyle=dotted](2,1)(3,1)(3,2.5)
+	  \psline[linecolor=red](1,0)(4,3)
+	  \psdots(2,1)(3,2.5)
+	  \uput[0](3,1.75){$\Delta y$}
+	  \uput[90](2.5,1){$\Delta x$}
+	  \uput[270](2,1)  {$(x,            f(x))$}
+	  \uput[ 90](3,2.5){$(x + \Delta x, f(x + \Delta x))$}
+	\end{pspicture}
+      \end{center}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \begin{lemma}
+	\begin{itemize}
+	  \item 切線是割線的極限
+	  \item 割線的斜率為
+	  \[\frac{\Delta y}{\Delta x} = \frac{f(x + \Delta x) - f(x)}{\Delta x}\]
+	  \item 切線的斜率為
+	  \[\lim_{\Delta x \to 0} \frac{f(x + \Delta x) - f(x)}{\Delta x}\]
+	\end{itemize}
+      \end{lemma}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{導數（derivative）}
+  \begin{theorem}
+    對於函數 $y = f(x)$，它的在 $x=c$ 處的導數定義為
+    \[f'(c) := \lim_{h \to 0} \frac{f(c + h) - f(c)}{h}\]
+  \end{theorem}
+  \begin{itemize}
+    \item 導數也是函數在該點的切線斜率
+    \item 導數是微分（differential）的商，故又稱微商
+    \item 求導的過程叫微分（differentiation）
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{導函數}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \begin{center}
+	\begin{pspicture}(-2,-3)(2,3)
+	  \psaxes(0,0)(-2,-3)(2,3)
+	  \psplot[plotstyle=curve]{-2}{2}{x x mul SIN x mul}
+	  \psplot[plotstyle=dots,dotscale=0.25,plotpoints=100]{-1.557222634070489}{1.557222634070489}{
+	      x x mul dup SIN exch dup COS mul 2 mul add} % \sin(x^2) + 2 x^2 \cos(x^2)
+	\end{pspicture}
+      \end{center}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      對於定義域中找得到 $f'(c)$ 的 $c$，可以把這些導數們又當成一個函數來看，就是導函數
+      \begin{definition}
+	對於函數 $y = f(x)$，它的導函數 $y' = f'(x)$如下
+	\[\lim_{h \to 0} \frac{f(x + h) - f(x)}{h}\]
+      \end{definition}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{導函數的記法}
+  \begin{itemize}
+    \item 拉格朗日（Lagarange）記法
+    \[y' = f'(x)\]
+    \item 萊布尼茲（Leibniz）記法
+    \[\frac{dy}{dx} = \frac{d}{dx} f(x)\]
+    \item 牛頓記法
+    \[\mathbf F = \dot{\mathbf P} = m \dot{\mathbf v} = m \ddot{\mathbf x} = m \mathbf a\]
+    \item 算子記法，由黑維塞（Heaviside）發明
+    \[Dy = D_x y = Df(x)\]
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{從定義計算導函數}
+  \begin{example}
+    \begin{align*}
+      \frac{d}{dx} \sin x &= \lim_{h\to0} \frac{\sin(x+h) - \sin x}{h}\\
+	&= \lim_{h\to0} \frac{\sin x \cos h + \cos x \sin h - \sin x}{h}\\
+	&= (-\sin x) \left( \lim_{h\to0} \frac{1 - \cos h}{h} \right) + (\cos x) \left( \lim_{h\to0} \frac{\sin h}{h} \right)\\
+	&= \cos x
+    \end{align*}
+  \end{example}
+\end{frame}
+
+\begin{frame}{可微必連續}
+  \begin{theorem}
+    若函數 $f$ 在 $c$ 上可微，則它必在此連續
+  \end{theorem}
+  \begin{proof}
+    \begin{align*}
+      f'(c) &= \lim_{x \to c} \frac{f(x) - f(c)}{x-c}\\
+      \lim_{x \to c} f(x) &= \lim_{x \to c} \left( \left( \frac{f(x) - f(c)}{x-c} \right) (x-c) + f(c) \right)\\
+	&= \lim_{x \to c} \frac{f(x) - f(c)}{x-c} \lim_{x \to c} (x-c) + \lim_{x \to c} f(c)\\
+	&= f(c)
+    \end{align*}
+  \end{proof}
+\end{frame}
+
+\begin{frame}{高階導函數}
+  \begin{definition}
+    把導函數拿來微分，結果就是二階導函數
+    \[f''(x) = \frac{d}{dx} \frac{d}{dx} f(x) = \frac{d^2}{dx^2} f(x)\]
+    $n+1$ 階導函數，是 $n$ 階導函數的導函數
+    \[f^{(n+1)}(x) = \frac{d}{dx} f^{(n)}(x)\]
+  \end{definition}
+\end{frame}
+
+\begin{frame}{高階導函數的記法}
+  \begin{center}
+    \renewcommand\arraystretch{2.5}
+    \begin{tabular}{rccc}
+      一階導數  &$y'=f'(x)$          & $Dy=Df(x)$    & $\displaystyle\frac{dy}{dx}=\frac{d}{dx}f(x)$\\
+      二階導數  &$y''=f''(x)$        & $D^2y=D^2f(x)$& $\displaystyle\frac{d^2y}{dx^2}=\frac{d^2}{dx^2}f(x)$\\
+      三階導數  &$y'''=f'''(x)$      & $D^3y=D^3f(x)$& $\displaystyle\frac{d^3y}{dx^3}=\frac{d^3}{dx^3}f(x)$\\
+      四階導數  &$y^{(4)}=f^{(4)}(x)$& $D^4y=D^4f(x)$& $\displaystyle\frac{d^4y}{dx^4}=\frac{d^4}{dx^4}f(x)$\\
+      $n$ 階導數&$y^{(n)}=f^{(n)}(x)$& $D^ny=D^nf(x)$& $\displaystyle\frac{d^ny}{dx^n}=\frac{d^n}{dx^n}f(x)$
+    \end{tabular}
+  \end{center}
+\end{frame}
+
+\subsection{微分法則}
+\begin{frame}{微分法則}
+  \begin{theorem}
+    \begin{itemize}
+      \item 線性法則
+      \begin{align*}
+	(u+v)' &= u'+v'\\
+	(cy)'  &= cy'
+      \end{align*}
+      \item 乘法法則
+      \[(uv)' = u'v + uv'\]
+      \item 連鎖法則
+      \[\frac{dy}{dt} = \frac{dy}{dx}\frac{dx}{dt}\]
+    \end{itemize}
+  \end{theorem}
+\end{frame}
+
+\begin{frame}{線性法則}
+  \begin{proof}
+    \begin{align*}
+      (f(x) + g(x))' &= \lim_{h\to0}\frac{(f(x+h) + g(x+h)) - (f(x) + g(x))}{h}\\
+		     &= \lim_{h\to0}\frac{f(x+h) - f(x)}{h} + \lim_{h\to0}\frac{g(x+h) - g(x)}{h}\\
+		     &= f'(x) + g'(x)\\
+      (cf(x))' &= \lim_{h\to0}\frac{cf(x+h) - cf(x)}{h}\\
+	       &= c \lim_{h\to0}\frac{f(x+h) - f(x)}{h}\\
+	       &= cf'(x)
+    \end{align*}
+  \end{proof}
+\end{frame}
+
+\begin{frame}{乘法法則}
+  \begin{proof}
+    \begin{align*}
+       & (f(x)\,g(x))'\\
+      =& \lim_{h\to0}\frac{f(x+h)\,g(x+h) - f(x)\,g(x)}{h}\\
+      =& \lim_{h\to0}\tfrac{f(x+h)\,g(x+h) - f(x)\,g(x+h)}{h}
+	 + \lim_{h\to0}\tfrac{f(x)\,g(x+h) - f(x)\,g(x)}{h}\\
+      =& \lim_{h\to0}\tfrac{f(x+h) - f(x)}{h} \lim_{h\to0} g(x+h) + \lim_{h\to0} f(x) \lim_{h\to0}\tfrac{g(x+h) - g(x)}{h}\\
+      =& f'(x)\,g(x) + f(x)\,g'(x)
+    \end{align*}
+  \end{proof}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{連鎖法則}
+  \begin{align*}
+    (f \circ g)'(c) &= \lim_{x \to c} \frac{f(g(x)) - f(g(c))}{x-c}\\
+      &= \lim_{x \to c} \left( \frac{f(g(x)) - f(g(c))}{g(x) - g(c)} \right) \left( \frac{g(x) - g(c)}{x-c} \right)
+  \end{align*}
+  設一分段定義函數 $\displaystyle Q(y) :=
+    \begin{cases}
+      \frac{f(y) - f(g(c))}{y - g(c)}, & y \ne g(c)\\
+      f'(g(c)),                        & y = g(c)
+    \end{cases}$
+  \[\lim_{y \to g(c)} Q(y) = \lim_{y \to g(c)} \frac{f(y) - f(g(c))}{y - g(c)} = f'(g(c))\]
+  \begin{align*}
+    (f \circ g)'(c) &= \lim_{x \to c} Q(g(x)) \left( \frac{g(x) - g(c)}{x-c} \right)\\
+      &= \lim_{x \to c} Q(g(x)) \lim_{x \to c} \frac{g(x) - g(c)}{x-c}\\
+      &= f'(g(x))\,g'(x)
+  \end{align*}
+\end{frame}
+
+\subsection{微分技巧}
+\begin{frame}{連續使用乘法法則和連鎖法則}
+  \begin{theorem}
+    \begin{align*}
+      g(x) :=& \prod_{i=1}^n f_i(x) = f_1(x)\,f_2(x) \cdots f_n(x)\\
+      g'(x) =& \sum_i \left( f'_i(x) \prod_{j\ne i} f_j(x) \right)\\
+	    =&\, f_1'(x)\,f_2(x) \cdots f_n(x) + f_1(x)\,f_2'(x) \cdots f_n(x) + \cdots\\
+	     &\quad + f_1(x)\,f_2(x) \cdots f_n'(x)\\
+      y :=&\, f_1(f_2(\cdots f_n(x) \cdots))\\
+      \frac{dy}{dx} =& \prod_{i=1}^{n-1} f_i'(f_{i+1}(f_{i+2}(\cdots f_n(x) \cdots)))
+	= \frac{df_1}{df_2} \frac{df_2}{df_3} \cdots \frac{df_{n-1}}{df_n}
+    \end{align*}
+  \end{theorem}
+\end{frame}
+
+\begin{frame}{$\displaystyle \frac{d}{dx} \ln x = \frac{1}{x}$}
+  \begin{proof}
+    \begin{align*}
+      \frac{d}{dx} \ln x &= \lim_{h\to0} \frac{\ln(x+h) - \ln x}{h}
+			  = \lim_{h\to0} \frac{\ln \left( 1 + \frac{h}{x} \right)}{h}\\
+	&= \lim_{h\to0} \ln \left( \left( 1 + \frac{h}{x} \right)^\frac{1}{h} \right)
+	 = \lim_{h\to0} \frac{\ln \left( \left( 1 + \frac{h}{x} \right)^\frac{x}{h} \right)}{x}\\
+	&= \frac{\ln \lim_{h\to0} \left( 1 + \frac{h}{x} \right)^\frac{x}{h}}{x} = \frac{\ln \textup e}{x}\\
+	&= \frac{1}{x}
+    \end{align*}
+  \end{proof}
+\end{frame}
+
+\begin{frame}{$\displaystyle \frac{d}{dx} \ln |x| = \frac{1}{x},\; x \in \mathbb R \backslash \{0\}$}
+  \begin{proof}
+    \begin{itemize}
+      \item 當 $x > 0$，$\displaystyle \frac{d}{dx} \ln |x| = \frac{d}{dx} \ln x = \frac{1}{x}$
+      \item 當 $x < 0$
+	\begin{align*}
+	  \frac{d}{dx} \ln |x| &= \frac{d}{dx} \ln(-x)\\
+	    &= \left( \frac{d}{du} \ln u \right) \frac{du}{dx} &u = -x\\
+	    &= \left( \frac{1}{u} \right) (-1)\\
+	    &= \frac{1}{x}
+	\end{align*}
+    \end{itemize}
+  \end{proof}
+\end{frame}
+
+\begin{frame}{對數微分法（logarithmic differentiation）}
+  當實函數 $y := f(x)$ 難於微分時，先取其絕對值的對數 $\ln |f(x)|$
+  \[\frac{d}{dx} \ln |f(x)| = \left( \frac{d}{dy} \ln |y| \right) \frac{dy}{dx} = \left( \frac1y \right) f'(x)
+    = \frac{f'(x)}{f(x)}\]
+  \[f'(x) = f(x)\, \frac{d}{dx} \ln |f(x)|\]
+\end{frame}
+
+\begin{frame}{廣義冪法則}
+  \begin{align*}
+    \ln \left| f(x)^{g(x)} \right|  &= g(x) \ln |f(x)|\\
+    \left( g(x) \ln |f(x)| \right)' &= g'(x) \ln |f(x)| + \frac{f'(x)\,g(x)}{f(x)}\\
+    \left( f(x)^{g(x)} \right)'     &= f(x)^{g(x)} \left( \frac{f'(x)\,g(x)}{f(x)} + g'(x) \ln |f(x)| \right)
+  \end{align*}
+\end{frame}
+
+\begin{frame}{除法法則}
+  \begin{align*}
+    \frac{d}{dx} \frac{f(x)}{g(x)} &= \frac{d}{dx} f(x)\, g(x)^{-1}\\
+      &= f'(x)\,g(x)^{-1} - f(x)\,g(x)^{-2} g'(x)\\
+      &= \frac{f'(x)}{g(x)} - \frac{f(x)\,g'(x)}{g(x)^2}\\
+      &= \frac{f'(x)\,g(x) -f(x)\,g'(x)}{g(x)^2}
+  \end{align*}
+\end{frame}
+
+\subsection{微分初等函數}
+\begin{frame}{有理函數的導函數}
+  \begin{example}
+    Given $f(x) = \dfrac{x^2 (1-x)^3}{1+x}$, find $f'(2)$.
+    \begin{solution}
+      \begin{align*}
+	f'(x) &= \frac{\left( x^2 (1-x)^3 \right)'}{1+x} - \frac{x^2 (1-x)^3}{(1+x)^2}\\
+	      &= \frac{2x (1-x)^3 - 3 x^2 (1-x)^2}{1+x} - \frac{x^2 (1-x)^3}{(1+x)^2}\\
+	f'(2) &= \frac{-4-12}{3} + \frac49 = \frac{-44}{9}
+      \end{align*}
+    \end{solution}
+  \end{example}
+\end{frame}
+
+\begin{frame}{$\displaystyle \frac{d}{dx} \cos x = -\sin x$}
+  \begin{proof}
+    \begin{align*}
+      \frac{d}{dx} \cos x &= \frac{d}{dx} \sin \left( \frac\pi2 - x \right)\\
+	&= -\cos \left( \frac\pi2 - x \right)\\
+	&= -\sin x
+    \end{align*}
+  \end{proof}
+  \begin{center}
+    \begin{pspicture}(-5,-1.5)(5,1.5)
+      \psaxes(0,0)(-5,-1.5)(5,1.5)
+      \psplot[plotstyle=curve]{-5}{5}{x COS}
+      \psplot[plotstyle=dots,dotscale=0.25,plotpoints=100]{-5}{5}{x SIN neg}
+    \end{pspicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}{$\displaystyle \frac{d}{dx} \tan x = \sec^2 x$}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \begin{center}
+	\begin{pspicture}(-2.5,-3)(2.5,3)
+	  \psaxes(0,0)(-2.5,-3)(2.5,3)
+	  \psplot[plotstyle=curve]{-1.249045772398254}{1.249045772398254}{x TAN}
+	  \psplot[plotstyle=curve,plotpoints=25]{ 1.892546881191539}{ 2.5}{x TAN}
+	  \psplot[plotstyle=curve,plotpoints=25]{-1.892546881191539}{-2.5}{x TAN}
+
+	  \psplot[plotstyle=dots,dotscale=0.25]{-0.9553166181245092}{0.9553166181245092}{x COS -2 exp}
+	  \psplot[plotstyle=dots,dotscale=0.25,plotpoints=10]{ 2.186276035465284}{ 2.5}{x COS -2 exp}
+	  \psplot[plotstyle=dots,dotscale=0.25,plotpoints=10]{-2.186276035465284}{-2.5}{x COS -2 exp}
+	\end{pspicture}
+      \end{center}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \begin{proof}
+	\begin{align*}
+	  \frac{d}{dx} \tan x &= \frac{d}{dx} \frac{\sin x}{\cos x}\\
+	    &= \frac{\cos x}{\cos x} - \frac{-\sin^2 x}{\cos^2 x}\\
+	    &= 1 + \tan^2 x\\ 
+	    &= \sec^2 x
+	\end{align*}
+      \end{proof}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{$\displaystyle \frac{d}{dx} \sec x = \sec x \tan x$}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \begin{center}
+	\begin{pspicture}(-2.5,-3)(2.5,3)
+	  \psaxes(0,0)(-2.5,-3)(2.5,3)
+	  \psplot[plotstyle=curve]{-1.230959417340775}{1.230959417340775}{1 x COS div}
+	  \psplot[plotstyle=curve,plotpoints=25]{ 1.910633236249019}{ 2.5}{1 x COS div}
+	  \psplot[plotstyle=curve,plotpoints=25]{-1.910633236249019}{-2.5}{1 x COS div}
+
+	  \psplot[plotstyle=dots,dotscale=0.25]{-1.010555360379985}{1.010555360379985}{x TAN x COS div}
+	  \psplot[plotstyle=dots,dotscale=0.25,plotpoints=10]{ 2.131037293209808}{ 2.5}{x TAN x COS div}
+	  \psplot[plotstyle=dots,dotscale=0.25,plotpoints=10]{-2.131037293209808}{-2.5}{x TAN x COS div}
+	\end{pspicture}
+      \end{center}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \begin{proof}
+	\begin{align*}
+	  \frac{d}{dx} \sec x &= \frac{d}{dx} \frac{1}{\cos x}\\
+	    &= -\frac{-\sin x}{\cos^2 x}\\
+	    &= \sec x \tan x
+	\end{align*}
+      \end{proof}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{初等函數的導函數 I}
+  \begin{example}
+    Given $f(x) = \ln \left( \sec^4 x + \tan^2 x \right)$, find $f'\left( \dfrac\pi4 \right)$.
+    \begin{solution}
+      \begin{align*}
+	\frac{d}{dx} \left( \sec^4 x + \tan^2 x \right) &= 4 \left( \sec^3 x \right) (\sec x \tan x) + 2 \sec^2 x \tan x\\
+	  &= 4 \sec^4 x \tan x + 2 \sec^2 x \tan x\\
+	f'(x) &= \frac{4 \sec^4 x \tan x + 2 \sec^2 x \tan x}{\sec^4 x + \tan^2 x}\\
+	f'\left( \dfrac\pi4 \right) &= \frac{16+4}{4+1} = 4
+      \end{align*}
+    \end{solution}
+  \end{example}
+\end{frame}
+
+\begin{frame}{初等函數的導函數 II}
+  \begin{example}
+    給定 $f(x) = \left( x^2 + 1 \right)^{\sin x}$，求 $f'\left( \dfrac\pi2 \right)$
+    \begin{solution}
+      \begin{align*}
+	\ln |f(x)| &= \sin x \ln \left( x^2 + 1 \right)\\
+	\frac{f'(x)}{f(x)} &= \cos x \ln \left( x^2 + 1 \right) + \frac{2x \sin x}{x^2 + 1}\\
+	f'(x) &= \left( x^2 + 1 \right)^{\sin x} \left( \cos x \ln \left( x^2 + 1 \right) + \frac{2x \sin x}{x^2 + 1} \right)\\
+	f'\left( \frac\pi2 \right) &= \left( \frac{\pi^2}{4} + 1 \right) \left( \frac\pi{\frac{\pi^2}4 + 1} \right) = \pi
+      \end{align*}
+    \end{solution}
+  \end{example}
+\end{frame}
+
+\subsection{隱函數與反函數}
+\begin{frame}{隱函數}
+  \begin{itemize}
+    \item 有時候兩個變數的關係並非函數關係，而是
+      \begin{itemize}
+	\item 隱函數 $\phi(x,y) = 0$，如$x^2 + y^2 = 1$
+	\item 參數式 $x = t - \sin t;\, y = 1 - \cos t$
+      \end{itemize}
+    \item 當我們要做 $d\phi/dx$ 時，因為 $y$ 會隨 $x$ 變動，所以\textbf{不能視為常數}，要用\textbf{連鎖法則}把他做掉
+    \item 詳細原理、證明等期中考後我們有空再來解決，它跟多變數的微分有關
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{回顧錐線切線公式}
+  求錐線 $\phi(x,y) = ax^2 + bxy + cy^2 + dx + ey + f = 0$ 上一點 $(x_0, y_0)$ 上的切線
+  \begin{align*}
+    \frac{d\phi}{dx} &= 2ax + b \left( y+xy' \right) + 2cyy' + d + ey' = 0\\
+    \frac{d\phi}{dx}(x_0, y_0) &= \left( b x_0 + 2c y_0 + e \right) y' + 2a x_0 + b y_0 + d = 0\\
+    y' &= -\frac{2a x_0 + b y_0 + d}{b x_0 + 2c y_0 + e}
+  \end{align*}
+  代入點斜式得切線為
+  \[y - y_0 = \left( -\frac{2a x_0 + b y_0 + d}{b x_0 + 2c y_0 + e} \right) (x - x_0)\]
+  咦，怎麼沒有 $f$？這不是高中背的樣子啊！
+
+  \[\left( 2a x_0 + b y_0 + d \right) \left( x - x_0 \right) + \left( b x_0 + 2c y_0 + e \right) \left( y - y_0 \right) = 0\]
+  \begin{align*}
+     & 2a x_0 x + b \left( y_0 x + x_0 y \right) + 2c y_0 y + d \left( x + x_0 \right) + e \left( y + y_0 \right)\\
+    =&\, 2 \left( a x_0^2 + b x_0 y_0 + c y_0^2 + d x_0 + e y_0 \right)\\
+    =& -2f
+  \end{align*}
+  \[a x_0 x + b \left( \frac{y_0 x + x_0 y}{2} \right) + c y_0 y + d \left( \frac{x + x_0}{2} \right)
+      + e \left( \frac{y + y_0}2 \right) + f = 0\]
+\end{frame}
+
+\begin{frame}{求曲線上的切線}
+  \begin{example}
+    Find the equation of the tangent line of the curve $y^3 - xy^2 + xy = -14$ at $(1,-2)$
+    \begin{solution}
+      \[3y^2 y' - \left( 2xyy' + y^2 \right) + \left( xy' + y \right) = 0\]
+      \[\left( 3y^2 - 2xy + x \right) y' = y^2 - y\]
+      \[y'(1,-2) = \frac{(-2)^2 - (-2)}{3(-2)^2 - 2(1)(-2) + 1} = \frac{6}{17}\]
+      故切線方程式為
+      \[y+2 = \frac{6(x-1)}{17}\]
+    \end{solution}
+  \end{example}
+\end{frame}
+
+\begin{frame}{求曲線上的法線}
+  \begin{example}
+    Find the equation of the normal line of the curve $y^3 - xy^2 + xy = -14$ at $(1,-2)$
+    \begin{solution}
+      \begin{align*}
+	y'(1,-2) &= \frac{6}{17}\\
+	\frac{-1}{y'(1,-2)} &= \frac{-17}{6}
+      \end{align*}
+      故法線方程式為
+      \[y+2 = \frac{-17(x-1)}{6}\]
+    \end{solution}
+  \end{example}
+\end{frame}
+
+\begin{frame}{$y^3 - xy^2 + xy = -14$ 的特寫}
+  \begin{center}
+    \begin{pspicture}(-3,-3)(3,3)
+      \psaxes(0,0)(-3,-3)(3,3)
+      \parametricplot{-3}{-1.46621207433047}{t t mul dup t mul 14 add exch t sub div  t}
+      \psline[linecolor=green](-1.833333333333333,-3)(3,-1.294117647058824)
+      \psline[linecolor=red](-0.7647058823529411,3)(1.352941176470588,-3)
+      \psline[linecolor=blue,linestyle=dashed](-3,0)(3,0)
+      \psline[linecolor=blue,linestyle=dashed](-3,1)(3,1)
+      \psline[linecolor=blue,linestyle=dashed](-2,-3)(3,2)
+    \end{pspicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}{$y^3 - xy^2 + xy = -14$ 的全貌}
+  \begin{center}
+    \psset{xunit=0.05,yunit=0.5}
+    \begin{pspicture}(-100,-6)(100,6)
+      \psaxes[Dx=20,Dy=2](0,0)(-100,-6)(100,6)
+      \def\fxy{t t mul dup t mul 14 add exch t sub div         t}
+      \def\gxy{t t mul dup -14 t mul mul 1 sub exch t sub div  1 t div}
+      \parametricplot{-1}{-0.1666666666666667}{\gxy}
+      \parametricplot{-1}{-0.1244843548584256}{\fxy}
+      \parametricplot{0.1684095356135636}{0.8231449166008483}{\fxy}
+      \parametricplot{1.136132992341489}{2}{\fxy}
+      \parametricplot{0.1666666666666667}{0.5}{\gxy}
+
+      \psline[linecolor=green](-10.33333333333333,-6)(23.66666666666667,6)
+      \psline[linecolor=red](-1.823529411764706,6)(2.411764705882353,-6)
+      \psline[linecolor=blue,linestyle=dashed](-100,0)(100,0)
+      \psline[linecolor=blue,linestyle=dashed](-100,1)(100,1)
+      \psline[linecolor=blue,linestyle=dashed](-5,-6)(7,6)
+    \end{pspicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}{反函數的導數}
+  \begin{theorem}
+    \[\left(f^{-1}\right)'(c) = \frac{1}{f'(f^{-1}(c))}\]
+  \end{theorem}
+  \begin{proof}
+    \begin{align*}
+      f \left( f^{-1}(x) \right) &= x\\
+      f' \left(f^{-1}(x) \right) \left( f^{-1} \right)'(x) &= 1\\
+      \left(f^{-1}\right)'(c) &= \frac{1}{f'(f^{-1}(c))}
+    \end{align*}
+  \end{proof}
+\end{frame}
+
+\begin{frame}{$\displaystyle \frac{d}{dx} \arcsin x = \frac{1}{\sqrt{1 - x^2}}$}
+  \begin{proof}
+    設 $\theta := \arcsin x$，則 $x = \sin\theta$ 且 $-\dfrac\pi2 \le \theta \le \dfrac\pi2$
+    \begin{align*}
+      \frac{dx}{d\theta} &= \cos\theta\\
+      \frac{d\theta}{dx} &= \frac{1}{\cos\theta} = \frac{1}{\sqrt{1 - x^2}}
+    \end{align*}
+  \end{proof}
+  \begin{center}
+    \psset{unit=3}
+    \begin{pspicture}(0.8660254038,0.5)
+      \pspolygon(0,0)(0.8660254038,0)(0.8660254038,0.5)
+      \uput[135](0.4330127019,0.25){1}
+      \uput[  0](0.8660254038,0.25){$x$}
+      \uput[270](0.4330127019,0   ){$\sqrt{1 - x^2}$}
+
+      \psarc(0,0){0.2}{0}{30}
+      \uput[15](0.1931851653,0.05176380902){$\theta$}
+    \end{pspicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}{$\displaystyle \frac{d}{dx} \arctan x = \frac{1}{x^2 + 1}$}
+  \begin{proof}
+    設 $\theta := \arctan x$，則 $x = \tan\theta$ 且 $-\dfrac\pi2 < \theta < \dfrac\pi2$
+    \begin{align*}
+      \frac{dx}{d\theta} &= \sec^2 \theta\\
+      \frac{d\theta}{dx} &= \cos^2 \theta = \frac{1}{x^2 + 1}
+    \end{align*}
+  \end{proof}
+  \begin{center}
+    \psset{unit=3}
+    \begin{pspicture}(0.8660254038,0.5)
+      \pspolygon(0,0)(0.8660254038,0)(0.8660254038,0.5)
+      \uput[135](0.4330127019,0.25){$\sqrt{x^2 + 1}$}
+      \uput[  0](0.8660254038,0.25){$x$}
+      \uput[270](0.4330127019,0   ){1}
+
+      \psarc(0,0){0.2}{0}{30}
+      \uput[15](0.1931851653,0.05176380902){$\theta$}
+    \end{pspicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}{反三角函數的圖形}
+  \begin{center}
+    \begin{pspicture}(-5,-2)(5,4)
+      \psaxes(0,0)(-5,-2)(5,4)
+      \psplot[plotstyle=curve]{-5}{5}{x ATAN}
+      \psplot[plotstyle=curve,linecolor=blue]{-1}{1}{x ACOS}
+      \psplot[plotstyle=curve,linecolor=red] {-1}{1}{x ASIN}
+
+      \psplot[plotstyle=dots,dotscale=0.25,plotpoints=100]{-5}{5}{1 x x mul 1 add div}
+      \psplot[plotstyle=dots,dotscale=0.25,linecolor=blue]{-0.8660254037844386}{0.8660254037844386}{-1 1 x x mul sub sqrt div}
+      \psplot[plotstyle=dots,dotscale=0.25,linecolor=red] {-0.9682458365518543}{0.9682458365518543}{ 1 1 x x mul sub sqrt div}
+    \end{pspicture}
+  \end{center}
+\end{frame}
+
+\subsection{微分與線性近似}
+\begin{frame}{微分（differential）}
+  \begin{definition}
+    對於函數 $y = f'(x)$ 而言，它的微分 $dy$ 為
+    \[dy := f'(x) dx\]
+  \end{definition}
+  \begin{theorem}
+    \begin{itemize}
+      \item 它具有線性性
+	\begin{align*}
+	  d(u + v) &= du + dv\\
+	  d(cy) &= c\,dy
+	\end{align*}
+      \item 乘法定則
+	\[d(uv) = u\,dv + v\,du\]
+    \end{itemize}
+  \end{theorem}
+\end{frame}
+
+\begin{frame}{例題}
+  \begin{example}
+    In the late 1830s, French physiologist Jean Poiseuille discovered the formula we use today to predict how much the radius
+    of a particular clogged artery decreases the normal volume of flow. His formula,
+      \[V = kr^4\]
+    say that volume of fluid flowing through a small pipe or tube in a unit of time at a fixed pressure is a constant times the
+    fourth power of the tube’s radius $r$. How dose a 10\% decrease in $r$ affect $V$?
+  \end{example}
+\end{frame}
+
+\begin{frame}{解題}
+  \begin{solution}
+    \begin{itemize}
+      \item 標準答案：
+	\[dV = 4kr^3 dr\]
+	\[\frac{dV}{V} = \frac{4kr^3 dr}{kr^4} = \frac{4dr}{r}\]
+	\begin{itemize}
+	  \item $V$ 的相對變化率為 $r$ 的四倍，故減少 40\%
+	\end{itemize}
+      \item 嘴炮答案：
+	\[(1 - 0.1)^4 = 0.6561\]
+	\begin{itemize}
+	  \item 故變為原本的 65.61\%
+	\end{itemize}
+    \end{itemize}
+  \end{solution}
+\end{frame}
+
+\begin{frame}{線性近似}
+  線性近似就是用函數的切線來對該函數進行近似。當 $x \approx c$
+  \[f(x) \approx f(c) + f'(c) \left( x-c \right)\]
+  \begin{example}
+  Use the differentials to approximate the quantity $\sqrt{4.6}$ to four decimal places.
+    \begin{solution}
+      \[\sqrt x \approx \sqrt c + \frac{x-c}{2 \sqrt c}\]
+      \begin{align*}
+	\sqrt{4.6} &\approx 2 + \frac{4.6 - 4}{4} = 2.15\\
+	\sqrt{4.6} &\approx 2.15 + \frac{4.6 - (2.15)^2}{4.3} = \frac{3689}{1720} \approx 2.145
+      \end{align*}
+    \end{solution}
+  \end{example}
+\end{frame}
+
+\section{番外篇}
+\def\proj{\operatorname{proj}}
+
+\begin{frame}{無關微積分的題目}
+  \begin{itemize}
+    \item 期中考的範圍其實蠻簡單的
+    \item 為了湊滿 10 題，考卷中會有一些醬油題
+    \item 去年醬油題的題型是
+      \begin{itemize}
+	\item 比較係數法
+	\item 線性回歸
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\subsection{比較係數法}
+\begin{frame}{比較係數法}
+  \begin{example}
+    Water boils at 212$^\circ$F at sea level and 200$^\circ$F at an elevation of 6000 ft. Assume that the boiling point $B$
+    varies linearly with altitude $\alpha$. Find the function $B = f(\alpha)$ that describes the dependence. Comment on
+    whether a linear function gives a realistic model.
+    \begin{solution}
+      設 $f(\alpha) := m\alpha + k$
+      \begin{align*}
+	f(0) &= k = 212\\
+	f(6000) &= 6000m + 212 = 200\\
+	m &= \frac{200-212}{6000} = -0.002\\
+	B &= f(\alpha) = -0.002\alpha + 212
+      \end{align*}
+    \end{solution}
+  \end{example}
+\end{frame}
+
+\subsection{線性回歸}
+\begin{frame}[allowframebreaks]{線性回歸}
+  \begin{itemize}
+    \item 假設我們想要觀察 $p$ 個自變數 $x_1, \dots, x_p$ 如何影響 $y$
+    \item 我們收集了 $n$ 組數據 $\{y_i, x_{i1}, \dots, x_{ip}\}_{i=1}^n$
+    \item 我們試圖用線性關係來表達它，其中仍有誤差 $\epsilon_i$
+      \[y_i = \beta_0 + \beta_1 x_{i1} + \cdots + \beta_p x_{ip} + \epsilon_i
+	  = \mathbf x_i^{\textup T} \boldsymbol\beta + \epsilon_i\]
+      \[\mathbf x = \begin{pmatrix} 1\\ x_{i1}\\ \vdots\\ x_{ip} \end{pmatrix}\]
+    \item 包裝成矩陣的樣子就是
+      \[\mathbf y = \mathbf X \boldsymbol\beta + \boldsymbol\epsilon\]
+      \[\mathbf y = \begin{pmatrix} y_1\\ y_2\\ \vdots\\ y_n \end{pmatrix}, \quad
+	\mathbf X = \begin{pmatrix} \mathbf x_1^{\textup T}\\ \mathbf x_2^{\textup T}\\ \vdots\\
+	    \mathbf x_n^{\textup T} \end{pmatrix}, \quad
+	\boldsymbol\beta = \begin{pmatrix} \beta_0\\ \beta_1\\ \vdots\\ \beta_p \end{pmatrix}, \quad
+	\boldsymbol\epsilon = \begin{pmatrix} \epsilon_1\\ \epsilon_2\\ \vdots\\ \epsilon_n \end{pmatrix}\]
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{什麼是內積}
+  \begin{definition}
+    在幾何向量空間 $\mathbb R^n$ 中，向量 $\mathbf x$ 和 $\mathbf y$ 的內積為
+    \[\left< \mathbf x, \mathbf y \right> := \mathbf x^{\textup T} \mathbf y = \sum_{i=1}^n x_i y_i\]
+  \end{definition}
+  \begin{itemize}
+    \item 對稱性（交換律）
+      \[\left< \mathbf x, \mathbf y \right> = \left< \mathbf y, \mathbf x \right>\]
+    \item 雙線性
+      \[\left< \mathbf x, \mathbf u + \mathbf v \right>
+	  = \left< \mathbf x, \mathbf u \right> + \left< \mathbf x, \mathbf v \right>\]
+      \[\left< \mathbf x, c \mathbf y \right> = c \left< \mathbf x, \mathbf y \right>\]
+    \item 向量與自身的內積不為負，且等號僅發生於零向量
+      \[\left< \mathbf x, \mathbf x \right> \ge 0\]
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{推廣到複向量空間}
+  \begin{itemize}
+    \item 實向量空間所定義的內積，在 $\mathbb C^n$ 仍然有效嗎？
+      \[\Vert \textup i \mathbf x \Vert^2 = \left< \textup i \mathbf x, \textup i \mathbf x \right>
+	  = - \Vert \mathbf x \Vert^2\; ?\]
+    \item 這違反了我們對距離不為負值的期待！
+  \end{itemize}
+  \begin{definition}
+    在複向量空間 $\mathbb C^n$ 中，向量 $\mathbf x$ 和 $\mathbf y$ 的內積為
+    \[\left< \mathbf x, \mathbf y \right> = \mathbf x^* \mathbf y = \sum_{i=1}^n \bar x_i y_i\]
+  \end{definition}
+  \begin{itemize}
+    \item 其中 $\overline x$ 代表 $x$ 的共軛複數，而 $\mathbf x^*$ 為 $\mathbf x$ 的共軛轉置
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{內積空間}
+  \begin{definition}
+    符合以下四個條件，即廣義內積條件，的向量空間，稱為內積空間
+    \begin{itemize}
+      \item $\displaystyle \left< \mathbf x, \mathbf y \right> = \overline{\left< \mathbf y, \mathbf x \right>}$
+      \item $\displaystyle \left< \mathbf x, \mathbf u + \mathbf v \right>
+	  = \left< \mathbf x, \mathbf u \right> + \left< \mathbf x, \mathbf v \right>$
+      \item $\displaystyle \left< \mathbf x, c \mathbf y \right> = c \left< \mathbf x, \mathbf y \right>$
+      \item $\displaystyle \left< \mathbf x, \mathbf x \right> \ge 0$ 且 $\displaystyle \left< \mathbf x, \mathbf x \right> = 0
+	  \Leftrightarrow \mathbf x = \mathbf 0$
+    \end{itemize}
+  \end{definition}
+  常見的例子有
+  \begin{itemize}
+    \item 實向量空間和複向量空間的標準內積
+    \item 矩陣標準內積
+      \[\left< \mathbf A, \mathbf B \right> = \operatorname{tr}(\mathbf A^* \mathbf B)\]
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{正射影是最佳的近似}
+  \begin{theorem}
+    在內積空間 $V$ 中有一向量 $\mathbf v$，而空間 $W$ 為該內積空間的子空間，則 $W$ 中對 $\mathbf v$ 的最佳近似值為
+    $\proj_W \mathbf v$
+  \end{theorem}
+  \begin{proof}
+    \begin{itemize}
+    \item 對於所有 $W$ 中的向量 $\mathbf w$，我們有
+      \[\mathbf v - \mathbf w = \left( \mathbf v - \proj_W \mathbf v \right) + \left( \proj_W \mathbf v - \mathbf w \right)\]
+      \begin{itemize}
+	\item 因為 $\proj_W \mathbf v$ 和 $\mathbf w$ 都在 $W$ 中，所以 $\proj_W \mathbf v - \mathbf w$ 也是
+	\item $\mathbf v - \proj_W \mathbf v = \proj_{W^\bot} \mathbf v$，故與 $W$ 中任一向量垂直
+      \end{itemize}
+    \[\Vert \mathbf v - \mathbf w \Vert^2 = \Vert \mathbf v - \proj_W \mathbf v \Vert^2
+	+ \Vert \proj_W \mathbf v  - \mathbf w \Vert^2\]
+    \[\Vert \mathbf v - \mathbf w \Vert \ge \Vert \mathbf v - \proj_W \mathbf v \Vert\]
+    \end{itemize}
+  \end{proof}
+\end{frame}
+
+\begin{frame}{$\mathbf A^*$ 的零空間與 $\mathbf A$ 的行空間垂直}
+  \begin{theorem}
+    對矩陣 $\mathbf A$ 而言，若有一向量 $\mathbf x$ 滿足 $\mathbf A^* \mathbf x = \mathbf 0$，則 $\mathbf x$ 與 $\mathbf A$
+    的所有行向量垂直
+  \end{theorem}
+  \begin{proof}
+    \[\mathbf A := \begin{pmatrix} \mathbf a_1& \mathbf a_2& \dots& \mathbf a_n \end{pmatrix}\]
+    \[\mathbf A^* \mathbf x = \begin{pmatrix}
+      \left< \mathbf a_1, \mathbf x \right>\\
+      \left< \mathbf a_2, \mathbf x \right>\\
+      \vdots\\
+      \left< \mathbf a_n, \mathbf x \right> \end{pmatrix} = \mathbf 0\]
+  \end{proof}
+  \begin{itemize}
+    \item 行是 column，列是 row
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{最小平方法}
+  \begin{itemize}
+    \item 最小平方法的目標，在於讓 $\Vert \boldsymbol\epsilon \Vert$ 最小
+    \item $\boldsymbol\epsilon = \mathbf y - \mathbf X \boldsymbol\beta$
+  \end{itemize}
+  \begin{solution}
+    \begin{align*}
+      \mathbf X \hat{\boldsymbol\beta} &= \proj \mathbf y\\
+      \mathbf y - \mathbf X \hat{\boldsymbol\beta} &= \proj_\bot \mathbf y\\
+      \mathbf X^* (\mathbf y - \mathbf X \hat{\boldsymbol\beta}) &= \mathbf 0\\
+      \mathbf X^* \mathbf X \hat{\boldsymbol\beta} &= \mathbf X^* \mathbf y\\
+    \end{align*}
+  \end{solution}
+\end{frame}
+
+\begin{frame}{單變數線性回歸}
+  當 $p = 1$ 且 $\mathbf X$ 是實矩陣
+  \begin{solution}
+    \[\begin{pmatrix} n& \sum x_i\\ \sum x_i& \sum x_i^2 \end{pmatrix}\begin{pmatrix} \beta_0\\ \beta_1 \end{pmatrix}
+	= \begin{pmatrix} \sum y_i\\ \sum x_iy_i \end{pmatrix}\]
+    \begin{align*}
+      \beta_1 &= \frac{n \sum x_iy_i - \sum x_i \sum y_i}{n \sum x_i^2 - \left( \sum x_i \right)^2}\\
+      \beta_0 &= \frac{\sum y_i - \beta_1 \sum x}{n}
+    \end{align*}
+  \end{solution}
+\end{frame}
+
+\begin{frame}{例題}
+  \begin{example}
+    In a study of five industrial areas, a researcher obtained these data relating the average number of units of a certain
+    pollutant in the air and the number of incidences (per 100\,000 people) of a certain disease:
+    \begin{center}
+      \begin{tabular}{c|ccccc}
+	Units of pollutant       &  3&  4&  5&  8& 10\\
+	\hline
+	Incidences of the disease& 48& 52& 58& 70& 96
+      \end{tabular}
+    \end{center}
+    Find the equation of the least-square line $y = Ax + B$ (to two decimal places.)
+    \centerline{Given that $A = \dfrac{n \sum xy - \sum x \sum y}{n \sum x^2 - (\sum x)^2}$ and $B
+	= \dfrac{\sum y - A \sum x}{n}.$}
+  \end{example}
+\end{frame}
+
+\begin{frame}{解題}
+  \begin{solution}
+    \begin{center}
+      \begin{tabular}{ccccc}
+	      & $x$& $y$& $x^2$& $xy$\\
+	\hline
+	      &   3&  48&     9&  144\\
+	      &   4&  52&    16&  208\\
+	      &   5&  58&    25&  290\\
+	      &   8&  70&    64&  560\\
+	      &  10&  96&   100&  980\\
+	\hline
+	$\sum$&  30& 324&   214& 2162
+      \end{tabular}
+    \end{center}
+    \[A = \frac{109}{17},\quad B = \frac{2238}{85}\]
+    \[y = 6.41 x + 26.33\]
+  \end{solution}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \huge Thanks for your attention!
+  \end{center}
+\end{frame}
+
+\end{CJK}
+\end{document}

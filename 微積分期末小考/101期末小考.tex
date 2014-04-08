@@ -1,0 +1,400 @@
+%!TEX encoding = UTF-8 Unicode
+\documentclass{beamer}
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{CJKutf8}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{pstricks-add}
+
+\hypersetup{colorlinks,linkcolor=,unicode}
+\useoutertheme{sidebar}
+\usecolortheme{rose}
+\usecolortheme{seahorse}
+\newcommand{\Cdot} {\!\cdot\!}
+\newcommand{\Left} {\mathopen{}\mathclose\bgroup\left}
+\newcommand{\Right}{\aftergroup\egroup\right}
+\newcommand{\e}{\textup e}
+\newcommand{\N}{\mathbb N}
+\newcommand{\arsinh}{\operatorname{arsinh}}
+\newcommand{\erf} {\operatorname{erf}}
+\newcommand{\op}  {\operatorname{op}}
+\newcommand{\Elem}{\operatorname{Elem}}
+\newcommand{\trig}{\operatorname{trig}}
+\renewcommand{\today}{\number\year~年~\number\month~月~\number\day~日}
+\newcommand{\Negskip}{\vskip -1em plus 2pt minus 2pt}
+\newcommand{\negskip}{\vskip -2em plus 3pt minus 3pt}
+
+\theoremstyle{remark}
+  \newtheorem{remark}{Remark}
+
+\title[期末小考]{101 年微積分期末小考詳解}
+\author[何震邦]{何震邦 \href{mailto:jdh8@ms63.hinet.net}{\textless jdh8@ms63.hinet.net\textgreater}\\
+    \href{http://creativecommons.org/licenses/by-sa/3.0/tw/deed.zh\textunderscore TW}{\includegraphics{by-sa.eps}}}
+
+\begin{document}
+\begin{CJK}{UTF8}{bsmi}
+\maketitle
+
+\begin{frame}{再怎麼忙，也要記得\dots\dots}
+  \begin{theorem}
+    \begin{align*}
+      y' = \frac{dy}{dx} &\implies \int y'dx = \int dy.\\
+      \left( uv \right)' = u'v + uv' &\implies uv = \int v\,du + \int u\,dv\\
+      \left( \ln \Left| y \Right| \right)' = \frac{y'}{y} &\implies \ln \Left| y \Right| = \int \frac{dy}{y}.
+    \end{align*}
+  \end{theorem}
+\end{frame}
+
+\section{第 1 題}
+\begin{frame}{$\displaystyle \int x^2 \sin(x)\,dx$}
+  \begin{solution}
+    設 $u = x^2$ 與 $v = \cos(x)$，則 $u' = 2x$ 且 $v' = -\sin(x)$。
+    \[\int x^2 \sin(x)\,dx = -\int u\,dv = \int 2x \cos(x)\,dx - x^2 \cos(x).\]
+    設 $u = x$ 與 $v = \sin(x)$，則 $u' = 1$ 且 $v' = \cos(x)$。
+    \[\int x \cos(x)\,dx = \int u\,dv = x \cos(x) - \int \cos(x)\,dx.\]
+    所以
+    \[\int x^2 \sin(x)\,dx = 2x \sin(x) + \left( 2 - x^2 \right) \cos(x).\]
+  \end{solution}
+\end{frame}
+
+\section{第 2 題}
+\begin{frame}{神奇的導函數與判別式}
+  \begin{theorem}
+    \[4a \left( ax^2 + bx + c \right) = \left( 2ax + b \right)^2 + 4ac - b^2.\]
+    \begin{proof}
+      \begin{align*}
+	\left( 2ax + b \right)^2 &= 4a^2 x^2 + 4abx + b^2\\
+	\left( 2ax + b \right)^2 + 4ac - b^2 &= 4a^2 x^2 + 4abx + 4ac\\
+	4a \left( ax^2 + bx + c \right) &= 4a^2 x^2 + 4abx + 4ac\\
+	4a \left( ax^2 + bx + c \right) &= \left( 2ax + b \right)^2 + 4ac - b^2.\qedhere
+      \end{align*}
+    \end{proof}
+  \end{theorem}
+\end{frame}
+
+\begin{frame}{$\displaystyle \int \frac{1}{ax^2 + bx + c}\,dx$，其中 $4ac > b^2$}
+  \begin{solution}
+    設 $y = \arctan \Left( \frac{2ax + b}{\sqrt{4ac - b^2}} \Right)$。
+    \[\frac{dy}{dx} = \frac{2a}{\sqrt{4ac - b^2} \left( \frac{\left( 2ax + b \right)^2}{4ac - b^2} + 1 \right)} =
+      \frac{\sqrt{4ac - b^2}}{2ax^2 + 2bx + 2c}.\]
+    \[\int \frac{1}{ax^2 + bx + c}\,dx = \int \frac{2}{\sqrt{4ac - b^2}}\,dy =
+      \frac{2 \arctan \Left( \frac{2ax + b}{\sqrt{4ac - b^2}} \Right)}{\sqrt{4ac - b^2}}.\]
+  \end{solution}
+  \begin{center}
+    \begin{pspicture}(0,-0.5)(2,1.5)
+      \pspolygon(0,0)(2,0)(2,1.5)
+      \uput[270](1,0   ){$\sqrt{4ac - b^2}$}
+      \uput[  0](2,0.75){$2ax + b$}
+      \rput(0.5,0.15){$y$}
+    \end{pspicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}{$\displaystyle \int \frac{1}{ax^2 + bx + c}\,dx$，其中 $4ac < b^2$}
+  \begin{solution}
+    $ax^2 + bx + c$ 的兩根為 $\dfrac{- b \pm \sqrt{b^2 - 4ac}}{2a}$。
+    \begin{align*}
+      \frac{1}{\left( x - \alpha \right) (x - \beta)} &= \frac{1}{\beta - \alpha} \left( \frac{1}{x - \beta} 
+	- \frac{1}{x - \alpha} \right)\\
+      \int \frac{1}{\left( x - \alpha \right) (x - \beta)}\,dx &= \frac{\ln \Left| \frac{x - \beta}{x - \alpha} \Right|}
+	{\beta - \alpha} = \frac{\ln \Left| \frac{2ax - 2a\beta}{2ax - 2a\alpha} \Right|} {\beta - \alpha}\\
+      \int \frac{1}{ax^2 + bx + c}\,dx &= \frac{\ln \Left| \frac{2ax + b - \sqrt{b^2 - 4ac}}{2ax + b + \sqrt{b^2 - 4ac}}
+	\Right|} {\sqrt{b^2 - 4ac}}.
+    \end{align*}
+  \end{solution}
+\end{frame}
+
+\begin{frame}{$\displaystyle \int \frac{px + q}{ax^2 + bx + c}\,dx$}
+  \begin{solution}
+    \begin{align*}
+	 & \int \frac{px + q}{ax^2 + bx + c}\,dx\\
+      =\:& \frac{p}{2a} \int \frac{2ax + b}{ax^2 + bx + c}\,dx + \int \frac{q - \frac{bp}{2a}}{ax^2 + bx + c}\,dx\\
+      =\:& \frac{p \ln \Left| ax^2 + bx + c \Right|}{2a} + \int \frac{2aq - bp}{2a \left( ax^2 + bx + c \right)}\,dx.
+    \end{align*}
+  \end{solution}
+\end{frame}
+
+\begin{frame}{$\displaystyle \int \frac{x}{x^2 - 2x + 2}\,dx$}
+  \begin{solution}
+    \begin{align*}
+	 & \int \frac{x}{x^2 - 2x + 2}\,dx\\
+      =\:& \int \frac{2x - 2}{2 \left( x^2 - 2x + 2 \right)}\,dx + \int \frac{1}{x^2 - 2x + 2}\,dx\\
+      =\:& \frac{\ln \Left| x^2 - 2x + 2 \Right|}{2} + \arctan \Left( \frac{2x - 2}{2} \Right)\\
+      =\:& \frac{\ln \Left| x^2 - 2x + 2 \Right|}{2} + \arctan(x-1).
+    \end{align*}
+  \end{solution}
+\end{frame}
+
+\section{第 3 題}
+\begin{frame}{多項式除法}
+  對於任意兩個多項式 $A$, $B$，其中 $B \ne 0$，我們都可以找到商 $Q$ 和餘式 $R$ 使得
+  \begin{equation}
+    A = BQ + R \label{eq:A=BQ+R}
+  \end{equation}
+  其中 $\deg(R) < \deg(B)$。
+  \begin{definition}
+    為了方便，對於 \eqref{eq:A=BQ+R} 式，我們定義以下新符號：
+    \[\left\lceil B \right\rceil A = R.\]
+  \end{definition}
+\end{frame}
+
+\begin{frame}{擴展的餘式算子}
+  \begin{definition}
+    設 $B$, $D$, $N$, $R$ 皆為多項式，其中 $B$ 與 $D$ 互質，我們定義
+    \[\left\lceil B \right\rceil \frac N D = R\]
+    等價於
+    \[\left\lceil B \right\rceil N = \left\lceil B \right\rceil DR\]
+    其中 $\deg(R) < \deg(B)$。
+  \end{definition}
+\end{frame}
+
+\begin{frame}{餘式算子的性質}
+  \begin{theorem}
+    設 $B$, $D$, $N$ 為多項式，$F$ 與 $G$ 為有理函數且 $B$ 與 $D$ 互質。
+    \begin{itemize}
+      \item $\lceil B \rceil \left( F + G \right) = \left\lceil B \right\rceil F + \left\lceil B \right\rceil G$
+      \item $\left\lceil B \right\rceil FG = \lceil B \rceil \left( \left\lceil B \right\rceil F \left\lceil B
+	\right\rceil G\right)$
+      \item $\left\lceil B \right\rceil \dfrac{N}{D} = \left\lceil B \right\rceil \dfrac{\left\lceil B \right\rceil
+	N}{\left\lceil B \right\rceil D}$
+    \end{itemize}
+  \end{theorem}
+\end{frame}
+
+\begin{frame}{部份分式分解算法}
+  \begin{theorem}
+    對於最簡真分式 $A/D$，其中
+    \[D = D_1 D_2 \cdots D_n\]
+    且 $D_k$ 兩兩互質。則 $A/D$ 可以表達為
+    \[\frac{A_1}{D_1} + \frac{A_2}{D_2} + \cdots + \frac{A_n}{D_n}\]
+    其中對於所有 $k$，若 $1 \le k \le n$ 則
+    \[A_k = \left\lceil D_k \right\rceil \frac{AD_k}{D}.\]
+  \end{theorem}
+\end{frame}
+
+\begin{frame}{$\displaystyle \int \frac{1}{x^4 + 1}\,dx$ 之一}
+  \[x^4 + 1 = \left( x^2 - \sqrt2 x + 1 \right) \left( x^2 + \sqrt2 x + 1 \right).\]
+  設 $D_1 = x^2 - \sqrt2 x + 1$ 與 $D_2 = x^2 + \sqrt2 x + 1$。
+  \begin{align*}
+    \left\lceil D_1 \right\rceil \frac{1}{D_2} &= \left\lceil D_1 \right\rceil \frac{1}{2^{3/2} x}
+      = \frac{x - \sqrt2}{-2^{3/2}}\\
+    \left\lceil D_2 \right\rceil \frac{1}{D_1} &= \left\lceil D_2 \right\rceil \frac{1}{-2^{3/2} x}
+      = \frac{x + \sqrt2}{2^{3/2}}.
+  \end{align*}
+  \begin{center}
+    \newcommand{\sqrtHalf}{0.7071067811865475}
+    \begin{pspicture}(-1,-1)(1,1.5)
+      \pscircle[linestyle=dotted,linecolor=gray](0,0){1}
+      \psaxes[labels=none](0,0)(-1,-1)(1,1)
+      \pspolygon[linecolor=gray](\sqrtHalf,\sqrtHalf)(-\sqrtHalf,\sqrtHalf)(-\sqrtHalf,-\sqrtHalf)(\sqrtHalf,-\sqrtHalf)
+      \psdots[linecolor=red ]( \sqrtHalf,\sqrtHalf)( \sqrtHalf,-\sqrtHalf)
+      \psdots[linecolor=blue](-\sqrtHalf,\sqrtHalf)(-\sqrtHalf,-\sqrtHalf)
+      \uput[ 0](1,0){$\Re$}
+      \uput[90](0,1){$\Im$}
+    \end{pspicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}{$\displaystyle \int \frac{1}{x^4 + 1}\,dx$ 之二}
+  \begin{solution}
+    \begin{align*}
+	 & \int \frac{1}{x^4 + 1}\,dx\\
+      =\:& \int \frac{x + \sqrt2}{2^{3/2} \left( x^2 + \sqrt2 x + 1 \right)}\,dx
+	   - \int \frac{x - \sqrt2}{2^{3/2} \left( x^2 - \sqrt2 x + 1 \right)}\,dx\\
+      =\:& \frac{\ln \Left( x^2 + \sqrt2 x + 1 \Right)}{2^{5/2}} - \frac{\ln \Left( x^2 - \sqrt2 x + 1 \Right)}{2^{5/2}}
+	   + \frac{\arctan \Left( \sqrt2 x + 1 \Right)}{2^{3/2}}\\
+      \phantom=\:& +\frac{\arctan \Left( \sqrt2 x - 1 \Right)}{2^{3/2}}.
+    \end{align*}
+  \end{solution}
+\end{frame}
+
+\section{第 4 題}
+\begin{frame}{Hermite reduction}
+  假設 $m \ge 2$ 否則 $D$ 已經 squarefree 了。首先設 $V = D_m$ 與 $U = D/V^m$。因為 $UV'$ 與 $V$
+  互質，我們能以擴展的輾轉相除法求兩多項式 $B$, $C$ 使得
+  \[\frac{A}{1-m} = BUV' + CV\]
+  其中 $\deg(B) < \deg(V)$。兩端同乘 $(1-m)/(UV^m)$ 得
+  \begin{align*}
+    \frac{A}{UV^m} &= \frac{\left( 1-m \right) BV'}{V^m} + \frac{\left( 1-m \right) C}{UV^{m-1}}\\
+      &= \frac{B'}{V^{m-1}} - \frac{\left( m-1 \right) BV'}{V^m} - \frac{B'U + \left( m-1 \right) C}{UV^{m-1}}\\
+    \int \frac{A}{UV^m} &= \frac{B}{V^{m-1}} - \int \frac{B'U + \left( m-1 \right) C}{UV^{m-1}}.
+  \end{align*}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{$\displaystyle \int \frac{6x^2 - 15x + 22}{(x+3) \left( x^2 + 2 \right)^2}\,dx$，頁}
+  設 $A = 6x^2 - 15x + 22$，又設 $U = x+3$ 及 $V = x^2 + 2$。
+  \begin{align*}
+    UV' &= 2V + 6x - 4\\
+    18V &= (3x + 2) \left( 6x - 4 \right) + 44\\
+	&= (3x + 2) \left( UV' - 2V \right) + 44\\
+    44  &= \left( 3x + 2 \right) UV' + \left( 14x - 6 \right) V\\
+    -A  &= -6V + 15x - 10\\
+	&= -6V + \frac{5 \left( 6x - 4 \right)}{2}\\
+	&= \frac{5UV'}{2} - 11V.
+  \end{align*}
+  \[\int \frac{A}{UV^2} = \frac{5}{2V} + \int \frac{11}{UV}.\]
+  分解部份分式：
+  \begin{align*}
+    \left\lceil x + 3 \right\rceil   \frac{11}{x^2 + 2} &= \frac{11}{11}\\
+    \left\lceil x^2 + 2 \right\rceil \frac{11}{x   + 3} &= \frac{11 \left( x-3 \right)}{-11}.
+  \end{align*}
+  \[\frac{11}{(x+3) \left( x^2 + 2 \right)} = \frac{1}{x+3} + \frac{3-x}{x^2 + 2}.\]
+  \begin{align*}
+       & \int \frac{6x^2 - 15x + 22}{(x+3) \left( x^2 + 2 \right)^2}\,dx\\
+    =\:& \frac{5}{2x^2 + 4} + \ln \Left| x-3 \Right| - \frac{\ln \Left( x^2 + 2 \Right)}{2}
+	 +\frac{3 \arctan \Left( \frac{x}{\sqrt2} \Right)}{\sqrt2}.
+  \end{align*}
+\end{frame}
+
+\section{第 5 題}
+\begin{frame}{$\displaystyle \int \e^{3x} \sin(2x)\,dx$}
+  \begin{solution}
+    \negskip
+    \begin{align*}
+      \int \e^{3x} \sin(2x)\,dx &= \frac{\e^{3x} \sin(2x)}{3} - \int \frac{2\e^{3x} \cos(2x)}{3}\,dx\\
+      \int \e^{3x} \cos(2x)\,dx &= \frac{\e^{3x} \cos(2x)}{3} + \int \frac{2\e^{3x} \sin(2x)}{3}\,dx.
+    \end{align*}
+    \begin{align*}
+	 & \int \e^{3x} \sin(2x)\,dx\\
+      =\:& \frac{\e^{3x} \left( 3 \sin(2x) - 2 \cos(2x) \right)}{9}
+	   -\int \frac{4 \e^{3x} \sin(2x)}{9}\,dx\\
+      =\:& \frac{\e^{3x} \left( 3 \sin(2x) - 2 \cos(2x) \right)}{13}.
+    \end{align*}
+  \end{solution}
+\end{frame}
+
+\section{第 6 題}
+\begin{frame}{$\displaystyle \int_1^5 \frac{1}{x}\,dx$，分別取左、右黎曼和，$n = 4$}
+  \begin{solution}
+    左黎曼和為
+    \[\int_1^5 \frac{1}{x}\,dx \approx 1 + \frac12 + \frac13 + \frac14 = \frac{25}{12}.\]
+    右黎曼和為
+    \[\int_1^5 \frac{1}{x}\,dx \approx \frac12 + \frac13 + \frac14 + \frac15 = \frac{7}{60}.\]
+  \end{solution}
+  \begin{center}
+    \newcommand{\oneThird}{0.3333333333333333}
+    \begin{pspicture}(5,1)
+      \psaxes(5,1)
+      \psplot[plotstyle=curve]{1}{5}{1 x div}
+      \psline[linecolor=red](1,1)(2,1)(2,0.5)(3,0.5)(3,\oneThird)(4,\oneThird)(4,0.25)(5,0.25)
+      \psline[linecolor=blue](1,0.5)(2,0.5)(2,\oneThird)(3,\oneThird)(3,0.25)(4,0.25)(4,0.2)(5,0.2)
+    \end{pspicture}
+  \end{center}
+\end{frame}
+
+\section{第 7 題}
+\begin{frame}{$\displaystyle \int_0^\pi \sin(x)\,dx$，梯形法則，$n = 8$}
+  \begin{solution}
+    \Negskip
+    \begin{align*}
+      \int_0^\pi \sin(x)\,dx
+	&\approx \frac{\pi}{16} \left( \sin(0) + 2 \sum_{k=1}^7 \sin\Left( \frac{k\pi}{8} \Right) + \sin(\pi) \right)\\
+	&= \frac\pi8 \left( 2 \sin\Left( \frac{\pi}{8} \Right) + 2 \sin\Left( \frac{3\pi}{8} \Right) + \sqrt2 + 1\right)\\
+	&\approx 1.974231601945551.
+    \end{align*}
+  \end{solution}
+  \begin{center}
+    \begin{pspicture}(3.5,1)
+      \psaxes(3.5,1)
+      \psplot[plotstyle=curve]{0}{3.141592653589793}{x SIN}
+      \psplot[plotstyle=line,plotpoints=9,linecolor=red]{0}{3.141592653589793}{x SIN}
+    \end{pspicture}
+  \end{center}
+\end{frame}
+
+\section{第 8 題}
+\begin{frame}{累積分布函數（CDF）}
+  \begin{definition}
+    實值隨機變數 $X$ 的\textbf{累積分布函數} 為
+    \[F_X(x) = P(X \le x).\]
+  \end{definition}
+  \begin{center}
+    \psset{yunit=2.5}
+    \begin{pspicture}(-3,0)(3,1)
+      \psaxes[Dy=0.5](0,0)(-3,0)(3,1)
+      \psplot[plotstyle=curve]{-3}{3}{0 x /t {t t mul -0.5 mul EXP} 0.001 SIMPSON 0.3989422804014326 mul 0.5 add}
+    \end{pspicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}{機率密度函數（PDF）}
+  \begin{definition}
+    隨機變數 $X$ 的\textbf{機率密度函數}是 $f$，其中 $f$ 是非負可積函數，若
+    \[P(a \le X \le b) = \int_a^b f(x)\,dx.\]
+  \end{definition}
+  \begin{center}
+    \psset{yunit=5}
+    \begin{pspicture}(-3,0)(3,0.4)
+      \psaxes[Dy=0.2](0,0)(-3,0)(3,0.4)
+      \psplot[plotstyle=curve]{-3}{3}{x x mul -0.5 mul EXP 0.3989422804014326 mul}
+    \end{pspicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}{CDF 與 PDF 的關係}
+  \begin{theorem}
+    若 $F$ 是 $X$ 的累積分布函數，則
+    \[F(x) = \int_{-\infty}^x f(t)\,dt.\]
+  \end{theorem}
+  \begin{theorem}
+    若 $F'(c)$ 存在，則
+    \[F'(c) = f(c).\]
+  \end{theorem}
+\end{frame}
+
+\begin{frame}{期望值}
+  \begin{definition}
+    若隨機變數 $X$ 的機率密度函數為 $f$，則 $X$ 的期望值為
+    \[E(X) = \int X\,dP = \int_{-\infty}^\infty xf(x)\,dx.\]
+  \end{definition}
+  \begin{theorem}
+    若隨機變數 $X$ 的機率密度函數為 $f$，則函數 $g(X)$ 的期望值為
+    \[E(g(X)) = \int g(X)\,dP = \int_{-\infty}^\infty g(x)\,f(x)\,dx.\]
+  \end{theorem}
+\end{frame}
+
+\begin{frame}{應用題}
+  In reliability theory, the random variable is often the lifetime of some item, such as a laptop computer battery.  The
+  PDF can be used to find probabilities and expectations about the lifetime.  Suppose then that the lifetime in hours of a
+  battery is a continuous random variable $x$ with PDF
+  \[f(x) = \begin{cases}
+    \frac{12x^2 \left( 5-x \right)}{625} & \mbox{if } 0 \le x \le 5\\
+    0 & \mbox{otherwise.}\end{cases}\]
+  \begin{enumerate}
+    \item Find the probability that the battery lasts at least three hours.
+    \item Find the expected value of the lifetime.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{詳解}
+  \begin{solution}
+    \[\int_3^5 \frac{12x^2 \left( 5-x \right)}{625}\,dx = \left[ \frac{20x^3 - 3x^4}{625} \right]_3^5 = \frac{328}{625}.\]
+  \end{solution}
+  \begin{solution}
+    \[\int_0^5 \frac{12x^3 \left( 5-x \right)}{625}\,dx = \left[ \frac{3 \left( 25x^4 - 4x^5 \right)}{3125} \right]_0^5 = 3.\]
+  \end{solution}
+\end{frame}
+
+\begin{frame}{機率密度函數的圖}
+  \begin{itemize}
+    \item 期望值：3
+    \item 中位數：3.071362159338052
+  \end{itemize}
+  \begin{center}
+    \psset{yunit=5}
+    \begin{pspicture}(5,0.4)
+      \psaxes[Dy=0.2](5,0.4)
+      \psplot[plotstyle=curve]{0}{5}{x x mul 5 x sub mul 0.0192 mul}
+      \psline[linecolor=red  ](3                ,0)(3                ,0.4) % 期望值
+      \psline[linecolor=green](3.071362159338052,0)(3.071362159338052,0.4) % 中位數
+    \end{pspicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \huge Tanks for your attention!
+  \end{center}
+\end{frame}
+\end{CJK}
+\end{document}
