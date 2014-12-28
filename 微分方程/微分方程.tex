@@ -34,38 +34,174 @@
 \begin{CJK}{UTF8}{bsmi}
 \maketitle
 
+\section{微分方程}
+\begin{frame}{常微分方程與偏微分方程}
+  函數方程中，有待解函數的導函數項時，稱為微分方程。例如
+  \begin{equation}
+    \sin(x)\,x'' = \left( x + 1 \right) x' + x^2 \e^{-3x}. \label{ODE}
+  \end{equation}
+  \begin{equation}
+    x^{(4)} + x''' + x'' + x = \cos(t) \label{LinearDE}
+  \end{equation}
+  以上微分方程只有常導數，所以是\textbf{常微分方程} (ODE).
+  有偏導數的方程是\textbf{偏微分方程} (PDE)，例如
+  \begin{equation}
+    u_{xxt} = u_y + 1. \label{PDE}
+  \end{equation}
+\end{frame}
+
+\begin{frame}{階}
+  微分方程的\textbf{階}是方程中最高階導數的階。例如 \eqref{ODE}
+  是二階微分方程，\eqref{PDE} 是三階微分方程，而 \eqref{LinearDE}
+  是四階微分方程。
+\end{frame}
+
+\begin{frame}{線性微分方程}
+  \textbf{線性微分方程}可以寫成以下的形式：
+  \[ \sum_{k=0}^n f_k(t) x^{(k)}(t) = g(t) \]
+  其中 $t$ 是自變數，$x$ 是待解函數，$f_k$ 和 $g$ 是已知函數，如
+  \eqref{LinearDE}。
+\end{frame}
+
+\begin{frame}{解}
+  從足微分方程的函數稱為\textbf{解}或\textbf{特解}。解可能有自變數的範圍限制。
+  \begin{example}
+    在 $t > 0$ 時，$x = t^{-3/2}$ 是 $4t^2 x'' + 12t x' + 3x = 0$ 的解。
+  \end{example}
+  \begin{proof}
+    \negskip
+    \begin{align*}
+      x'  &= -\frac32 t^{-5/2} \\
+      x'' &= -\frac{15}{4} t^{-7/2}
+    \end{align*}
+    \[ 4t^2 \left( -\frac{15}{4} t^{-7/2} \right)
+        + 12t \left( -\frac32 t^{-5/2} \right)
+        + 3t^{-3/2} = 0. \qedhere \]
+  \end{proof}
+\end{frame}
+
+\begin{frame}{初始條件}
+  \textbf{初始條件}形如
+  \[ x_k = x^{(k)}(t_0) \]
+  例如
+  \[ x_0 = x(t_0).\]
+\end{frame}
+
+\begin{frame}{初值問題}
+  \textbf{初值問題}是有適當初始條件的微分方程。
+  \begin{example}
+    以下是初值問題。
+    \[ t^2 x'' + 2t x' + 3x = 0 \]
+    \begin{align*}
+      x (4) &= 1 \\
+      x'(4) &= 2.
+    \end{align*}
+  \end{example}
+\end{frame}
+
+\begin{frame}{有效範圍}
+  對於有初始條件
+  \[ x_k = x^{(k)}(t_0) \]
+  的微分方程而言，\textbf{有效範圍}是包含 $t_0$ 且解有效的最大範圍。
+\end{frame}
+
+\begin{frame}{通解}
+  \textbf{通解}是微分方程的解的最廣義的形式。
+  \begin{example}
+    \[ 2tx' + 4x = 3 \]
+    的通解是
+    \[ x = \frac{c}{t^2} + \frac34 \]
+    其中 $c$ 是任意常數。
+  \end{example}
+\end{frame}
+
+\begin{frame}{實際解}
+  同時符合微分方程與附屬條件（像是初始條件）的解，是\textbf{實際解}。
+  \begin{example}
+    求解
+    \[ 2tx' + 4x = 3 \qquad x(1) = -4.\]
+    \begin{solution}
+      已經有通解了，所以我們只要代入初始條件，求取待定常數 $c$。
+      \[ 4 = \frac{c}{1^2} + \frac34 \qquad c = -\frac{19}{4} \]
+      \[ x = \frac34 - \frac{19}{4t^2}. \]
+    \end{solution}
+  \end{example}
+\end{frame}
+
+\begin{frame}{顯式解與隱式解}
+  若待解函數為 $x$ 而自變數為 $t$，\textbf{顯式解}形如
+  \[ x = f(t).\]
+  以其他方式寫出待解函數與自變數的關係的，為\textbf{隱式解}，像是
+  \[ F(x,t) = 0.\]
+\end{frame}
+
+\begin{frame}{從隱式解推出顯式解}
+  \begin{example}
+    \[ x' = \frac{t}{x} \qquad x(2) = -1 \]
+    的隱式解為
+    \[ x^2 = t^2 - 3 \]
+    求顯式解。
+    \begin{solution}
+      乍看之下有 $x = \pm\sqrt{t^2 - 3}$ 兩解，但只有負的合初值條件。
+      \[ x = -\sqrt{t^2 - 3}.\]
+    \end{solution}
+  \end{example}
+\end{frame}
+
 \section[一階 ODE]{一階常微分方程}
 \begin{frame}{一階常微分方程}
-  \textbf{一階常微分方程}為符合以下兩者之一的方程式：
-  \begin{enumerate}
-    \item $P(x,y)\,y' + Q(x,y) = 0$
-    \item $P(x,y)\,dx + Q(x,y)\,dy = 0$。
-  \end{enumerate}
-  若我們解出方程，通解可用以下形式表達：
-  \[\phi(x,y) = c\]
-  其中 $c$ 是積分常數。
+  \textbf{一階常微分方程}為符合以下形式的方程式：
+  \[ \frac{dx}{dt} = f(x,t) \]
+  其中 $f$ 不含微分項。
 \end{frame}
 
 \subsection[線性]{一階線性微分方程}
 \begin{frame}{方法 1：一階線性微分方程}
   \begin{theorem}
     給定微分方程
-    \[f(x)\,y' + g(x)\,y + h(x) = 0.\]
-    設 $P(x) = \dfrac{g(x)}{f(x)}$ 與 $Q(x) = \dfrac{h(x)}{f(x)}$，則通解為
-    \[\e^{\int P\,dx} y + \int \e^{\int P\,dx} Q\,dx = c.\]
+    \[f(t)\,x' + g(t)\,x = h(t).\]
+    設 $A(t) = \dfrac{g(t)}{f(t)}$ 與 $B(t) = \dfrac{h(t)}{f(t)}$，將方程化為
+    \[x' + Ax = B.\]
+    則 $\e^{\int A\,dt}$ 為一積分乘數，使得通解為
+    \[x = \e^{-\int A\,dt} \left( c + \int \e^{\int A\,dt} B\,dt \right).\]
   \end{theorem}
 \end{frame}
 
 \begin{frame}{通解的證明}
   \begin{proof}
+    設 $P = \int A\,dt$，則
     \begin{align*}
-      f(x)\,y' + g(x)\,y &+ h(x) = 0\\
-      y' + Py &+ Q = 0\\
-      \e^{\int P\,dx} y' + \e^{\int P\,dx} Py &+ \e^{\int P\,dx} Q = 0\\
-      \left( \e^{\int P\,dx} y \right)' &+ \e^{\int P\,dx} Q = 0\\
-      \e^{\int P\,dx} y &+ \int \e^{\int P\,dx} Q\,dx = c. \qedhere
+      x' + P'\,x &= B \\
+      \e^P x' + \e^P P'\,x &= \e^P B \\
+      \left( \e^P x \right)' &= \e^P B
     \end{align*}
+    此時積分，引進積分常數 $c$。
+    \[ \e^P x = c + \int \e^P B\,dt \]
+    \[x = \e^{-\int A\,dt} \left( c + \int \e^{\int A\,dt} B\,dt \right). \qedhere\]
   \end{proof}
+\end{frame}
+
+\begin{frame}{特殊狀況}
+  給定微分方程
+  \[x' + Ax = B.\]
+  若 $B$ 為零，即原方程齊次，則通解成為
+  \[x = c\e^{-\int A\,dt}.\]
+  若 $A$ 為常數，則 $\int A\,dt = At$，使通解成為
+  \[x = \e^{-At} \left( c + \int \e^{At} B\,dt \right).\]
+\end{frame}
+
+\begin{frame}{常係數一階線性微分方程}
+  給定微分方程
+  \[x' + Ax = B.\]
+  若 $A$ 與 $B$ 皆為常數，即原方程常係數，則設 $x^* = B/A$,
+  \[x' + A \left( x - x^* \right) = 0\]
+  再設 $y = x - x^*$，原方程簡化成常係數齊次方程
+  $y' + Ay = 0$，通解顯然為
+  \begin{align*}
+    y &= c_1 \e^{-Ay} \\
+    x &= c_2 \e^{-Ax} + x^*
+  \end{align*}
+  其中 $c_1$ 為積分常數，而 $c_2 = c_1 \e^{Ax^*}$.
 \end{frame}
 
 \begin{frame}{指數衰變}
@@ -89,9 +225,9 @@
 \begin{frame}{方法 2：變數可分離的微分方程}
   \begin{theorem}
     給定微分方程
-    \[A(x)\,B(y)\,dx + C(x)\,D(y)\,dy = 0.\]
+    \[A(x)\,B(t)\,x' = C(x)\,D(t).\]
     通解為
-    \[\int \frac{A(x)}{C(x)}\,dx + \int \frac{D(y)}{B(y)}\,dy = c.\]
+    \[\int \frac{A(x)}{C(x)}\,dx = \int \frac{D(t)}{B(t)}\,dt.\]
     證明從略。
   \end{theorem}
 \end{frame}
@@ -108,86 +244,74 @@
       y(0)  &= 800
     \end{aligned} \right.\]
   原微分方程為變數可分離的微分方程。
+  \[10000y' = 3y \left( 2000 - y \right)\]
+  既然我們要求 $y(3)$，我們就從 $t=0$ 積到 $t=3$。
   \begin{align*}
-    10000y' - 3y \left( 2000 - y \right) &= 0\\
-    10000dy - 3y \left( 2000 - y \right) dt &= 0\\
-    \int \frac{10000}{3y \left( 2000 - y \right)}\,dy - \int dt &= c\\
-    \int \frac53 \left( \frac1y - \frac{1}{y-2000} \right) dy - \int dt &= c\\
-    \frac{5 \ln \Left| y \Right|}{3} - \frac{5 \ln \Left| y - 2000 \Right|}{3} - t &= c.
+    \int_{y(0)}^{y(3)} \frac{10000}{3y \left( 2000 - y \right)}\,dy &= \int_0^3 dt\\
+    \int_{800}^{y(3)} \frac53 \left( \frac1y - \frac{1}{y-2000} \right) dy &= 3.
   \end{align*}
-  代入初期值條件 $y(0) = 800$ 以求取積分常數
-  \[c = \frac{5 \ln \Left| 800 \Right|}{3} - \frac{5 \ln \Left| -1200 \Right|}{3} = \frac{5\ln(2)}{3} - \frac{5\ln(3)}{3}.\]
-  代回原方程，因為 $0 < 800 < 2000$，整理得：
+  此時被積函數有 0 和 2000 兩個不連續點，所以有效區間為 $(0, 2000)$。
+  \[\ln(y(3)) - \ln(800) - \ln(2000 - y(3)) + \ln(1200) = \frac95\]
   \begin{align*}
-    \ln y - \ln \Left( 2000 - y \Right) &= \frac{3t}{5} + \ln(2) - \ln(3)\\
-    \frac{y}{2000-y} &= \frac{2\e^\frac{3t}{5}}{3}\\
-    \frac{y(3)}{2000-y(3)} &= \frac{2e^{9/5}}{3}\\
-    y(3) = \frac{4000\e^{9/5}}{2\e^{9/5}+3} &\approx 1602.6304520653167546.
+    \ln \Left( \frac{y(3)}{2000-y(3)} \Right) &= \frac95 + \ln \Left( \frac23 \Right)\\
+    \frac{y(3)}{2000-y(3)} &= \frac{2\e^{9/5}}{3}\\
+    \frac{2000}{2000-y(3)} &= \frac{2\e^{9/5}}{3} + 1
   \end{align*}
+  \[y(3) = \frac{4000\e^{9/5}}{2\e^{9/5}+3} \approx 1602.6304520653167546.\]
 \end{frame}
 
 \subsection[恰當--積分乘數]{恰當微分方程}
 \begin{frame}{方法 3：恰當微分方程}
   \begin{theorem}
     給定微分方程
-    \[P(x,y)\,dx + Q(x,y)\,dy = 0\]
+    \[P(x,t)\,x' + Q(x,t) = 0\]
     其中
-    \begin{equation}
-      \frac{\partial P}{\partial y} = \frac{\partial Q}{\partial x}. \label{eq:Exact}
-    \end{equation}
-    通解為
-    \[\int P\,dx + \int \left( Q - \frac{\partial}{\partial y} \int P\,dx \right) dy.\]
+    \begin{equation*}
+      \frac{\partial P}{\partial t} = \frac{\partial Q}{\partial x}.
+    \end{equation*}
+    通解為勢函數
+    \[F(x,t) = \int Q\,dt + \int \left( P - \frac{\partial}{\partial x} \int Q\,dt \right) dx.\]
   \end{theorem}
 \end{frame}
 
-\begin{frame}{\eqref{eq:Exact}式的充要條件}
-  \begin{theorem}
-    \eqref{eq:Exact}式等價於存在函數 $\phi(x,y)$ 使得
-    \begin{equation}
-      d\phi = P(x,y)\,dx + Q(x,y)\,dy. \label{eq:ExactIffPhiExists}
-    \end{equation}
-  \end{theorem}
-\end{frame}
-
-\begin{frame}{若\eqref{eq:Exact}則\eqref{eq:ExactIffPhiExists}}
+\begin{frame}{勢函數的存在}
   \begin{proof}
-    設
-    \[\phi = \int P\,dx + \int \left( Q - \frac{\partial}{\partial y} \int P\,dx \right) dy.\]
-    \Negskip
-    \begin{align*}
-      \frac{\partial\phi}{\partial x}
-	&= P + \frac{\partial}{\partial x} \int \left( Q - \frac{\partial}{\partial y} \int P\,dx \right) dy\\
-	&= P + \int \left( \frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y} \right) dy = P.\\
-    \end{align*}
-    \negskip
-    \[\frac{\partial\phi}{\partial y} = \frac{\partial}{\partial y} \int P\,dx + Q - \frac{\partial}{\partial y} \int P\,dx
-      = Q. \qedhere\]
+    設有函數 $F(x,t)$ 使得
+    \[\frac{\partial F}{\partial x} = P \quad
+      \mbox{且} \quad \frac{\partial F}{\partial t} = Q.\]
+    此時若 $P$, $Q$, $P_t$ 與 $Q_x$
+    在所討論的 $xt$-平面區域上連續，則在此區域中由\href
+    {https://zh.wikipedia.org/wiki/\%E4\%BA\%8C\%E9\%98\%B6\%E5\%AF\%BC\%E6\%95\%B0\%E7\%9A\%84\%E5\%AF\%B9\%E7\%A7\%B0\%E6\%80\%A7}
+    {二階導數的對稱性}得
+    \[\frac{\partial P}{\partial t}
+      = \frac\partial{\partial t} \frac{\partial F}{\partial x}
+      = \frac\partial{\partial x} \frac{\partial F}{\partial t}
+      = \frac{\partial Q}{\partial x}. \qedhere\]
   \end{proof}
 \end{frame}
 
-\begin{frame}{若\eqref{eq:ExactIffPhiExists}則\eqref{eq:Exact}}
+\begin{frame}{通解的證明}
   \begin{proof}
-    根據\href{http://zh.wikipedia.org/wiki/\%E5\%81\%8F\%E5\%AF\%BC\%E6\%95\%B0}{偏導數}的定義，
-    \begin{equation}
-      d\phi = \frac{\partial\phi}{\partial x}\,dx + \frac{\partial\phi}{\partial y}\,dy. \label{eq:PartialPhi}
-    \end{equation}
-    比較\eqref{eq:ExactIffPhiExists}與\eqref{eq:PartialPhi}得
-    \[\frac{\partial\phi}{\partial x} = P \quad \mbox{且} \quad \frac{\partial\phi}{\partial y} = Q.\]
-    若 $P$, $Q$, $P_y$ 與 $Q_x$
-    在所討論的平面區域上連續，則在此區域中
-    \[\frac{\partial P}{\partial y} = \frac{\partial^2 \phi}{\partial y\,\partial x} = \frac{\partial^2 \phi}{\partial x\,
-      \partial y} = \frac{\partial Q}{\partial x}. \qedhere\]
+    設
+    \[F = \int Q\,dt + \int \left( P - \frac{\partial}{\partial x} \int Q\,dt \right) dx.\]
+    \[\frac{\partial F}{\partial x} = \frac{\partial}{\partial x} \int Q\,dt + P - \frac{\partial}{\partial x} \int Q\,dt
+      = P.\]
+    \begin{align*}
+      \frac{\partial F}{\partial t}
+	&= Q + \frac{\partial}{\partial t} \int \left( P - \frac{\partial}{\partial x} \int Q\,dt \right) dx\\
+	&= Q + \int \left( \frac{\partial P}{\partial t} - \frac{\partial Q}{\partial x} \right) dx = Q. \qedhere
+    \end{align*}
   \end{proof}
 \end{frame}
 
 \begin{frame}{積分乘數}
   對於非恰當微分方程
-  \[P(x,y)\,dx + Q(x,y)\,dy = 0\]
-  我們可以試著尋找積分乘數 $\mu(x,y)$ 使得
-  \[\mu P\,dx + \mu Q\,dy = 0\]
+  \[P(x,t)\,x' + Q(x,t) = 0\]
+  我們可以試著尋找積分乘數 $\mu(x,t)$ 使得
+  \[\mu Px' + \mu Q = 0\]
   為恰當微分方程，即
   \begin{equation}
-    \frac{\partial}{\partial y}\,\mu P = \frac{\partial}{\partial x}\,\mu Q \label{eq:Multiplier}
+    \frac{\partial}{\partial t}\,\mu P = \frac{\partial}{\partial x}\,\mu Q \label{eq:Multiplier}
   \end{equation}
   其中 $\mu \ne 0$。
 \end{frame}
@@ -196,25 +320,25 @@
   \begin{theorem}
     給定非恰當微分方程
     \begin{equation}
-      P(x,y)\,dx + Q(x,y)\,dy = 0. \label{eq:NonExact}
+      P(x,t)\,x' + Q(x,t) = 0. \label{eq:NonExact}
     \end{equation}
-    若 $\dfrac{P_y - Q_x}{Q} = h(x)$，則積分乘數為
+    若 $\dfrac{Q_x - P_t}{P} = h(t)$，則積分乘數為
     \begin{equation}
-      \mu(x) = \e^{\int h(x)\,dx}. \label{eq:xMultiplier}
+      \mu(t) = \e^{\int h(t)\,dt}. \label{eq:xMultiplier}
     \end{equation}
-    同理，若 $\dfrac{Q_x - P_y}{P} = k(y)$，則積分乘數為
-    \[\mu(y) = \e^{\int k(y)\,dy}.\]
+    同理，若 $\dfrac{P_t - Q_x}{Q} = k(x)$，則積分乘數為
+    \[\mu(x) = \e^{\int k(x)\,dx}.\]
   \end{theorem}
 \end{frame}
 
 \begin{frame}{\eqref{eq:xMultiplier}式的證明}
   \begin{proof}
-    設 $\mu(x)$ 為\eqref{eq:NonExact}的積分乘數，則由\eqref{eq:Multiplier}得
-    \[\mu\,\frac{\partial P}{\partial y} - \mu\,\frac{\partial Q}{\partial x} - Q\,\frac{d\mu}{dx} = 0\]
-    \[\frac{d\mu}{\mu} = \frac{\frac{\partial P}{\partial y} - \frac{\partial Q}{\partial x}}{Q}\,dx = h\,dx\]
+    設 $\mu(t)$ 為\eqref{eq:NonExact}的積分乘數，則由\eqref{eq:Multiplier}得
+    \[\mu\,\frac{\partial Q}{\partial x} - \mu\,\frac{\partial P}{\partial t} - P\,\frac{d\mu}{dt} = 0\]
+    \[\frac{\mu'}{\mu} = \frac{Q_x - P_t}{P} = h\]
     \begin{align*}
-      \ln \mu &= \int h\,dx\\
-      \mu &= \e^{\int h\,dx}. \qedhere
+      \ln \mu &= \int h\,dt\\
+      \mu &= \e^{\int h\,dt}. \qedhere
     \end{align*}
   \end{proof}
 \end{frame}
@@ -223,15 +347,15 @@
   \begin{theorem}
     給定微分方程
     \begin{equation}
-      P(x,y)\,dx + Q(x,y)\,dy = 0. \label{eq:CauchyRiemann}
+      P(x,t)\,x' + Q(x,t) = 0. \label{eq:CauchyRiemann}
     \end{equation}
     其中
-    \[\frac{\partial P}{\partial x} = \frac{\partial Q}{\partial y} \quad \mbox{且} \quad \frac{\partial Q}{\partial x} =
-      -\frac{\partial P}{\partial y}\]
-    即 $P$ 與 $Q$ 滿足 \href
+    \[\frac{\partial Q}{\partial t} = \frac{\partial P}{\partial x} \quad \mbox{且} \quad \frac{\partial P}{\partial t} =
+      -\frac{\partial Q}{\partial x}\]
+    即 $P$ 與 $Q$ 滿足\href
     {http://zh.wikipedia.org/wiki/\%E6\%9F\%AF\%E8\%A5\%BF\%EF\%BC\%8D\%E9\%BB\%8E\%E6\%9B\%BC\%E6\%96\%B9\%E7\%A8\%8B}
     {柯西--黎曼方程}，此時積分乘數為
-    \[\mu(x,y) = \frac{1}{P^2 + Q^2}.\]
+    \[\mu(x,t) = \frac{1}{P^2 + Q^2}.\]
   \end{theorem}
 \end{frame}
 
@@ -265,8 +389,8 @@
 \begin{frame}{方法 5：齊次微分方程}
   \begin{theorem}
     給定微分方程
-    \[P(x,y)\,dx + Q(x,y)\,dy = 0\]
-    其中 $P$ 與 $Q$ 皆為 $x$, $y$ 的齊次函數。設 $u(x) = y/x$，則原方程轉為變數可分離的方程。
+    \[P(x,t)\,x' = Q(x,t)\]
+    其中 $P$ 與 $Q$ 皆為 $x$, $t$ 的齊次函數。設 $u(t) = x/t$，則原方程轉為變數可分離的方程。
   \end{theorem}
 \end{frame}
 
@@ -274,9 +398,9 @@
 \begin{frame}{方法 6：幾乎線性的微分方程}
   \begin{theorem}
     給定微分方程
-    \[f(x)\,k'(y)\,y' + g(x)\,k(y) + h(x)= 0.\]
-    設 $u(x) = k(y)$，則原方程轉為線性的
-    \[f(x)\,u' + g(x)\,u + h(x) = 0.\]
+    \[f(t)\,k'(x)\,x' + g(t)\,k(x) = h(t).\]
+    設 $u(t) = k(x)$，則原方程轉為線性的
+    \[f(t)\,u' + g(t)\,u = h(t).\]
   \end{theorem}
   \begin{remark}
     這方法在課本上罕見。
@@ -287,20 +411,20 @@
 \begin{frame}{方法 7：含線性分式的微分方程}
   \begin{theorem}
     給定微分方程
-    \[y' + F \Left( \frac{a_1 x + b_1 y + c_1}{a_2 x + b_2 y + c_2} \Right) = 0.\]
-    若在 $xy$-平面上，直線 $a_1 x + b_1 y + c_1 = 0$ 與 $a_2 x + b_2 y + c_2 = 0$ 交於 $(h,k)$，設 $X = x-h$ 與
-    $Y = y-k$，則原方程轉為齊次的
-    \[\frac{dY}{dX} + F \Left( \frac{a_1 X + b_1 Y}{a_2 X + b_2 Y} \Right) = 0.\]
+    \[x' = f \Left( \frac{a_1 x + b_1 t + c_1}{a_2 x + b_2 t + c_2} \Right).\]
+    若 $a_1 x + b_1 t + c_1 = 0$ 與 $a_2 x + b_2 t + c_2 = 0$ 聯立方程有唯一解
+    $(x,t) = (h,k)$，設 $X = x-h$ 與 $T = t-k$，則原方程轉為齊次的
+    \[\frac{dX}{dT} = f \Left( \frac{a_1 X + b_1 T}{a_2 X + b_2 T} \Right).\]
   \end{theorem}
 \end{frame}
 
-\subsection[以 $x^n y$ 替代]{以 x\textasciicircum n y 替代}
-\begin{frame}{方法 8：以 $x^n y$ 替代}
+\subsection[以 $t^n x$ 替代]{以 t\textasciicircum n x 替代}
+\begin{frame}{方法 8：以 $t^n x$ 替代}
   \begin{theorem}
     給定微分方程
-    \[y' + \frac{y H(x^n y)}{x} = 0\]
-    其中 $n$ 為待定常數。設 $u(x) = x^n y$，則原方程轉為變數可分離的
-    \[\frac{du}{u \left( n - H(u) \right)} = \frac{dx}{x}.\]
+    \[x' + \frac{x f(t^n x)}{t} = 0\]
+    其中 $n$ 為待定常數。設 $y = t^n x$，則原方程轉為變數可分離的
+    \[\int \frac{1}{y \left( n - f(y) \right)}\,dy = \int \frac1t\,dt.\]
   \end{theorem}
 \end{frame}
 
