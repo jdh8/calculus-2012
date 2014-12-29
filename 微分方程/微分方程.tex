@@ -177,8 +177,24 @@
     \end{align*}
     此時積分，引進積分常數 $c$。
     \[ \e^P x = c + \int \e^P B\,dt \]
-    \[x = \e^{-\int A\,dt} \left( c + \int \e^{\int A\,dt} B\,dt \right). \qedhere\]
+    \begin{equation}
+      x = \e^{-\int A\,dt} \left( c + \int \e^{\int A\,dt} B\,dt \right).
+      \qedhere \label{LinearGeneralSol}
+    \end{equation}
   \end{proof}
+\end{frame}
+
+\begin{frame}{有效區間}
+  \begin{theorem}
+    給定微分方程
+    \[ x' + Ax = B \]
+    與初始條件
+    \[ x_0 = x(t_0).\]
+    若函數 $A$, $B$ 在區間 $(a, b)$ 中連續，且 $a < t_0 < b$，則 $x$
+    在此區間中有唯一解。
+  \end{theorem}
+
+  證明從略，因為解的形式可以通解 \eqref{LinearGeneralSol} 中獲得。
 \end{frame}
 
 \begin{frame}{特殊狀況}
@@ -230,6 +246,19 @@
     \[\int \frac{A(x)}{C(x)}\,dx = \int \frac{D(t)}{B(t)}\,dt.\]
     證明從略。
   \end{theorem}
+\end{frame}
+
+\begin{frame}{有效區間}
+  \begin{theorem}
+    給定微分方程
+    \[ P(x)\,x' = Q(t) \]
+    與初始條件
+    \[ x_0 = x(t_0) \]
+    若在 $a < t < b$ 時，函數 $P$, $Q$ 處處連續，則在此有實際解
+    \[ \int_{x_0}^x P(u)\,du = \int_{t_0}^t Q(v)\,dv.\]
+  \end{theorem}
+
+  由換元積分得證。
 \end{frame}
 
 \begin{frame}[allowframebreaks]{Logistic 成長，頁}
