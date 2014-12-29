@@ -459,6 +459,33 @@
   \end{theorem}
 \end{frame}
 
+\section{數值方法}
+\begin{frame}{數值方法}
+  有時
+  \begin{itemize}
+    \item 微分方程沒有解析解
+    \item 計算解析解的成本太大。
+  \end{itemize}
+  此時我們就用數值方法去計算待解函數的近似值。
+\end{frame}
+
+\subsection{歐拉法}
+\begin{frame}{微分方程與線性近似}
+  給定一階常微分方程
+  \[ \frac{d\mathbf x}{dt} = \mathbf f(\mathbf x,t) \]
+  與初始條件
+  \[ \mathbf x_0 = \mathbf x(t_0).\]
+  根據線性近似，當 $t$ 在 $t_0$ 附近
+  \[ \mathbf x(t) \approx \mathbf x(t_0) + \left( t - t_0 \right) \mathbf f(\mathbf x_0, t_0).\]
+\end{frame}
+
+\begin{frame}{歐拉法}
+  假設代求的函數值是 $\mathbf x(t_n)$，且 $t_n > t_0$，不失一般性。我們把區間 $[t_0, t_n]$
+  以 $t_1, t_2, t_3, \dots$ 分成 $n$ 段，再以
+  \[ \mathbf x(t_{k+1}) \approx \mathbf x(t_k) + \left( t_{k+1} - t_k \right) \mathbf f(\mathbf x_k, t_k) \]
+  讓 $k$ 從 0 迭代到 $n-1$，最後獲得 $\mathbf x(t_n)$ 的近似值。
+\end{frame}
+
 \begin{frame}{謝謝聆聽！}
   \begin{center}
     \includegraphics[width=0.3\textheight]{favicon}
