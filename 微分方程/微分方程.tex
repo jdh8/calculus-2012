@@ -162,7 +162,7 @@
     \[f(t)\,x' + g(t)\,x = h(t).\]
     設 $A(t) = \dfrac{g(t)}{f(t)}$ 與 $B(t) = \dfrac{h(t)}{f(t)}$，將方程化為
     \[x' + Ax = B.\]
-    則 $\e^{\int A\,dt}$ 為一積分乘數，使得通解為
+    則 $\e^{\int A\,dt}$ 為一積分因子，使得通解為
     \[x = \e^{-\int A\,dt} \left( c + \int \e^{\int A\,dt} B\,dt \right).\]
   \end{theorem}
 \end{frame}
@@ -289,7 +289,7 @@
   \[y(3) = \frac{4000\e^{9/5}}{2\e^{9/5}+3} \approx 1602.6304520653167546.\]
 \end{frame}
 
-\subsection[恰當--積分乘數]{恰當微分方程}
+\subsection[恰當--積分因子]{恰當微分方程}
 \begin{frame}{方法 3：恰當微分方程}
   \begin{theorem}
     給定微分方程
@@ -333,10 +333,10 @@
   \end{proof}
 \end{frame}
 
-\begin{frame}{積分乘數}
+\begin{frame}{積分因子}
   對於非恰當微分方程
   \[P(x,t)\,x' + Q(x,t) = 0\]
-  我們可以試著尋找積分乘數 $\mu(x,t)$ 使得
+  我們可以試著尋找積分因子 $\mu(x,t)$ 使得
   \[\mu Px' + \mu Q = 0\]
   為恰當微分方程，即
   \begin{equation}
@@ -345,24 +345,24 @@
   其中 $\mu \ne 0$。
 \end{frame}
 
-\begin{frame}{積分乘數為單變函數}
+\begin{frame}{積分因子為單變函數}
   \begin{theorem}
     給定非恰當微分方程
     \begin{equation}
       P(x,t)\,x' + Q(x,t) = 0. \label{eq:NonExact}
     \end{equation}
-    若 $\dfrac{Q_x - P_t}{P} = h(t)$，則積分乘數為
+    若 $\dfrac{Q_x - P_t}{P} = h(t)$，則積分因子為
     \begin{equation}
       \mu(t) = \e^{\int h(t)\,dt}. \label{eq:xMultiplier}
     \end{equation}
-    同理，若 $\dfrac{P_t - Q_x}{Q} = k(x)$，則積分乘數為
+    同理，若 $\dfrac{P_t - Q_x}{Q} = k(x)$，則積分因子為
     \[\mu(x) = \e^{\int k(x)\,dx}.\]
   \end{theorem}
 \end{frame}
 
 \begin{frame}{\eqref{eq:xMultiplier}式的證明}
   \begin{proof}
-    設 $\mu(t)$ 為\eqref{eq:NonExact}的積分乘數，則由\eqref{eq:Multiplier}得
+    設 $\mu(t)$ 為\eqref{eq:NonExact}的積分因子，則由\eqref{eq:Multiplier}得
     \[\mu\,\frac{\partial Q}{\partial x} - \mu\,\frac{\partial P}{\partial t} - P\,\frac{d\mu}{dt} = 0\]
     這是變數可分離的微分方程。我們著手解 $\mu$。
     \[\frac{\mu'}{\mu} = \frac{Q_x - P_t}{P} = h\]
@@ -374,7 +374,7 @@
   \end{proof}
 \end{frame}
 
-\begin{frame}{$P$ 與 $Q$ 滿足柯西--黎曼方程時的積分乘數}
+\begin{frame}{$P$ 與 $Q$ 滿足柯西--黎曼方程時的積分因子}
   \begin{theorem}
     給定微分方程
     \begin{equation}
@@ -385,7 +385,7 @@
       -\frac{\partial Q}{\partial x}\]
     即 $P$ 與 $Q$ 滿足\href
     {http://zh.wikipedia.org/wiki/\%E6\%9F\%AF\%E8\%A5\%BF\%EF\%BC\%8D\%E9\%BB\%8E\%E6\%9B\%BC\%E6\%96\%B9\%E7\%A8\%8B}
-    {柯西--黎曼方程}，此時積分乘數為
+    {柯西--黎曼方程}，此時積分因子為
     \[\mu(x,t) = \frac{1}{P^2 + Q^2}.\]
   \end{theorem}
 \end{frame}
