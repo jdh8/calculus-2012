@@ -64,8 +64,9 @@
   \begin{proof}
     當 $L < 1$，設 $r = \dfrac{L+1}{2}$。則 $L < 1 < r$ 且存在 $N \in \N$ 使得若 $n > N$ 則 $|a_{n+1}| < r \left| a_n
     \right|$。因此對於所有 $n > N$ 及 $k > 0$，我們都有 $|a_{n+k}| < r^k \left| a_n \right|$。所以
-    \[\sum_{k=N+1}^\infty |a_k| = \sum_{k=1}^\infty |a_{N+k} < \sum_{k=1}^\infty r^k \left| a_{N+1} \right| = |a_{N+1}|
-    \sum_{k=1}^\infty r^k = \frac{r \left| a_{N+1} \right|}{1-r} < \infty\]
+    \[\sum_{k=N+1}^\infty \left| a_k \right| = \sum_{k=1}^\infty \left| a_{N+k} \right|
+      < \sum_{k=1}^\infty r^k \left| a_{N+1} \right| = |a_{N+1}| \sum_{k=1}^\infty r^k
+      = \frac{r \left| a_{N+1} \right|}{1-r} < \infty\]
     即此級數絕對收斂。
   \end{proof}
 \end{theorem}

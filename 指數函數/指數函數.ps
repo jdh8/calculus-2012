@@ -1,7 +1,7 @@
 %!PS-Adobe-2.0
-%%Creator: dvips(k) 5.992 Copyright 2012 Radical Eye Software
+%%Creator: dvips(k) 5.994 Copyright 2014 Radical Eye Software
 %%Title: 指數函數.dvi
-%%CreationDate: Sat Nov 24 01:42:26 2012
+%%CreationDate: Wed Nov  4 14:18:44 2015
 %%Pages: 4
 %%PageOrder: Ascend
 %%BoundingBox: 0 0 596 842
@@ -17,7 +17,7 @@
 %DVIPSWebPage: (www.radicaleye.com)
 %DVIPSCommandLine: dvips "指數函數"
 %DVIPSParameters: dpi=600
-%DVIPSSource:  TeX output 2012.11.24:0142
+%DVIPSSource:  TeX output 2015.11.04:1418
 %%BeginProcSet: tex.pro 0 0
 %!
 /TeXDict 300 dict def TeXDict begin/N{def}def/B{bind def}N/S{exch}N/X{S
@@ -67,10 +67,10 @@ B/g{0 M}B/h{1 M}B/i{2 M}B/j{3 M}B/k{4 M}B/w{0 rmoveto}B/l{p -4 w}B/m{p
 
 %%EndProcSet
 %%BeginProcSet: pstricks.pro 0 0
-% $Id: pstricks.pro 700 2012-08-13 21:04:25Z herbert $
+% $Id: pstricks.pro 902 2014-03-30 16:23:33Z herbert $
 %
 %% PostScript prologue for pstricks.tex.
-%% Version 1.14, 2012/08/13
+%% Version 1.22, 2014/02/20
 %%
 %% This program can be redistributed and/or modified under the terms
 %% of the LaTeX Project Public License Distributed from CTAN archives
@@ -85,7 +85,7 @@ systemdict /.setshapealpha known not {/.setshapealpha { pop } def } if
 %
 /tx@Dict 200 dict def 				% the main PSTricks dictionary
 tx@Dict begin
-/ADict 25 dict def				% The arrow dictionaray
+/ADict 25 dict def				% The arrow dictionary
 /CM { matrix currentmatrix } bind def
 /SLW /setlinewidth load def
 /CLW /currentlinewidth load def
@@ -99,6 +99,7 @@ tx@Dict begin
 /Atan { /atan load stopped { pop pop 0 } if } def % return 0 if atan not known
 /ATAN1 {neg -1 atan 180 sub } def		% atan(x) (only one parameter)
 /Div { dup 0 eq { pop } { div } ifelse } def  	% control the division
+/Log { dup 1e-20 lt { pop -1e30 }{ log } ifelse } def % control the log
 /tan { dup cos abs 1.e-10 lt 
   { pop 1.e10 } 				% return 1.e10 as infinit
   { dup sin exch cos div } ifelse 		% default sin/cos
@@ -106,6 +107,14 @@ tx@Dict begin
 /Tan { dup sin exch cos Div } def 		% sin(x)/cos(x) x in degrees
 /Acos {dup dup mul neg 1 add dup 0 lt {		% arc cos, returns 0 when negative root
   pop pop 0 }{ sqrt exch atan} ifelse } def
+/Acos2 { 2 dict begin 
+  /x ED /y ED
+  y abs 1.0e-20 lt { 1.0e30 } if
+  x y div 
+  dup dup mul neg 1 add dup 0 lt {		% arc cos needs two values x,y
+  pop pop 0 }{ sqrt exch atan} ifelse 
+  y 0 lt { 180 add } if
+} def
 /NET { neg exch neg exch T } def	      	% change coordinate system to the negative one		
 /Pyth { dup mul exch dup mul add sqrt } def   	% Pythagoras, expects 2 parameter
 /Pyth2 {					% Pythagoras, xA yA xB yB
@@ -115,7 +124,8 @@ tx@Dict begin
   sub			% yB-yA xA-xB
   Pyth } def
 /PtoC { 2 copy cos mul 3 1 roll sin mul } def 	% Polar to Cartesian
-/Rand { rand 4294967295 div } def		% a real random number
+%/Rand { rand 4294967295 div } def		% a real random number
+/Rand { rand 2147483447 div } def		% a real random number between 0 and 1
 %----------------- hv added 20050516 ---------------
 /PiDiv2 1.57079632680 def
 /Pi 3.14159265359 def 
@@ -125,6 +135,13 @@ tx@Dict begin
 %
 /RadtoDeg { 180 mul Pi div } bind def 		% convert from radian to degrees
 /DegtoRad { Pi mul 180 div } bind def 		% viceversa
+%
+/startGlobal { true setglobal globaldict begin } bind def
+/endGlobal { end false setglobal } bind def
+/pssetRGBcolor /setrgbcolor load def
+/pssetCMYKcolor /setcmykcolor load def
+/pssetGraycolor /setgray load def
+%
 %----------------- hv end---------------------------
 /PathLength@ { /z z y y1 sub x x1 sub Pyth add def /y1 y def /x1 x def } def
 %
@@ -192,7 +209,6 @@ tx@Dict begin
     /YLength YB YA sub def
     /PAngle YLength XLength Atan def
     /XYLength XLength YLength Pyth def
-
     %% for negative SymStep we calculate the distance 
     SymStep 0 lt 
       { %XYLength SymStep div abs cvi 
@@ -339,7 +355,6 @@ gsave
   /kite_colour ED 
   /dart_colour ED
   clip 
-
   newpath 
   gsave
   100 100 translate
@@ -786,6 +801,100 @@ gsave
   CurvePath 
 } def
 %
+/CalcBezierSpline {%  Christoph Bersch
+  10 dict begin
+  /getX { Points exch 2 mul get } def
+  /getY { Points exch 2 mul 1 add get } def
+  /n Points length 1 sub 2 idiv def
+  /GetFirstControlPoints {
+    /x n array def
+    /tmp n array def
+    /b 2 def
+    x 0 rhs 0 get b div put
+    1 1 n 1 sub {
+      /i exch def
+      tmp i 1 b div dup 4 1 roll put
+      i n 1 sub lt { 4 }{ 3.5 } ifelse exch sub /b exch def
+      x i rhs i get x i 1 sub get sub b div put
+    } for
+    1 1 n 1 sub {
+      n exch sub
+      dup dup x exch 1 sub 2 copy 6 2 roll
+      get 3 1 roll tmp exch get
+      exch x exch get mul sub
+      put	
+    } for
+    x
+  } def
+  % 
+  n 1 eq {
+    0 getX 2 mul 1 getX add 3 div
+    0 getY 2 mul 1 getY add 3 div
+    exch dup 3 1 roll 2 mul 0 getX sub
+    exch dup 3 1 roll 2 mul 0 getY sub
+    [ 0 getX 0 getY 7 3 roll 1 getX 1 getY ] /outPoints exch def
+  } {
+    /outPoints 6 n mul 2 add array def
+    0 1 n {
+      dup dup 6 mul dup 1 add
+      outPoints exch 5 -1 roll getY put
+      outPoints exch 3 -1 roll getX put
+    } for
+    /rhs n array def
+    1 1 n 2 sub {
+      rhs exch dup dup getX 4 mul exch 1 add getX 2 mul add put
+    } for
+    rhs 0 0 getX 1 getX 2 mul add put
+    rhs n 1 sub dup getX 8 mul n getX add 2 div put
+    GetFirstControlPoints
+    1 1 n 2 sub {
+      rhs exch dup dup getY 4 mul exch 1 add getY 2 mul add put
+    } for
+    rhs 0 0 getY 1 getY 2 mul add put
+    rhs n 1 sub dup getY 8 mul n getY add 2 div put
+    GetFirstControlPoints
+    0 1 n 1 sub {
+      /i exch def
+      2 copy
+      i get outPoints 6 i mul 3 add 3 -1 roll put
+      i get outPoints 6 i mul 2 add 3 -1 roll put
+      2 copy
+      i n 1 sub lt {
+        i 1 add get i 1 add getY 2 mul exch sub outPoints 6 i mul 5 add 3 -1 roll put
+        i 1 add get i 1 add getX 2 mul exch sub outPoints 6 i mul 4 add 3 -1 roll put
+      }{
+        n 1 sub get n getY add 2 div outPoints 6 n 1 sub mul 5 add 3 -1 roll put
+        n 1 sub get n getX add 2 div outPoints 6 n 1 sub mul 4 add 3 -1 roll put
+      } ifelse
+    } for
+    pop pop
+  } ifelse
+  outPoints
+  end
+} def
+/Spline {
+  /showpoints ED
+  counttomark 2 div dup cvi /n ED
+  n eq not { exch pop } if
+  ] /Points ED
+  n 1 gt {
+    CalcBezierSpline
+    mark exch aload pop
+    ArrowA
+    n 2 sub {
+      6 2 roll 4 2 roll curveto
+    } repeat
+    6 2 roll 4 2 roll ArrowB curveto
+  } if
+} def
+/OpenSymbolSpline {
+  Spline
+  0.1 setflat
+  /Shift Symbol stringwidth pop 2 div def 
+  CurvePath 
+} def
+
+%
 /SQ { /r ED r r moveto r r neg L r neg r neg L r neg r L fill } def
 /ST { /y ED /x ED x y moveto x neg y L 0 x L fill } def
 /SP { /r ED gsave 0 r moveto 4 { 72 rotate 0 r L } repeat fill grestore } def
@@ -1123,7 +1232,7 @@ dup angle0 sub dup abs 180 gt { 180 add 360 div floor 360 mul sub } { pop } ifel
 /PutBegin { /TMatrix [ TMatrix CM ] cvx def CP 4 2 roll T moveto } def
 /PutEnd { CP /TMatrix [ TMatrix setmatrix ] cvx def moveto } def
 %
-/Uput { 
+/Uput {
   /a ED 
   add 2 div /h ED 2 
   div /w ED 
@@ -1138,6 +1247,7 @@ dup angle0 sub dup abs 180 gt { 180 add 360 div floor 360 mul sub } { pop } ifel
 } def
 %
 /UUput { 
+  5 dict begin
   /z ED 
   abs /y ED 
   /x ED 
@@ -1148,73 +1258,6 @@ dup angle0 sub dup abs 180 gt { 180 add 360 div floor 360 mul sub } { pop } ifel
   a PtoC 
   h1 add exch 
   w1 add exch 
-} def
-%
-/BeginOL { 
-  dup (all) eq exch TheOL eq or 
-    { IfVisible not { Visible /IfVisible true def } if } 
-    { IfVisible { Invisible /IfVisible false def } if } ifelse 
-} def
-%
-/InitOL { 
-  /OLUnit [ 3000 3000 matrix defaultmatrix dtransform ] cvx def
-  /Visible { CP OLUnit idtransform T moveto } def 
-  /Invisible { CP OLUnit neg exch neg exch idtransform T moveto } def 
-  /BOL { BeginOL } def
-  /IfVisible true def 
-} def
-%
-%%%%%%%%%%%%%%%%% tools %%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%% ### bubblesort ###
-%% syntax : array bubblesort --> array2 trie par ordre croissant
-%% code de Bill Casselman
-%% http://www.math.ubc.ca/people/faculty/cass/graphics/text/www/
-/bubblesort {
-4 dict begin
-   /a exch def
-   /n a length 1 sub def
-   n 0 gt {
-      % at this point only the n+1 items in the bottom of a remain to
-      % the sorted largest item in that blocks is to be moved up into
-      % position n
-      n {
-         0 1 n 1 sub {
-            /i exch def
-            a i get a i 1 add get gt {
-               % if a[i] > a[i+1] swap a[i] and a[i+1]
-               a i 1 add
-               a i get
-               a i a i 1 add get
-               % set new a[i] = old a[i+1]
-               put
-               % set new a[i+1] = old a[i]
-               put
-            } if
-         } for
-         /n n 1 sub def
-      } repeat
-   } if
-   a
-end
-} def
-%
-%
-/concatstringarray{  %  [(a) (b) ... (z)] --> (ab...z)  20100422
-  0 1 index { length add } forall 
-  string     
-  0 3 2 roll      
-  { 3 copy putinterval length add }forall 
-  pop  
-} bind def
-%
-/dot2comma {% on stack a string (...) 
-  2 dict begin
-  /Output exch def
-  0 1 Output length 1 sub { 
-    /Index exch def 
-    Output Index get 46 eq { Output Index 44 put } if 
-  } for
-  Output
   end
 } def
 %
@@ -1225,10 +1268,10 @@ end
 
 %%EndProcSet
 %%BeginProcSet: pst-algparser.pro 0 0
-% $Id: pst-algparser.pro 594 2011-10-31 18:13:18Z herbert $
+% $Id: pst-algparser.pro 902 2014-03-30 16:23:33Z herbert $
 %%
 %% PostScript prologue for PSTricks algorithm parser
-%% Version 0.04, 2011/10/21
+%% Version 0.05, 2014/03/30
 %%
 %% This program can be redistributed and/or modified under the terms
 %% of the LaTeX Project Public License Distributed from CTAN archives
@@ -1795,6 +1838,10 @@ end   %tx@CoreAnalyzerDict
   PreCommonFunc
   { (1/\(1+\() StrConcat 5 index StrConcat (\)^2\)\)) StrConcat } if
   PostCommonFunc } def
+/EvalFunc_floor {%
+  PreCommonFunc
+  {  dup 0 eq { (1) StrConcat } { 1 sub } ifelse (/\() StrConcat 5 index StrConcat AddClPar } if
+  PostCommonFunc } def
 /EvalFunc_ln {%
   PreCommonFunc
   {  dup 0 eq { (1) StrConcat } { 1 sub } ifelse (/\() StrConcat 5 index StrConcat AddClPar } if
@@ -1994,10 +2041,10 @@ end
 
 %%EndProcSet
 %%BeginProcSet: pst-tools.pro 0 0
-% $Id: pst-tools.pro 622 2012-01-01 15:36:14Z herbert $
+% $Id: pst-tools.pro 842 2013-10-26 10:25:41Z herbert $
 %
 %% PostScript tools prologue for pstricks.tex.
-%% Version 0.02, 2012/01/01
+%% Version 0.04, 2013/10/26
 %%
 %% This program can be redistributed and/or modified under the terms
 %% of the LaTeX Project Public License Distributed from CTAN archives
@@ -2019,6 +2066,15 @@ end
   end
 } def
 %
+/ps@ReverseOrderOfPoints { % on stack [P1 P2 P3 ...Pn]=>[Pn,Pn-1,...,P2,P1]
+  5 dict begin       % all local
+  aload length /n ED % number of coors
+  n 2 div cvi /m ED  % number of Points
+  /n1 n def
+  m { n1 2 roll /n1 n1 2 sub def } repeat
+  n array astore
+  end
+} def
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % subroutines for complex numbers, given as an array [a b] 
 % which is a+bi = Real+i Imag
@@ -2208,12 +2264,56 @@ end
   end
 } def
 %
+/rightTrim { % on stack the string and the character number to be stripped  
+  /charNo exch def
+  dup
+  length 1 sub -1 0 { 
+    /i exch def dup i get charNo ne { exit } if 
+  } for
+  0 i 1 add getinterval
+  dup length string copy
+} bind def  % leaves the stripped string on the stack
+
+/psStringwidth /stringwidth load def
+/psShow /show load def
+
+%/stringwidth{ 32 rightTrim psStringwidth } bind def
+
+%/show { 32 rightTrim psShow } bind def
+%-----------------------------------------------------------------------------%
+
+/pgffunctions {
+    /pgfsc{}bind def% stroke color is empty by default
+    /pgffc{}bind def% fill color is empty by default
+    /pgfstr{stroke}bind def%
+    /pgffill{fill}bind def%
+    /pgfeofill{eofill}bind def%
+    /pgfe{a dup 0 rlineto exch 0 exch rlineto neg 0 rlineto closepath}bind def% rectangle
+    /pgfw{setlinewidth}bind def% setlinewidth
+    /pgfs{save pgfpd 72 Resolution div 72 VResolution div neg scale 
+      magscale{1 DVImag div dup scale}if 
+      pgfx neg pgfy neg translate pgffoa .setopacityalpha}bind def% save
+    /pgfr{pgfsd restore}bind def %restore
+    userdict begin%
+    /pgfo{pgfsd /pgfx currentpoint /pgfy exch def def @beginspecial}bind def %open
+    /pgfc{newpath @endspecial pgfpd}bind def %close
+    /pgfsd{globaldict /pgfdelta /delta where {pop delta} {0} ifelse put}bind def% save delta
+    /pgfpd{/delta globaldict /pgfdelta get def}bind def % put delta
+    /.setopacityalpha where {pop} {/.setopacityalpha{pop}def} ifelse % install .setopacityalpha 
+    /.pgfsetfillopacityalpha{/pgffoa exch def
+      /pgffill{gsave pgffoa .setopacityalpha fill 1 .setopacityalpha newpath fill grestore newpath}bind def
+      /pgfeofill{gsave pgffoa .setopacityalpha eofill 1 .setopacityalpha newpath eofill grestore newpath}bind def}bind def
+    /.pgfsetstrokeopacityalpha{/pgfsoa exch def /pgfstr{gsave pgfsoa .setopacityalpha stroke grestore newpath}bind def}bind def
+    /pgffoa 1 def
+    /pgfsoa 1 def
+    end
+} def
 %-----------------------------------------------------------------------------%
 % END pst-tools.pro
 
 %%EndProcSet
 %%BeginProcSet: pst-dots.pro 0 0
-% $Id: pst-dots.pro 130 2009-08-27 08:55:03Z herbert $
+% $Id: pst-dots.pro 801 2013-07-09 18:10:41Z herbert $
 %
 %% PostScript prologue for pstricks.tex.
 %% Version 2.02,  2009/06/16
@@ -2389,20 +2489,25 @@ end
 
 %%EndProcSet
 %%BeginProcSet: pst-node.pro 0 0
-% $Id: pst-node.pro 645 2012-02-12 09:09:51Z herbert $
+% $Id: pst-node.pro 876 2014-01-28 15:03:13Z herbert $
 %%
 %% PostScript prologue for pst-node.tex.
-%% Version 1.13, 2011/11/21.
+%% Version 1.15, 2014/01/27.
 %%
 %% This program can be redistributed and/or modified under the terms
 %% of the LaTeX Project Public License Distributed from CTAN archives
 %% in directory macros/latex/base/lppl.txt.
 %
-/tx@NodeDict 400 dict def tx@NodeDict begin
+%%%%  EMPTY lines are not aload!!! Problem with pst-eps -> \par
+%
+%
 tx@Dict begin 			% from main pstricks dict
  /T /translate load def 
  /CP /currentpoint load def 
+% /startGlobal { true setglobal globaldict begin } bind def
+% /endGlobal { end false setglobal } bind def
 end
+/tx@NodeDict 400 dict def tx@NodeDict begin
 /NewNode { % on stack: { x y } boolean N@name type InitXnode 
   gsave 
   NodeScale                     % a bugfix for xelatex, it's empty for dvips
@@ -2596,15 +2701,26 @@ end
 %
 /HPosBegin { yB yA ge { /t 1 t sub def } if /Y yB yA sub t mul yA add def
 } def
+%
 /HPosEnd { /X Y yyA sub yyB yyA sub Div xxB xxA sub mul xxA add def
-/NAngle yyB yyA sub xxB xxA sub Atan def } def
+           /NAngle yyB yyA sub xxB xxA sub Atan def 
+} def
 /HPutLine { HPosBegin /yyA ED /xxA ED /yyB ED /xxB ED HPosEnd  } def
-/HPutLines { HPosBegin yB yA ge { /check { le } def } { /check { ge } def
-} ifelse /xxA xA def /yyA yA def mark xB yB LPutVar { dup Y check { exit
-} { /yyA ED /xxA ED } ifelse } loop /yyB ED /xxB ED cleartomark HPosEnd 
+%
+/HPutLines { HPosBegin yB yA ge 
+  { /check { le } def } { /check { ge } def } ifelse 
+  /xxA xA def 
+  /yyA yA def 
+  mark xB yB LPutVar 
+    { dup Y check { exit } { /yyA ED /xxA ED } ifelse } 
+  loop 
+  /yyB ED /xxB ED cleartomark HPosEnd 
 } def
-/VPosBegin { xB xA lt { /t 1 t sub def } if /X xB xA sub t mul xA add def
+%
+/VPosBegin { 
+  xB xA lt { /t 1 t sub def } if /X xB xA sub t mul xA add def
 } def
+%
 /VPosEnd { /Y X xxA sub xxB xxA sub Div yyB yyA sub mul yyA add def
 /NAngle yyB yyA sub xxB xxA sub Atan def } def
 /VPutLine { VPosBegin /yyA ED /xxA ED /yyB ED /xxB ED VPosEnd  } def
@@ -2614,11 +2730,19 @@ exit } { /yyA ED /xxA ED } ifelse } loop /yyB ED /xxB ED cleartomark
 VPosEnd  } def
 /HPutCurve { gsave newpath /SaveLPutVar /LPutVar load def LPutVar 8 -2
 roll moveto curveto flattenpath /LPutVar [ {} {} {} {} pathforall ] cvx
-def grestore exec /LPutVar /SaveLPutVar load def } def
-/NCCoor { /AngleA yB yA sub xB xA sub Atan def /AngleB AngleA 180 add def
-GetEdgeA GetEdgeB /LPutVar [ xB1 yB1 xA1 yA1 ] cvx def /LPutPos {
-LPutVar LPutLine } def /HPutPos { LPutVar HPutLine } def /VPutPos {
-LPutVar VPutLine } def LPutVar } def
+def grestore exec /LPutVar /SaveLPutVar load def 
+} def
+%
+/NCCoor { 
+  /AngleA yB yA sub xB xA sub Atan def 
+  /AngleB AngleA 180 add def
+  GetEdgeA GetEdgeB 
+  /LPutVar [ xB1 yB1 xA1 yA1 ] cvx def 
+  /LPutPos { LPutVar LPutLine } def 
+  /HPutPos { LPutVar HPutLine } def 
+  /VPutPos { LPutVar VPutLine } def 
+  LPutVar 
+} def
 %
 /NCLine { 
   NCCoor 
@@ -3317,8 +3441,10 @@ end
 
 %%EndProcSet
 %%BeginProcSet: pstricks-add.pro 0 0
-%% $Id: pstricks-add.pro 328 2010-05-24 15:56:43Z herbert $
+%% $Id: pstricks-add.pro 692 2012-06-04 06:47:40Z herbert $
+%%
 % PostScript prologue for pstricks-add.tex.
+%
 % Version 0.23, 2009/12/17 
 %
 /tx@addDict 410 dict def tx@addDict begin
@@ -3674,7 +3800,6 @@ FontDirectory/bsmiu5e known{/bsmiu5e findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu5e def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4106226 def
 /XUID [1021 31 1977193847 1402035 94] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -3799,7 +3924,6 @@ FontDirectory/bsmiu30 known{/bsmiu30 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu30 def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4115957 def
 /XUID [1021 31 1977193847 1402035 48] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -3885,7 +4009,6 @@ FontDirectory/bsmiu5b known{/bsmiu5b findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu5b def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4111370 def
 /XUID [1021 31 1977193847 1402035 91] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -4084,7 +4207,6 @@ FontDirectory/bsmiu8c known{/bsmiu8c findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu8c def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4036334 def
 /XUID [1021 31 1977193847 1402035 140] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -4190,7 +4312,6 @@ FontDirectory/bsmiu97 known{/bsmiu97 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu97 def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4103615 def
 /XUID [1021 31 1977193847 1402035 151] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -4311,7 +4432,6 @@ FontDirectory/bsmiu4e known{/bsmiu4e findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu4e def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4182218 def
 /XUID [1021 31 1977193847 1402035 78] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -4456,7 +4576,6 @@ FontDirectory/bsmiu67 known{/bsmiu67 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu67 def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4154748 def
 /XUID [1021 31 1977193847 1402035 103] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -4582,7 +4701,6 @@ FontDirectory/bsmiu81 known{/bsmiu81 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu81 def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4149787 def
 /XUID [1021 31 1977193847 1402035 129] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -4676,7 +4794,6 @@ FontDirectory/bsmiu50 known{/bsmiu50 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu50 def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4166900 def
 /XUID [1021 31 1977193847 1402035 80] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -4789,7 +4906,6 @@ FontDirectory/bsmiu53 known{/bsmiu53 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu53 def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4231336 def
 /XUID [1021 31 1977193847 1402035 83] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -4908,7 +5024,6 @@ FontDirectory/bsmiu65 known{/bsmiu65 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu65 def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4193154 def
 /XUID [1021 31 1977193847 1402035 101] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -5121,7 +5236,6 @@ FontDirectory/bsmiu5c known{/bsmiu5c findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu5c def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4024340 def
 /XUID [1021 31 1977193847 1402035 92] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -5251,7 +5365,6 @@ FontDirectory/bsmiu7d known{/bsmiu7d findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu7d def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4119238 def
 /XUID [1021 31 1977193847 1402035 125] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -5403,7 +5516,6 @@ FontDirectory/CMR6 known{/CMR6 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /CMR6 def
 /FontBBox {-20 -250 1193 750 }readonly def
-/UniqueID 5000789 def
 /PaintType 0 def
 /FontInfo 9 dict dup begin
 /version (003.002) readonly def
@@ -5639,7 +5751,6 @@ FontDirectory/bsmiu56 known{/bsmiu56 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu56 def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4006954 def
 /XUID [1021 31 1977193847 1402035 86] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -5734,7 +5845,6 @@ FontDirectory/bsmiu5f known{/bsmiu5f findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu5f def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4124950 def
 /XUID [1021 31 1977193847 1402035 95] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -5842,7 +5952,6 @@ FontDirectory/CMTI10 known{/CMTI10 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /CMTI10 def
 /FontBBox {-35 -250 1124 750 }readonly def
-/UniqueID 5000828 def
 /PaintType 0 def
 /FontInfo 9 dict dup begin
 /version (003.002) readonly def
@@ -6144,7 +6253,6 @@ FontDirectory/bsmiu72 known{/bsmiu72 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu72 def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4007870 def
 /XUID [1021 31 1977193847 1402035 114] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -6243,7 +6351,6 @@ FontDirectory/bsmiu76 known{/bsmiu76 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu76 def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4221397 def
 /XUID [1021 31 1977193847 1402035 118] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -6365,7 +6472,6 @@ FontDirectory/bsmiu82 known{/bsmiu82 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu82 def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4184357 def
 /XUID [1021 31 1977193847 1402035 130] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -6463,7 +6569,6 @@ FontDirectory/bsmiu52 known{/bsmiu52 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu52 def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4188906 def
 /XUID [1021 31 1977193847 1402035 82] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -6573,7 +6678,6 @@ FontDirectory/bsmiu8d known{/bsmiu8d findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu8d def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4219475 def
 /XUID [1021 31 1977193847 1402035 141] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -6667,7 +6771,6 @@ FontDirectory/bsmiu89 known{/bsmiu89 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu89 def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4065242 def
 /XUID [1021 31 1977193847 1402035 137] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -6774,7 +6877,6 @@ FontDirectory/bsmiu90 known{/bsmiu90 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu90 def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4148773 def
 /XUID [1021 31 1977193847 1402035 144] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -6893,7 +6995,6 @@ FontDirectory/bsmiu98 known{/bsmiu98 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu98 def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4211399 def
 /XUID [1021 31 1977193847 1402035 152] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -6992,7 +7093,6 @@ FontDirectory/bsmiu54 known{/bsmiu54 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu54 def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4204743 def
 /XUID [1021 31 1977193847 1402035 84] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -7088,7 +7188,6 @@ FontDirectory/bsmiu66 known{/bsmiu66 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu66 def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4018172 def
 /XUID [1021 31 1977193847 1402035 102] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -7214,7 +7313,6 @@ FontDirectory/bsmiu8a known{/bsmiu8a findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu8a def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4216940 def
 /XUID [1021 31 1977193847 1402035 138] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -7452,7 +7550,6 @@ FontDirectory/bsmiu6e known{/bsmiu6e findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu6e def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4002535 def
 /XUID [1021 31 1977193847 1402035 110] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -7555,7 +7652,6 @@ FontDirectory/bsmiu4f known{/bsmiu4f findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu4f def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4145983 def
 /XUID [1021 31 1977193847 1402035 79] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -7683,7 +7779,6 @@ FontDirectory/bsmiu75 known{/bsmiu75 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu75 def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4014825 def
 /XUID [1021 31 1977193847 1402035 117] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -7801,7 +7896,6 @@ FontDirectory/bsmiu6c known{/bsmiu6c findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu6c def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4133922 def
 /XUID [1021 31 1977193847 1402035 108] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -7953,7 +8047,6 @@ FontDirectory/bsmiu6b known{/bsmiu6b findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu6b def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4118696 def
 /XUID [1021 31 1977193847 1402035 107] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -8073,7 +8166,6 @@ FontDirectory/bsmiu74 known{/bsmiu74 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu74 def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4179847 def
 /XUID [1021 31 1977193847 1402035 116] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -8173,7 +8265,6 @@ FontDirectory/bsmiu57 known{/bsmiu57 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu57 def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4080822 def
 /XUID [1021 31 1977193847 1402035 87] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -8269,7 +8360,6 @@ FontDirectory/bsmiu59 known{/bsmiu59 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu59 def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4081123 def
 /XUID [1021 31 1977193847 1402035 89] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -8407,7 +8497,6 @@ FontDirectory/CMR7 known{/CMR7 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /CMR7 def
 /FontBBox {-27 -250 1122 750 }readonly def
-/UniqueID 5000790 def
 /PaintType 0 def
 /FontInfo 9 dict dup begin
 /version (003.002) readonly def
@@ -8663,7 +8752,6 @@ FontDirectory/CMMI7 known{/CMMI7 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /CMMI7 def
 /FontBBox {-1 -250 1171 750 }readonly def
-/UniqueID 5087382 def
 /PaintType 0 def
 /FontInfo 10 dict dup begin
 /version (003.002) readonly def
@@ -8946,7 +9034,6 @@ FontDirectory/CMEX10 known{/CMEX10 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /CMEX10 def
 /FontBBox {-24 -2960 1454 772 }readonly def
-/UniqueID 5092766 def
 /PaintType 0 def
 /FontInfo 9 dict dup begin
 /version (003.002) readonly def
@@ -9247,7 +9334,6 @@ FontDirectory/CMSY7 known{/CMSY7 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /CMSY7 def
 /FontBBox {-15 -951 1251 782 }readonly def
-/UniqueID 5096648 def
 /PaintType 0 def
 /FontInfo 9 dict dup begin
 /version (003.002) readonly def
@@ -9495,7 +9581,6 @@ FontDirectory/MSAM10 known{/MSAM10 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /MSAM10 def
 /FontBBox {8 -463 1331 1003 }readonly def
-/UniqueID 5031981 def
 /PaintType 0 def
 /FontInfo 7 dict dup begin
 /version (003.002) readonly def
@@ -9731,7 +9816,6 @@ FontDirectory/CMR10 known{/CMR10 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /CMR10 def
 /FontBBox {-40 -250 1009 750 }readonly def
-/UniqueID 5000793 def
 /PaintType 0 def
 /FontInfo 9 dict dup begin
 /version (003.002) readonly def
@@ -10128,7 +10212,6 @@ FontDirectory/bsmiu70 known{/bsmiu70 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu70 def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4197976 def
 /XUID [1021 31 1977193847 1402035 112] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -10229,7 +10312,6 @@ FontDirectory/bsmiu51 known{/bsmiu51 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu51 def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4226884 def
 /XUID [1021 31 1977193847 1402035 81] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -10350,7 +10432,6 @@ FontDirectory/bsmiu63 known{/bsmiu63 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu63 def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4154902 def
 /XUID [1021 31 1977193847 1402035 99] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -10449,7 +10530,6 @@ FontDirectory/bsmiuff known{/bsmiuff findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiuff def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4011539 def
 /XUID [1021 31 1977193847 1402035 251] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -10541,7 +10621,6 @@ FontDirectory/MSBM10 known{/MSBM10 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /MSBM10 def
 /FontBBox {-55 -420 2343 920 }readonly def
-/UniqueID 5031982 def
 /PaintType 0 def
 /FontInfo 7 dict dup begin
 /version (003.002) readonly def
@@ -10648,7 +10727,6 @@ FontDirectory/CMSY10 known{/CMSY10 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /CMSY10 def
 /FontBBox {-29 -960 1116 775 }readonly def
-/UniqueID 5096651 def
 /PaintType 0 def
 /FontInfo 9 dict dup begin
 /version (003.002) readonly def
@@ -10924,7 +11002,6 @@ FontDirectory/CMMI10 known{/CMMI10 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /CMMI10 def
 /FontBBox {-32 -250 1048 750 }readonly def
-/UniqueID 5087385 def
 /PaintType 0 def
 /FontInfo 10 dict dup begin
 /version (003.002) readonly def
@@ -11281,7 +11358,6 @@ FontDirectory/bsmiu62 known{/bsmiu62 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu62 def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4166693 def
 /XUID [1021 31 1977193847 1402035 98] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -11424,7 +11500,6 @@ FontDirectory/CMBX10 known{/CMBX10 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /CMBX10 def
 /FontBBox {-56 -250 1164 750 }readonly def
-/UniqueID 5000768 def
 /PaintType 0 def
 /FontInfo 9 dict dup begin
 /version (003.002) readonly def
@@ -11763,7 +11838,6 @@ FontDirectory/bsmiu7f known{/bsmiu7f findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /bsmiu7f def
 /FontBBox {0 -121 1000 879 }readonly def
-/UniqueID 4029455 def
 /XUID [1021 31 1977193847 1402035 127] def
 /PaintType 0 def
 /FontInfo 11 dict dup begin
@@ -11871,7 +11945,6 @@ FontDirectory/CMR12 known{/CMR12 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /CMR12 def
 /FontBBox {-34 -251 988 750 }readonly def
-/UniqueID 5000794 def
 /PaintType 0 def
 /FontInfo 9 dict dup begin
 /version (003.002) readonly def
@@ -11890,20 +11963,15 @@ dup 46 /period put
 dup 48 /zero put
 dup 49 /one put
 dup 50 /two put
-dup 51 /three put
 dup 52 /four put
-dup 54 /six put
+dup 53 /five put
 dup 56 /eight put
-dup 64 /at put
 dup 100 /d put
-dup 101 /e put
+dup 103 /g put
 dup 104 /h put
-dup 105 /i put
 dup 106 /j put
-dup 109 /m put
-dup 110 /n put
-dup 115 /s put
-dup 116 /t put
+dup 111 /o put
+dup 114 /r put
 readonly def
 currentdict end
 currentfile eexec
@@ -12093,105 +12161,76 @@ E663C2CC64E2DA3631AB809AE1B70CCD429EF7488E7E5C782C8311B03F19DC37
 1421F3099CCD799C248748B186F9D8B00FBBC7B9C635BB8D08FE653D05C3F05E
 3ABBE1ACEE7E3F02C7AC1613E545DBF5CC6354F9FB84BA958C2565390A99D843
 CF5C65F25CD33D82395549F71F79ACA87D8BECAECC436FA46B8F68A1F86006E6
-F7EC125F98C49D1451E429397254784BD360E3C6F4648804E1C3E324A8B97000
-F025BD612BE81602A0440FD7E97D5D9564C9487D1BD9EEC9147CE8C91CE4C268
-E6726CB7DDA64469D88C3A2FAC47231E92C9D078D2F5E7650ED675FA22EA607B
-A59CF5EA372FE8371C57DCA3E5F01E28499677DF13F1AD33B356FB1BD0F2933C
-A7C4B834E780EEF3BECA296F296BB5B5090B3A7515CF88B25D03D6E05E75E31C
-FB6D767B529ACDD2A6F757FE5C8C28263A51B0C53952F0408E4263C902DE3531
-328D3F874D7383086431000F51D0284B2382443462084CD271B5E81C4DEB11AE
-CA55B14E194AD72DAC861098CB5DA1BFA4AAFEC4AD878F55E2042975B9CDE5D9
-6C062AF1BAB33E15BBD7362D8E93F5134B8BA641900C9DFCC0F7FFFCAD8F9306
-C68F1A235E546EA13D28BEB9134B1E9C51FE3FEA9454D6DFB4B767C850B47B4B
-DEF33AADB066E98DC4B499F84FD5A6B266B9BA841892693EC3B9776697C3D931
-B10C86739A5ADAEBFC07618CF25EB4B6DD98FFCBE9FA3F78BF28FB163F0E768D
-6A04271F41181128E768DB630B9B43474162B0F9BDE6C0637451A1D5694EBF48
-71F38BB7CD0325C83C0BF5290BB98487650B8F2C718594125CA6C1EEE0EF3C51
-C3332D7F4ABF9FD97AA876321E20AD70E6DE2BD26B858CDC9F0864D4B9DD8A37
-967F3684B3D590F76E402BB5249C5415235E56550E7DA567FFF1BB03646BE1E7
-29C9D73D33A46EE494889DBEC40A45CE852EF1D6FC2621BAF6EDA209BBA9BE9A
-A548772ABDBDECC836E929787E698BB17CB6118EFD45A7138069813FD49F27D7
-A9B9B9FA4FD193439D7B61F559C575CB32005FD6F1BDF00F4078A33C7AAF22D2
-3DD56D7CA7FF37BD1CE8590CD27E916E16F25B37FA3706E07209AAE0AE686D79
-2D2785372A2A99C7FA74921B9A6D6AA748BF56D61853AD5D55E224034A0B22D4
-733B7619A0F00C89DE8445796409C948D9293E16C76A67A2EFEC4FA53D1ED204
-E3E13B34BDE7C9A3A951E6177B9F9D0AD1CCA0E14E1C228554ADC30F22795DA6
-7CBC092F0B70417AEC8FB382BC332FD12195932F09CD372986525BCD31B28421
-B3B74052DDED6AED352DE10EB75A615D99318A161FB4340094C7B7431662CF20
-9B27687CA3703DD6FE8BD13BDF2B54754C21B50471A58EB6B5701818CEE4D221
-9962F488CD5C4E304ADEEE43EE1E1D956755B68363E822A51C9DF8AC20938A16
-70297F000C68D24DAA01DCD2E376CAD18799430152F5433606BBC7E6B6F04F4E
-84737830D8096621E81A4E44A93D48842B19E06A2CF36B62F052E83629E77937
-87FE7785994B339797BD13CE9F644762A47CF72D4C619D22543BA9CE2C4C994E
-37AE282E4E0A2677E8CFAAEC40371E13EF4610752FD0A3578F4BF5D70CDD6DAC
-27393A2992E1DE36709E70682D8F0AA78CE46F62E357DA04FBEDE4E20D62F6AF
-71E3F60869BAE386774B95D98D6F6C8B3C6AE0C2C0DD74475BA2063D4E97A3D6
-714A64C0919C122A42FF84B58D7208B338D8B9099E35FA38C2095DD265DF1979
-DD74E3775EE86B1BE6237EC4BE47D967545ED69213B57D6F07696ADDC14337DC
-BB90D1BD1763C2BF346475C31A6D678CF895267ADBE735725D192DA84617097E
-8E1BBE434735D9F489968F56ABBF044D71C894897F137616CB0285CDDEF71AAC
-8786C007BFEED3B5B6B042E3870ABF6FBFF2FE6A25BA11F51B617EB663D1870E
-ABC0061D0BA04A3F8965210E712D2FB83B8A84107377CA22D9D499FF026CF322
-21F322C8C71CCA6E02CEBE9D62C66D710F1E569B864299651DFC5A320756C474
-3FB24DAA0057CD1D27F5B76173D5063A5DD6887309B925A7C72C864A2C79B669
-C9CD584BB9F3F0D324CBBD9B791A70F10DC5DB835BF0B4A9B1D8F5327EA01A7D
-F23F8126BE15F3FD16B3085C10D23D878E7423F8B9118CEC896A10C83B53B596
-CE9A8DE0C569CE0D758D3C9A23A609F9B1097DF1FF78939BC6837291B6B80A75
-61D57A0834FB7970A0E2DFDC54A18581416070D07FF9242EB101F3BC52B03295
-44F5BA492EFECF038A46A6FD6AC09B262475C73E324940840F656B3415D1A632
-FF1ED29E77DC28ECB996DD707A6B5D294CF4D47A642714091252F7CE7F776D20
-F2418F20CCA43588741CC89C4EF87A37BC7DF6230A91C190E32D33A1DE211263
-B0A912FBEC219DA7FADACDFD03D7BA930D9CC53F95287857CCF1580D0661F3B5
-2CA579585609AE417405B3E441578355D0519307A86613D5E75F06F318C342CB
-292F73BA89041D6A4AC3C8EF44D558DE059B2240E3E2FBCBF931F20E3BF5AA20
-2A2DBE68C59EE67902A5728F9AEFC3791F1C9F6BB8B947E4EE5580EA404C8090
-B3D8E24B0A0814926741110F3766FC368D4B0720148CEACF8FD727AB02B2CC25
-9164620ACEA63F25A79AE119F9DB68BCC473DBC43BF054A67D91F4DDDFAFBD46
-FD314AE59EA2B1B74E4566817B604CFE5A20481B648C822250697815D519A1A1
-A1E76ECC54EA8E2A01FC1F3227F0628EFA45C532CAD37A67A7A80617526670C6
-10D9E53044A8F7AE7DFE0CACFC33432201A5E4BD371BF0F911706E9B1A4B9042
-4BF2B940E6CBBE99A762217998F563A3A9A7DA6B7B52863FCB76AA5218995525
-EDDAAA566D019EB92F4AA8DD129746EE78D61B2C0BC97226036DB5D0AB0C2513
-CBEF5B2C6A2BB2354FB0DC71231C2968E3406EA6FDD925FD0A551993FCAA9A54
-AF997D9379C0598EEE7444065F0FEF749646D96FC9723DAC2A7A37F255AD50A3
-B5C634D64DD15A9547D7032BD092CF8A9650140940642B1DFFC3B023CDA09D23
-568A1A67E3FF1DCC92B803D36C188685E94DA7A993BD119306B25AB28EAD07BC
-17AE47BEE8F63BC7BF0D0A75E0ED2E2F79771FA60F5ABE511A07BB386614FB33
-07380382BC11AD8A4441A2BC18311CBC823113073202D7776A03FC4ACEE8A50E
-BE30DEF3F2AF606985B08621F86E36B33898005F6376020D0A043F5FB9C50229
-F1D286257BFDCCC2DEB04C1CDEEC9794CDC1DA7CF099EC7A19E1FC6D0F52CF92
-E1001E1222BEB9BA652C02BE590E74DBFBBB616D6CA2DE61774080F383E685BC
-F7D1A068AF58963AAFF43795A024967DAC9C530DF2D6EF74C158BFE59F600A82
-C4D13565CF0363DF0F0052C83CF4112C839CEBC907C07693EFA5B3EFEB67FEDD
-00215C9E3BE01B595F3FE2FCA5B035856AED9FA42822250A272222E2596FCFF7
-3A6E42F0EDE25767A310E39F8B5F9869EF096142226B705EDBAA868F7D5F4252
-2D16D09D82F8C8E9C587C6DE8DB865535C206F0F538FD0344B34B8616F2973D2
-75C16B34D8960B0310A9B4CEDF38D18A501B794DE5336066A4DAD35F77632CF0
-9205527CDF60B4940CA91441C910B69F8F08AF51564C8E5CCCF9F670FBA8F990
-6541DA62C91EEB18CE1259405219CCC66E9C888C920AE670FE0CB9E4B3B060C2
-F96F9E76DABE333C215EA322C3E55732649C7ADE661C633406E83F3916C01974
-96B8BAD1B6E33EDA6D116DE83B16612F82B5CCCA0F4CB78E90441C02DC012AFE
-29573AEAAD01590CAA80E3B2975AAEDE3060B49C59EB5FA92F21CC6F4F720991
-A78078B35C2819E0CF7EFEF3C6A269177FE94D14189B250C646C56AAEB130189
-DDE06B0DFE8311F0DCC015B15040EC3AB7ED3CFEFC5C1E6522AD29767B2ADC89
-5953AB089BBFBA267FD913CB59434D8075E16407B9F47BE4292BF7C62BFBB56C
-A102244BBEF31A743E43F6D1AEBDEA261D4860636265DA380B12DC3076A94D1D
-75AD0BC1972317CC284CAAAFED8E3F39C49991436E2CC56CC358D21463C67EEE
-0DE336CB01B830B3B4CB038CCA3DEB8B54A1CA08F2D10FB26AACC75527028532
-4D726702B4A3D9B915865DE755ED98BAA1FD96C0F5FEEC8096AB4651E0F730A7
-7A4B21D8944D23DBC567744255951B30D0540A3FFDFCBE73ED63DB7835C5440E
-4C43874D300C0B935D3B31DCF1EE010D8C938A977887CF986242AC78AA2CB965
-BF5B189258D3A4B5CD18B87D37816550BF36015E10185542DCA93A7D2C9948A2
-60B9E9893D8A0F3C0B5D9ED568CF867C15E3E485E2794B5990A8E69AC16947EC
-D0201E8E0D2FEC5CD6B978003F071E0433B11D31B5EAC52B950788171CCE5647
-3476C0F04F92D6DD9392AE803D6E8CCAB32F1398E868FDADC5886222E1EAF889
-DEEB9B18DC8A8C0D5D6187D5304C626E91774CE513605BFA7214E9E6BF84F081
-985DC6A014A81F29AEE5505ABBE5C93A612CF8F31E45FCCFE2E2ABDAA0167F87
-54A69FD78A82BE2039CA7534B74FF6FC9FA97B9BFC8D25C05CAA697FE909AAB6
-E4C89DF6090B0FD669BFFC958FC13222CEF1685011A7065E4737796DAF814C22
-07FBF7357A3FAACE783EDF75840E61D7E1BB9144ACEC6FBAFD20F23EB4703502
-B175F527326789D9B852929C2151CE0C5E2AB23F38D5ECDD6AC4F3F970932914
-46F6C06C8BB426F20CE90F6E
+F7EC125F98C49D1451E429397254784BD360EEE5554F86066A383C9D960B8B51
+76F31434F5C7D061F2893907BA0F3312FFE826D8AC2FD57B313E64CE6475741B
+99ED12B11E8CC0D01F90A4930F07F492048DEBCE173250C8ACE03240EFCF7076
+CCA8FDBA6A3DAF36A91AD24C162955A674C60D577458E7655CA8A5F415E1D083
+B6DF261E2EF18F976862E1546BE0D9586884FDC6D16DCEB21FAFF9D437D23100
+9CCD597AA724DA96A8E443232061A4FABE8990C7CB68272591E6D762E61DB320
+D950865581A3126A61B52A1D9CAE80EE3008CB67BF2B8934404B0E154EE06285
+C61E47C9FC81F6A2AF34CE1AC2A563E2C1075D54FF07FFFAB211164FB1E44D47
+A07E15626B830DD6B0DCCA1D207DA06DF069F4AA8CBB9B5DC32EDADD69C5D30D
+37F82B17D88264D7BA0B83F961E3BE4B0C49B8DCECD9A468F8F1D930C55CBBA5
+8F1D11B6AFC31979834D542ABF37DC99756CC6EE2A82685A1A67C6012DC3C2FF
+2656C665B25C52EE5F4CC14CF352E54C5023EBEBA7D887AC75F4A80D6D39AF15
+C456A72CB590C9E363F4CE4EE931651E7D5638365690FC6FF72A3429C7FA1868
+669ED083FC3F2CEA738C710CDC0B3D3AF102D4DE66415859019181222729EE52
+93B1D483CF83400A7F6E00A932578404D3810CB412088CA48CE80A25FA4C599D
+F776678637EF12F90DB8E62D324B6961EAE34271EC74F8A3276676BCD466526C
+6BB1EC0119CCCB13F6469507ED1796046D4D80447DC2697E2BF00CAAE2DED085
+8560EABB8C8BCB42ABF9426D156D282BB7BDFC5519D477D8D525E9EAE7C6DB04
+1BB348F9D16D829C50A92B8D10BB4512D7C81CB195616A9C7652188E7E277A8D
+0C4BD7166D5505774A89FA21F5147609AEBB74E2093829CBBFA904FA0D265726
+3ABA54D943AC1D7B514BCECCE75B6F42D848BB161AB679148D4AB471EE3BC51C
+55D2D5DF9A262A1190E6F2B1AC633337CADB858D5713F75CE523BF2678E50976
+112B9CC80B9D921B4A6980F605ECA86FC40E47CF8F04C16FCE15F7E87CB8A11D
+D2E74F9449046F7A08FA6F76B4FE40355ED86FCD66AB7A7D37A0C9F4D03794C2
+715D161DBF031FDDA391DE0704B86220D68BFCE9B42C7B08415E741281E1E5B9
+4226465675C97DD0A4870D45667F3BD21229600BA2C659960FDC423DCDF66462
+C7367852790542278C31BE3115BE3D7226838D3CAABCD5254EA961C30CE4DF99
+7B54661A9AD91959817147CD3FA7167C404DD35EF9DA7CA9BDBB937EEA1B40AE
+65C3DEC836554939DB8F2A2C10EF305DD047B66AE26BA3C4DE4532E353AA468F
+E003591F97A0D01E5CBE158783F15E22D59114A42599DDAA29B8BF42703FEF21
+EC4935520AF69B7361CB72EC02C13258901B0FCE3F5946927D51FCC476850283
+2D48AA5B0B349445420518F0B769EAD3F225A7DA921EA17AC9A6D6B611FA6852
+D5EB91F827B1C1826BE574BC60936ABA57FF68DF7E1B6E7A1D4FF433BF3FFAB7
+2C7C3FDD3D1A60132323652712DB74B3BBCED2E756867104E8E1C27A27B59664
+E85648C7892CC2B81B421B15B447EAE6D210518E772FFFE23EEEAD15507FC85E
+5D91AC2671F75D962FDF7AB21D2CB3F9BDE1EB94EFECACD5C6B31D09A1FD992B
+22A0C9BCFB9C5AF1D8BDB50D0ED9B192F9B2EA397F567A9E111098595D8AB6F2
+9A82C6F445493E4B4A7F8F93A1E99A4597F43F756889EF721D216CEA8437541C
+165DD810A81D7D988F12D0992DA9618E9DDFFA3E00F6FDF3D90D232B56D5AFC6
+C4F9D7D756C967A5B44FCC0DE3910D15AC97B66F807FB0EE1883306C71BB040F
+B66903EF82F2CA08A8443D72925F7CE9D93518A54BB7BDD14F108905CE0FD95D
+8A42D10BB15A0CEA424536F6AFE4C2971607C60434C1E29D83F340DF9C4B32A8
+910830D1E9EA689245859ABB72804DE273155CF2EC609F8F2301104BCA0ED251
+CF0C9F62C5460F42C54E93C5B23E5C1D9428DCCAAE578E317433F0CCF16EB5FE
+33B4CEB33373A9BD39BDF3F4B3CB70A9616DB1C1DC09BF0853B1841B3EB74213
+45B34077E70D01CC55094398596C97904F8FCAB0590A5FCA5A893162E7CD0E2D
+217B8C08D5D635AFD9037DC828FFE23CC0449E001DFBE6F2C031A7CFEE2E5116
+B17A5372AF25FC8432DA2643EEFF4F8876134E5B5DFDD8EBADDDE25894632D23
+BB3E42F7BB39ED1C36095A16BFF5EEE3AA8101E933D677CF43E64F4ED7DF7DBA
+FB2B189F0C2CFE712E1857BD39772F9097FEB96BED31E1DE42ECA39C67242CC4
+D9F76EB5BE96DEF7941BE6BA7F96CE8371FF60AFC9B583AA5C1856E3A9C95029
+5E06A58A6A17DF0C88411E6F3DBF842F9861962088E67D360B8D763FEED652CA
+CFEFF39DF8562259ED09B77592424FB12C1FEB016D2BF48F02B81709F7A96193
+0AC4499F05E57A50262CDA383C2B3001A1B3284F777795D02B2C875EB64CA07D
+458B352179B56DF038E9AEBBE0D0D3F672277D2A91593133421F87A9C7BA8ADB
+FE68773B51FFA17E9843688C358BFF6763F7E072DB835B2CE5BC7B5F6FDE7A47
+444D14D08414A0046D5C9CB2E6C784D7CB2CBE27D56D203B0A9846AF07430ECA
+26BCDED406A940AFBC148D19C5E3808336FF0C55BC0008AD43A594F2323043C6
+FC292C3459E0ACA7E8897E29671B5F38595BA9722C46E21C0BDCD7A2612086E0
+07FBABAC5611F183C0845EE86247F353F097F03D78522D18C9D3374CF7F644DB
+BBEBB0DBA0EBEB04C7E2D829D4FEE77AAA3C6657BE814C90171992259B7F80D6
+F7C618B74289425C82C76518B770BDEA65B75FC6E896487288D3A4314EFEC131
+372A2D75A4072B68EA6E1936DD9B5FA31B01F6758BC9EAE6AFE507C82C9889A4
+F0ACC58752F49FB5225EF1CC71AB54AD5C8CD3281AA01E73F2F07826DA22CB49
+684A3FC1DA6ED6EF040BA4FF6F6391E21B9D1F7EEBA389C06286EF3B4FA75BA2
+0B1A2BFB95E8A0419B1CD96AB33A1B9AFC06B5FBC5A687526976CF1D587386F0
+B734050745522FBD2E79614DACBED79D27FD1C913883AC7B040546688A667352
+0A7D93E55C8CE8603EBD3D32CD56D6837B919FC4EFF857D716BA6ACFE8BA048D
+34BB52AAD74867FD04C7D894D668E5974EB49A399986F5E46D1FC0918C7B1C0A
+05185436CC5D1698E709940CCD915D2330B304
 0000000000000000000000000000000000000000000000000000000000000000
 0000000000000000000000000000000000000000000000000000000000000000
 0000000000000000000000000000000000000000000000000000000000000000
@@ -12223,7 +12262,6 @@ FontDirectory/CMMI12 known{/CMMI12 findfont dup/UniqueID known{dup
 /FontMatrix [0.001 0 0 0.001 0 0 ]readonly def
 /FontName /CMMI12 def
 /FontBBox {-31 -250 1026 750 }readonly def
-/UniqueID 5087386 def
 /PaintType 0 def
 /FontInfo 10 dict dup begin
 /version (003.002) readonly def
@@ -12498,14 +12536,14 @@ rf /F5 241[83 83 13[{}2 83.022 /bsmiu5c rf /F6 199[48
 86[83 169[{}1 83.022 /bsmiu7f rf /F8 22[83 2[83 75[83
 33[83 31[83 88[{}5 83.022 /bsmiu5b rf /F9 26[100 229[{}1
 99.6264 /bsmiu65 rf /Ga 247[100 8[{}1 99.6264 /bsmiu67
-rf /Gb 139[100 116[{}1 99.6264 /bsmiu5e rf /Gc 139[38
-38 4[54 81 2[30 27 54 2[43 54 35[76 7[49 1[49 1[49 49
-49 49 49 1[27 46[{}18 99.6264 /CMR12 rf /Gd 193[76 1[76
-60[{}2 99.6264 /CMMI12 rf /Ge 89[100 166[{}1 99.6264
-/bsmiu90 rf /Gf 248[100 7[{}1 99.6264 /bsmiu97 rf /Gg
-170[100 85[{}1 99.6264 /bsmiu4f rf /Gh 2[143 253[{}1
-143.462 /bsmiu51 rf /Gi 135[143 120[{}1 143.462 /bsmiu65
-rf /Gj 248[143 7[{}1 143.462 /bsmiu63 rf end
+rf /Gb 139[100 116[{}1 99.6264 /bsmiu5e rf /Gc 141[38
+2[49 4[30 1[54 49 2[54 43[49 2[49 49 1[49 49 49 1[27
+46[{}13 99.6264 /CMR12 rf /Gd 193[76 1[76 60[{}2 99.6264
+/CMMI12 rf /Ge 89[100 166[{}1 99.6264 /bsmiu90 rf /Gf
+248[100 7[{}1 99.6264 /bsmiu97 rf /Gg 170[100 85[{}1
+99.6264 /bsmiu4f rf /Gh 2[143 253[{}1 143.462 /bsmiu51
+rf /Gi 135[143 120[{}1 143.462 /bsmiu65 rf /Gj 248[143
+7[{}1 143.462 /bsmiu63 rf end
 %%EndProlog
 %%BeginSetup
 %%Feature: *Resolution 600dpi
@@ -12537,44 +12575,47 @@ SDict begin H.R end
 SDict begin [/View [/XYZ H.V]/Dest (page.1) cvn /DEST pdfmark end
  136
 -74 a Black 0 TeXcolorgray Black 144 242 a
-tx@Dict begin  gsave STV CP T /ps@rot 0 def grestore  end
+ /pssetRGBcolor /setrgbcolor load def /pssetCMYKcolor /setcmykcolor
+load def /pssetGraycolor /setgray load def
  144 242 a
 144 242 a
-tx@Dict begin  gsave STV CP T /ps@refangle 0.  def grestore  end
- 144 242 a 0 TeXcolorgray 144 242 a
 tx@Dict begin  gsave STV CP T /ps@rot 0 def grestore  end
- 144 242
-a 144 242 a
+ 144 242 a 144 242 a
+tx@Dict begin  gsave STV CP T /ps@refangle 0.  def grestore  end
+ 144 242 a 0 TeXcolorgray
+144 242 a
+tx@Dict begin  gsave STV CP T /ps@rot 0 def grestore  end
+ 144 242 a 144 242 a
 SDict begin [/PageMode /UseOutlines/Page 1/View [/Fit] /DOCVIEW pdfmark
 end
  144 242 a 144 242 a
 SDict begin [ {Catalog}<<>> /PUT pdfmark end
- 144 242 a 144 242 a
-SDict begin H.S end
  144
 242 a 144 242 a
-SDict begin 12 H.A end
+SDict begin H.S end
  144 242 a 144 242 a
+SDict begin 12 H.A end
+ 144 242 a 144 242
+a
 SDict begin [/View [/XYZ H.V]/Dest (Doc-Start) cvn /DEST pdfmark end
- 144 242 a 0 TeXcolorgray
-0 TeXcolorgray 1593 674 a Gj(\007)p Gi(x)p Gh(\375)p
-Gi(x)1195 914 y Gg(U)p Gf(\007)p Ge(\246)p 0 1 0 0 TeXcolorcmyk
-1527 934 a
+ 144 242 a 0 TeXcolorgray 0 TeXcolorgray 1593 674 a
+Gj(\007)p Gi(x)p Gh(\375)p Gi(x)1464 914 y Gg(U)p Gf(\007)p
+Ge(\246)p 0 1 0 0 TeXcolorcmyk 1795 934 a
 SDict begin H.S end
- 1527 934 a 0 1 0 0 TeXcolorcmyk -20 x Gd(<)p
-Gc(jdh8@ms63.hinet.net)p Gd(>)p 0 1 0 0 TeXcolorcmyk
-2565 845 a
+ 1795 934 a
+0 1 0 0 TeXcolorcmyk -20 x Gd(<)p Gc(jdh8.org)p Gd(>)p
+0 1 0 0 TeXcolorcmyk 2297 845 a
 SDict begin H.R end
- 2565 845 a 2565 914 a
+ 2297 845 a 2297 914 a
 SDict begin [/H /I/Border [0 0 0]BorderArrayPatch/Color [0 1 1]/Action
-<</Subtype/URI/URI(mailto:jdh8@ms63.hinet.net)>>/Subtype /Link H.B
-/ANN pdfmark end
- 2565 914 a 0 TeXcolorgray
-0 1 0 0 TeXcolorcmyk 1480 1241 a
+<</Subtype/URI/URI(http://jdh8.org/)>>/Subtype /Link H.B /ANN pdfmark
+end
+
+2297 914 a 0 TeXcolorgray 0 1 0 0 TeXcolorcmyk 1480 1241
+a
 SDict begin H.S end
- 1480 1241 a 0 1 0 0
-TeXcolorcmyk @beginspecial 0 @llx -1 @lly 96 @urx 34
-@ury 960 @rwi @setspecial
+ 1480 1241 a 0 1 0 0 TeXcolorcmyk @beginspecial 0 @llx
+-1 @lly 96 @urx 34 @ury 960 @rwi @setspecial
 %%BeginDocument: by-sa.eps
 %!PS-Adobe-3.0 EPSF-3.0
 %%Creator: cairo 1.10.2 (http://cairographics.org)
@@ -12819,8 +12860,8 @@ a 2280 1241 a
 SDict begin [/H /I/Border [0 0 0]BorderArrayPatch/Color [0 1 1]/Action
 <</Subtype/URI/URI(http://creativecommons.org/licenses/by-sa/3.0/tw/deed.zh_TW)>>/Subtype
 /Link H.B /ANN pdfmark end
- 2280 1241 a 0 TeXcolorgray 1454 1451 a
-Gc(2012)32 b Gb(t)g Gc(11)g Ga(\010)g Gc(24)h F9(\345)144
+ 2280 1241 a 0 TeXcolorgray 1479 1451 a
+Gc(2015)31 b Gb(t)i Gc(11)f Ga(\010)g Gc(4)g F9(\345)144
 1758 y
 SDict begin H.S end
  144 1758 a 144 1758 a
@@ -12901,48 +12942,49 @@ b F1(k)d(>)e FT(0)p FY(\014)p F3(\021)p FX(\021)p Fx(\375)p
 F2(\011)k F0(j)p F1(a)1752 4309 y FP(n)p FO(+)p FP(k)1885
 4297 y F0(j)c F1(<)g(r)2058 4266 y FP(k)2113 4297 y F0(j)p
 F1(a)2180 4309 y FP(n)2226 4297 y F0(j)p FM(\002)p F3(@)p
-FN(\345)659 4442 y FR(1)632 4467 y FQ(X)577 4646 y FP(k)q
-FO(=)p FP(N)6 b FO(+1)821 4546 y F0(j)p F1(a)888 4558
-y FP(k)929 4546 y F0(j)23 b FT(=)1090 4442 y FR(1)1063
-4467 y FQ(X)1063 4646 y FP(k)q FO(=1)1198 4546 y F0(j)p
-F1(a)1265 4558 y FP(N)6 b FO(+)p FP(k)1438 4546 y F1(<)1553
-4442 y FR(1)1526 4467 y FQ(X)1526 4646 y FP(k)q FO(=1)1660
-4546 y F1(r)1699 4511 y FP(k)1755 4546 y F0(j)p F1(a)1822
-4558 y FP(N)g FO(+1)1969 4546 y F0(j)23 b FT(=)g F0(j)p
-F1(a)2170 4558 y FP(N)6 b FO(+1)2317 4546 y F0(j)2381
-4442 y FR(1)2354 4467 y FQ(X)2354 4646 y FP(k)q FO(=1)2488
-4546 y F1(r)2527 4511 y FP(k)2592 4546 y FT(=)2689 4490
-y F1(r)17 b F0(j)p F1(a)2810 4502 y FP(N)6 b FO(+1)2957
-4490 y F0(j)p 2689 4527 291 4 v 2743 4603 a FT(1)18 b
-F0(\000)g F1(r)3013 4546 y(<)23 b F0(1)144 4822 y FL(s)p
-FG(d)p FI(\032)p F4(x)p FI(U)p F5(\015)p F4(6\202)p FM(\002)p
-3556 4822 4 57 v 3560 4770 50 4 v 3560 4822 V 3609 4822
-4 57 v 144 4989 a
+FN(\345)648 4442 y FR(1)621 4467 y FQ(X)565 4646 y FP(k)q
+FO(=)p FP(N)6 b FO(+1)810 4546 y F0(j)p F1(a)877 4558
+y FP(k)918 4546 y F0(j)23 b FT(=)1079 4442 y FR(1)1052
+4467 y FQ(X)1051 4646 y FP(k)q FO(=1)1186 4546 y F0(j)p
+F1(a)1253 4558 y FP(N)6 b FO(+)p FP(k)1404 4546 y F0(j)23
+b F1(<)1565 4442 y FR(1)1538 4467 y FQ(X)1537 4646 y
+FP(k)q FO(=1)1672 4546 y F1(r)1711 4511 y FP(k)1766 4546
+y F0(j)p F1(a)1833 4558 y FP(N)6 b FO(+1)1980 4546 y
+F0(j)23 b FT(=)g F0(j)p F1(a)2181 4558 y FP(N)6 b FO(+1)2328
+4546 y F0(j)2392 4442 y FR(1)2365 4467 y FQ(X)2365 4646
+y FP(k)q FO(=1)2500 4546 y F1(r)2539 4511 y FP(k)2603
+4546 y FT(=)2701 4490 y F1(r)16 b F0(j)q F1(a)2822 4502
+y FP(N)6 b FO(+1)2968 4490 y F0(j)p 2701 4527 291 4 v
+2755 4603 a FT(1)18 b F0(\000)g F1(r)3025 4546 y(<)k
+F0(1)144 4822 y FL(s)p FG(d)p FI(\032)p F4(x)p FI(U)p
+F5(\015)p F4(6\202)p FM(\002)p 3556 4822 4 57 v 3560
+4770 50 4 v 3560 4822 V 3609 4822 4 57 v 144 4989 a
 SDict begin H.S end
- 144 4989 a 144 4989 a
+ 144
+4989 a 144 4989 a
 SDict begin 12 H.A end
- 144 4989 a 144
-4989 a
+ 144 4989 a 144 4989 a
 SDict begin [/View [/XYZ H.V]/Dest (theorem.3) cvn /DEST pdfmark end
- 144 4989 a 0 TeXcolorgray F8(\232)-82 b(\232)g(\232)p
-FH(\006)g(\006)g(\006)33 b F6(3.)p 0 TeXcolorgray 41
-w F5(\015)p F4(\274)p F3(@)p F2(\011)d F1(x)23 b F0(2)g
-FZ(C)p FY(\014)p FI(\032)p F4(x)30 b F1(S)35 b FI(U)p
-F5(\015)p F4(6\202)p FM(\002)p 0 TeXcolorgray 144 5049
-1389 4 v 237 5104 a Fn(1)p 0 TeXcolorgray 271 5128 a
+ 144 4989 a 0
+TeXcolorgray F8(\232)-82 b(\232)g(\232)p FH(\006)g(\006)g(\006)33
+b F6(3.)p 0 TeXcolorgray 41 w F5(\015)p F4(\274)p F3(@)p
+F2(\011)d F1(x)23 b F0(2)g FZ(C)p FY(\014)p FI(\032)p
+F4(x)30 b F1(S)35 b FI(U)p F5(\015)p F4(6\202)p FM(\002)p
+0 TeXcolorgray 144 5049 1389 4 v 237 5104 a Fn(1)p 0
+TeXcolorgray 271 5128 a
 SDict begin H.S end
-
-271 5128 a 271 5128 a
-SDict begin H.R end
  271 5128 a 271 5128 a
+SDict begin H.R end
+ 271 5128
+a 271 5128 a
 SDict begin [/View [/XYZ H.V]/Dest (Hfootnote.1) cvn /DEST pdfmark
 end
- 271 5128
-a 0 TeXcolorgray Fm(U)-65 b(U)g(U)p Fl(\015)g(\015)g(\015)p
-Fk(6)g(6)g(6\202)g(\202)g(\202)p Fj(s)p Fm(U)p Fl(\015)p
-Fi(<)p Fk(6\202)p Fh(\363)p Fg(\320)p Ff(\000)p Fe(^)p
-Fd(\240)p Fc(\346)q Fk(x)p Fb(\002)p 0 TeXcolorgray 0
-TeXcolorgray 1860 5402 a FT(1)p 0 TeXcolorgray eop end
+ 271 5128 a 0 TeXcolorgray Fm(U)-65 b(U)g(U)p
+Fl(\015)g(\015)g(\015)p Fk(6)g(6)g(6\202)g(\202)g(\202)p
+Fj(s)p Fm(U)p Fl(\015)p Fi(<)p Fk(6\202)p Fh(\363)p Fg(\320)p
+Ff(\000)p Fe(^)p Fd(\240)p Fc(\346)q Fk(x)p Fb(\002)p
+0 TeXcolorgray 0 TeXcolorgray 1860 5402 a FT(1)p 0 TeXcolorgray
+eop end
 %%Page: 2 2
 TeXDict begin 2 1 bop 0 TeXcolorgray 0 0 a
 SDict begin /product where{pop product(Distiller)search{pop pop pop
